@@ -139,4 +139,102 @@ class MsGroupsCTest extends TestCase
         $dt->assertStatus(200);
         self::assertEquals("false", $dt->getContent());
     }
+
+    public function testGetByIdSuccess()
+    {
+        $dt = $this->withSession($this->sess_user)
+            ->get(route("ms-groups.get", ["id" => 3]));
+        $dt->assertStatus(200);
+        $jsonDt = json_decode($dt->getContent(), true);
+        self::assertTrue($jsonDt['status']);
+        self::assertEquals(3, $jsonDt['data']["group_id"]);
+        self::assertEquals("02", $jsonDt['data']["group_kode"]);
+        self::assertEquals("User", $jsonDt['data']["group_nama"]);
+        self::assertEquals(true, $jsonDt['data']["group_status"]);
+    }
+
+    public function testGetByIdNotFound()
+    {
+        $dt = $this->withSession($this->sess_user)
+            ->get(route("ms-groups.get", ["id" => 0]));
+        $dt->assertStatus(200);
+        $jsonDt = json_decode($dt->getContent(), true);
+        self::assertFalse($jsonDt['status']);
+        self::assertEquals("Data tidak ditemukan!", $jsonDt['msg']);
+    }
+
+    public function testGetByIdFailed()
+    {
+        $dt = $this->withSession($this->sess_user)
+            ->get(route("ms-groups.get", ["id" => "-"]));
+        $dt->assertStatus(200);
+        $jsonDt = json_decode($dt->getContent(), true);
+        self::assertFalse($jsonDt['status']);
+    }
+
+    public function testGetAksesSuccess()
+    {
+        $dt = $this->withSession($this->sess_user)
+            ->get(route("ms-groups.get-akses") . "?group_id=3&parent_menu_id=#");
+        $dt->assertStatus(200);
+        $jsonDt = json_decode($dt->getContent(), true);
+        self::assertGreaterThanOrEqual(0, count($jsonDt));
+    }
+
+    public function testGetAksesFailed()
+    {
+        $dt = $this->withSession($this->sess_user)
+            ->get(route("ms-groups.get-akses") . "");
+        $dt->assertStatus(200);
+        $jsonDt = json_decode($dt->getContent(), true);
+        self::assertEquals(0, count($jsonDt));
+    }
+
+    public function testSaveAksesSuccess()
+    {
+        $dt = $this->withSession($this->sess_user)
+            ->post(route("ms-groups.save-akses"), [
+                "group_id" => 3,
+                "menu_id" => [7],
+            ]);
+        $dt->assertStatus(200);
+        $jsonDt = json_decode($dt->getContent(), true);
+        self::assertTrue($jsonDt['status']);
+    }
+
+    public function testSaveAksesGroupIdRequired()
+    {
+        $dt = $this->withSession($this->sess_user)
+            ->post(route("ms-groups.get-akses"), [
+                "menu_id" => [7],
+            ]);
+        $dt->assertStatus(200);
+        $jsonDt = json_decode($dt->getContent(), true);
+        self::assertFalse($jsonDt["status"]);
+        self::assertEquals("Id hak akses diperlukan!", $jsonDt["msg"]);
+    }
+
+    public function testSaveAksesListMenuIdRequired()
+    {
+        $dt = $this->withSession($this->sess_user)
+            ->post(route("ms-groups.get-akses"), [
+                "group_id" => 3,
+            ]);
+        $dt->assertStatus(200);
+        $jsonDt = json_decode($dt->getContent(), true);
+        self::assertFalse($jsonDt["status"]);
+        self::assertEquals("Pilih minimal 1 menu!", $jsonDt["msg"]);
+    }
+
+    public function testSaveAksesFailed()
+    {
+        $dt = $this->withSession($this->sess_user)
+            ->post(route("ms-groups.get-akses"), [
+                "group_id" => "-",
+                "menu_id" => "",
+            ]);
+        $dt->assertStatus(200);
+        $jsonDt = json_decode($dt->getContent(), true);
+        self::assertFalse($jsonDt["status"]);
+    }
 }

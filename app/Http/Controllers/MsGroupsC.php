@@ -23,7 +23,7 @@ class MsGroupsC extends MyC
             "__title" => "Master Hak Akses",
         ];
 
-        return $this->my_view("v_ms_groups", $data);
+        return $this->my_view("v_ms_group", $data);
     }
 
     public function getData(Request $request): JsonResponse
@@ -33,6 +33,7 @@ class MsGroupsC extends MyC
             'mg.group_kode',
             'mg.group_nama',
             'mg.group_status',
+            'coalesce(gm.tot_menu,0) as tot_menu',
         ];
 
         $colsSearch = [
@@ -46,6 +47,9 @@ class MsGroupsC extends MyC
         $inputLength = $request->length;
 
         $sWhere = "";
+
+        $sWhere .= " AND mg.group_id > 1 ";
+
         if (!empty($inputSearch) && array_key_exists("value", $inputSearch)) {
             if (!empty($inputSearch['value'])) {
                 $search = $inputSearch['value'];
@@ -116,10 +120,34 @@ class MsGroupsC extends MyC
 
             $id = $v->group_id;
 
+            $isHaveAkses = 'secondary';
+            if ($v->tot_menu > 0) {
+                $isHaveAkses = 'warning';
+            }
+
             $aksiEdit = '<a href="javascript:void(0)" class="btn btn-sm btn-primary mb-1 mx-1" title="Edit" onclick="fnEdit(\'' . $id . '\')"><i class="fas fa-pencil-alt"></i></a>';
+            $aksiAkses = '<a href="javascript:void(0)" class="btn btn-sm btn-' . $isHaveAkses . ' mb-1 mx-1" title="Setting Hak Akses" onclick="fnAkses(\'' . $id . '\',\'' . $v->group_nama . '\')"><i class="fas fa-cogs"></i></a>';
             $aksiHapus = '<a href="javascript:void(0)" class="btn btn-sm btn-danger mb-1 mx-1" title="Hapus" onclick="fnDel(\'' . $id . '\',\'' . $v->group_nama . '\')"><i class="fas fa-trash"></i></a>';
 
-            $aksi = $aksiEdit . $aksiHapus;
+            $aksi = "";
+
+            if ($v->group_id == 1) {
+                if ($this->__sess_user['user_id'] == 1) {
+                    $aksi .= $aksiEdit . $aksiAkses;
+                } else {
+                    continue;
+                }
+            } else if ($v->group_id == 2) {
+                if ($this->__sess_user['group_id'] == 1 || $this->__sess_user['group_id'] == 2) {
+                    $aksi .= $aksiEdit . $aksiAkses;
+                } else {
+                    $aksi = '';
+                }
+            } else if ($v->group_id == $this->__sess_user['group_id']) {
+                $aksi .= $aksiEdit . $aksiAkses;
+            } else {
+                $aksi .= $aksiEdit . $aksiAkses . $aksiHapus;
+            }
 
             $data['data'][] = [
                 $no,

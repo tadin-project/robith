@@ -17,14 +17,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['prefix' => 'ms-groups'], function () {
-    Route::get('', [MsGroupsC::class, 'index'])->name('ms-groups.index');
-    Route::post('', [MsGroupsC::class, 'save'])->name('ms-groups.save');
     Route::get('akses', [MsGroupsC::class, 'getAkses'])->name('ms-groups.get-akses');
     Route::post('akses', [MsGroupsC::class, 'saveAkses'])->name('ms-groups.save-akses');
     Route::get('check-duplicate', [MsGroupsC::class, 'checkDuplicate'])->name('ms-groups.check-duplicate');
     Route::get('get-data', [MsGroupsC::class, 'getData'])->name('ms-groups.get-data');
     Route::get('{id}', [MsGroupsC::class, 'getById'])->name('ms-groups.get');
     Route::delete('{id}', [MsGroupsC::class, 'delete'])->name('ms-groups.delete');
+    Route::get('', [MsGroupsC::class, 'index'])->name('ms-groups.index');
+    Route::post('', [MsGroupsC::class, 'save'])->name('ms-groups.save');
 });
 
 Route::group(['prefix' => 'profil'], function () {

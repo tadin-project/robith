@@ -56,6 +56,14 @@ class MsGroupsServiceImpl implements MsGroupsService
                             count(mg.group_id) as total
                         from
                             ms_groups mg
+                        left join (
+                            select
+                                count(*) as tot_menu,
+                                group_id
+                            from
+                                group_menus
+                            group by
+                                group_id ) gm on gm.group_id = mg.group_id
                         where
                             0 = 0 $where";
             $total = DB::select($qtotal);
@@ -91,6 +99,7 @@ class MsGroupsServiceImpl implements MsGroupsService
                     "mg.group_kode",
                     "mg.group_nama",
                     "mg.group_status",
+                    'coalesce(gm.tot_menu,0) as tot_menu',
                 ];
             }
 
@@ -99,6 +108,14 @@ class MsGroupsServiceImpl implements MsGroupsService
                             $slc
                         from
                             ms_groups mg
+                        left join (
+                            select
+                                count(*) as tot_menu,
+                                group_id
+                            from
+                                group_menus
+                            group by
+                                group_id ) gm on gm.group_id = mg.group_id
                         where
                             0 = 0 $where
                         $order $limit";
