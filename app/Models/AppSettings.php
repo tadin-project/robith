@@ -10,6 +10,6 @@ class AppSettings extends Model
     use HasFactory;
     protected $table = "app_settings";
     protected $primaryKey = "as_id";
-    protected $guard = [];
+    protected $guarded = [];
     public $timestamps = false;
 }

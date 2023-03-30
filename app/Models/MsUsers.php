@@ -10,6 +10,6 @@ class MsUsers extends Model
     use HasFactory;
     protected $table = "ms_users";
     protected $primaryKey = "user_id";
-    protected $guard = [];
+    protected $guarded = [];
     public $timestamps = true;
 }

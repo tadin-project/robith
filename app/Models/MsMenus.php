@@ -10,6 +10,6 @@ class MsMenus extends Model
     use HasFactory;
     protected $table = "ms_menus";
     protected $primaryKey = "menu_id";
-    protected $guard = [];
+    protected $guarded = [];
     public $timestamps = false;
 }

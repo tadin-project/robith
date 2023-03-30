@@ -10,6 +10,6 @@ class GroupMenus extends Model
     use HasFactory;
     protected $table = "group_menus";
     protected $primaryKey = "gm_id";
-    protected $guard = [];
+    protected $guarded = [];
     public $timestamps = false;
 }

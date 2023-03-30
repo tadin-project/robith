@@ -10,6 +10,6 @@ class MsGroups extends Model
     use HasFactory;
     protected $table = "ms_groups";
     protected $primaryKey = "group_id";
-    protected $guard = [];
+    protected $guarded = [];
     public $timestamps = false;
 }

@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\MyC;
 use Illuminate\Http\Request;
 
-class MsGroupsC extends Controller
+class MsGroupsC extends MyC
 {
     //
 }
