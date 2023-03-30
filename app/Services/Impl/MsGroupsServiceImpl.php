@@ -2,12 +2,14 @@
 
 namespace App\Services\Impl;
 
+use App\Models\GroupMenus;
 use App\Models\MsGroups;
 use App\Services\MsGroupsService;
 use Illuminate\Support\Facades\DB;
 
 class MsGroupsServiceImpl implements MsGroupsService
 {
+    private $id_ms_menus = 5;
     /**
      * @param $id
      * @return array
@@ -257,7 +259,7 @@ class MsGroupsServiceImpl implements MsGroupsService
             }
 
             $d = $cekGroup['data']->delete();
-            if ($d != 1) {
+            if ($d < 0) {
                 $res = [
                     'status' => false,
                     'msg' => 'Gagal hapus data. Silahkan hubungi Admin!',
@@ -295,6 +297,258 @@ class MsGroupsServiceImpl implements MsGroupsService
             }
         } catch (\Throwable $th) {
             $res = "false";
+        }
+
+        return $res;
+    }
+
+    /**
+     * @param $id
+     * @return array
+     */
+    public function getById($id): array
+    {
+        $res = [
+            'status' => true,
+            'msg' => "",
+        ];
+
+        try {
+            $res = $this->__cekData($id);
+        } catch (\Throwable $th) {
+            $res = [
+                'status' => false,
+                'msg' => $th->getMessage(),
+            ];
+        }
+
+        return $res;
+    }
+
+    /**
+     * @param $groupId
+     * @param $parentMenuId
+     * @return array
+     */
+    public function getAkses($groupId, $parentMenuId): array
+    {
+        $res = [
+            'status' => true,
+            'msg' => "",
+        ];
+
+        try {
+            if (empty($groupId)) {
+                $res = [
+                    'status' => false,
+                    'msg' => "Id hak akses diperlukan!",
+                ];
+                return $res;
+            }
+
+            if ($parentMenuId == '#' || trim($parentMenuId) == '') {
+                $parentMenuId = '0';
+            }
+
+            $sql = "SELECT
+                        mm.*,
+                        case
+                            when gm.menu_id is not null then 1
+                            else 0
+                        end as checked
+                    from
+                        ms_menus mm
+                    left join group_menus gm on
+                        mm.menu_id = gm.menu_id
+                        and gm.group_id = $groupId
+                    where
+                        mm.parent_menu_id = $parentMenuId
+                        and mm.menu_id != $this->id_ms_menus
+                    order by
+                        menu_kode";
+            // echo $sql;
+            $dt = DB::select($sql);
+
+            $data = [];
+            foreach ($dt as $v) {
+                $d = [
+                    "id" => $v->menu_id,
+                    "menu_id" => $v->menu_id,
+                    "text" => $v->menu_nama . ($v->menu_status != 1 ? ' (NON AKTIF)' : ''),
+                    "children" => false,
+                    "state" => [
+                        "opened" => true,
+                    ],
+                    "a_attr" => $v,
+                    "li_attr" => $v,
+                ];
+
+                if ($parentMenuId == '#') {
+                    $d['type'] = 'root';
+                }
+
+                $child_data = DB::select(
+                    "SELECT
+                        count(x.menu_id) as tot,
+                        count(x.group_id > 0) as checked
+                    from
+                        (
+                        select
+                            mm.menu_id,
+                            cgm.group_id 
+                        from
+                            ms_menus mm
+                        left join group_menus cgm on
+                            mm.menu_id = cgm.menu_id
+                            and cgm.group_id = $groupId
+                        where
+                            0 = 0
+                            and mm.menu_id != $this->id_ms_menus
+                            and mm.menu_kode like '$v->menu_kode%'
+                            and mm.menu_kode != '$v->menu_kode') x"
+                );
+
+                if ($child_data[0]->tot > 0) {
+                    $d['children'] = true;
+                }
+
+                if ($v->checked == 1 && $child_data[0]->tot == $child_data[0]->checked) {
+                    $d['state']['selected'] = true;
+                } else {
+                    $d['state']['selected'] = false;
+                }
+
+                $data[] = $d;
+            }
+
+            $res['data'] = $data;
+        } catch (\Throwable $th) {
+            $res = [
+                'status' => false,
+                'msg' => $th->getMessage(),
+            ];
+        }
+
+        return $res;
+    }
+
+    /**
+     * @param $groupId
+     * @return array
+     */
+    public function delAkses($groupId): array
+    {
+        $res = [
+            'status' => true,
+            'msg' => "",
+        ];
+
+        try {
+            $q = GroupMenus::where('group_id', $groupId)->where('menu_id', '!=', $this->id_ms_menus)->delete();
+            if ($q < 0) {
+                $res = [
+                    'status' => false,
+                    'msg' => "Gagal hapus akses menu. Silahkan hubungi Admin",
+                ];
+            }
+            $res['data'] = $q;
+        } catch (\Throwable $th) {
+            $res = [
+                'status' => false,
+                'msg' => $th->getMessage(),
+            ];
+        }
+
+        return $res;
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    public function addAkses(array $data): array
+    {
+        $res = [
+            'status' => true,
+            'msg' => "",
+        ];
+
+        try {
+            $d = GroupMenus::insert($data);
+            if (!$d) {
+                $res = [
+                    'status' => false,
+                    'msg' => "Gagal menambahkan akses menu. Silahkan hubungi Admin!",
+                ];
+            }
+        } catch (\Throwable $th) {
+            $res = [
+                'status' => false,
+                'msg' => $th->getMessage(),
+            ];
+        }
+
+        return $res;
+    }
+
+    /**
+     * @param $groupId
+     * @param array $listMenuId
+     * @return array
+     */
+    public function saveAkses($groupId, $listMenuId): array
+    {
+        $res = [
+            'status' => true,
+            'msg' => "",
+        ];
+
+        try {
+            DB::beginTransaction();
+            if (empty($groupId)) {
+                $res = [
+                    'status' => false,
+                    'msg' => "Id hak akses diperlukan!",
+                ];
+                return $res;
+            }
+
+            $listMenuId = !empty($listMenuId) ? $listMenuId : [];
+            if (count($listMenuId) <= 0) {
+                $res = [
+                    'status' => false,
+                    'msg' => "Pilih minimal 1 menu!",
+                ];
+                return $res;
+            }
+
+            $q = $this->delAkses($groupId);
+            if (!$q['status']) {
+                return $q;
+            }
+
+            $data = [];
+
+            foreach ($listMenuId as $v) {
+                $data[] = [
+                    'group_id' => $groupId,
+                    'menu_id' => $v,
+                ];
+            }
+
+            $q = $this->addAkses($data);
+
+            if (!$q["status"]) {
+                $res = $q;
+                return $res;
+            }
+
+            DB::commit();
+        } catch (\Throwable $th) {
+            $res = [
+                'status' => false,
+                'msg' => $th->getMessage(),
+            ];
         }
 
         return $res;

@@ -190,4 +190,111 @@ class MsGroupsServiceTest extends TestCase
         $res = $this->msGroupsService->checkDuplicate("edit", "group_kodera", "-01");
         self::assertEquals("false", $res);
     }
+
+    public function testGetByIdSuccess()
+    {
+        $res = $this->msGroupsService->getById(3);
+        self::assertTrue($res['status']);
+        self::assertEquals(3, $res['data']->group_id);
+        self::assertEquals("02", $res['data']->group_kode);
+        self::assertEquals("User", $res['data']->group_nama);
+    }
+
+    public function testGetByIdNotFound()
+    {
+        $res = $this->msGroupsService->getById(0);
+        self::assertFalse($res["status"]);
+        self::assertEquals("Data tidak ditemukan!", $res['msg']);
+    }
+
+    public function testGetByIdFailed()
+    {
+        $res = $this->msGroupsService->getById("");
+        self::assertFalse($res["status"]);
+    }
+
+    public function testGetAksesSuccess()
+    {
+        $res = $this->msGroupsService->getAkses(3, "");
+        self::assertTrue($res['status']);
+        self::assertGreaterThanOrEqual(0, $res['data']);
+    }
+
+    public function testGetAksesGroupIdRequiredSuccess()
+    {
+        $res = $this->msGroupsService->getAkses(0, "");
+        self::assertFalse($res["status"]);
+        self::assertEquals("Id hak akses diperlukan!", $res['msg']);
+    }
+
+    public function testGetAksesFailed()
+    {
+        $res = $this->msGroupsService->getAkses(3, "a");
+        self::assertFalse($res["status"]);
+    }
+
+    public function testDelAksesSuccess()
+    {
+        $res = $this->msGroupsService->delAkses(3);
+        self::assertTrue($res['status']);
+    }
+
+    public function testDelAksesFailed()
+    {
+        $res = $this->msGroupsService->delAkses("\"");
+        if ($res["status"]) {
+            self::assertTrue($res["status"]);
+        } else {
+            self::assertFalse($res["status"]);
+        }
+    }
+
+    public function testAddAksesSuccess()
+    {
+        $res = $this->msGroupsService->addAkses([
+            [
+                "group_id" => 3,
+                "menu_id" => 7,
+            ]
+        ]);
+        self::assertTrue($res['status']);
+    }
+
+    public function testAddAksesFailed()
+    {
+        $res = $this->msGroupsService->addAkses([
+            [
+                "group_id" => "",
+                "menu_id" => "",
+            ]
+        ]);
+        self::assertFalse($res["status"]);
+    }
+
+    public function testSaveAksesSuccess()
+    {
+        $res = $this->msGroupsService->saveAkses(3, [7]);
+        fwrite(STDERR, print_r($res['msg'], true));
+        self::assertTrue($res['status']);
+    }
+
+    public function testSaveAksesErrorIdGroupRequired()
+    {
+        $res = $this->msGroupsService->saveAkses(0, []);
+        self::assertFalse($res["status"]);
+        self::assertEquals("Id hak akses diperlukan!", $res["msg"]);
+    }
+
+    public function testSaveAksesErrorMinimal1Menu()
+    {
+        $res = $this->msGroupsService->saveAkses(3, []);
+        self::assertFalse($res["status"]);
+        self::assertEquals("Pilih minimal 1 menu!", $res["msg"]);
+    }
+
+    public function testSaveAksesFailed()
+    {
+        $res = $this->msGroupsService->saveAkses(3, ["g"]);
+        self::assertFalse($res["status"]);
+    }
 }

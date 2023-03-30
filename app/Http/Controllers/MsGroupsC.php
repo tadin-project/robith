@@ -174,4 +174,25 @@ class MsGroupsC extends MyC
         $res = $this->msGroupsService->checkDuplicate($request->act, $request->key, $request->val, (!empty($request->old) ? $request->old : ""));
         return $res;
     }
+
+    public function getById($id): JsonResponse
+    {
+        $res = $this->msGroupsService->getById($id);
+        return response()->json($res);
+    }
+
+    public function getAkses(Request $request): JsonResponse
+    {
+        $res = $this->msGroupsService->getAkses($request->group_id, $request->parent_menu_id);
+        if (!$res['status']) {
+            return response()->json([]);
+        }
+        return response()->json($res['data']);
+    }
+
+    public function saveAkses(Request $request): JsonResponse
+    {
+        $res = $this->msGroupsService->saveAkses($request->group_id, $request->menu_id);
+        return response()->json($res);
+    }
 }
