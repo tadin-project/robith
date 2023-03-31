@@ -14,6 +14,7 @@ class MsGroupsC extends MyC
     public function __construct(MsGroupsService $msGroupsService)
     {
         parent::__construct();
+        $this->middleware("has_akses:ms-groups");
         $this->msGroupsService = $msGroupsService;
     }
 

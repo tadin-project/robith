@@ -176,6 +176,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        App\Providers\My\AuthServiceProvider::class,
+        App\Providers\My\AuthAdminServiceProvider::class,
         App\Providers\My\MsGroupsServiceProvider::class,
         App\Providers\My\MsUsersServiceProvider::class,
 

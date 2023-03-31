@@ -3,17 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\AppSettings;
-use App\Services\AuthService;
+use App\Services\AuthAdminService;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class AuthC extends Controller
+class AuthAdminC extends Controller
 {
-    public AuthService $authService;
+    public AuthAdminService $authAdminService;
     private $__sess_app;
 
-    public function __construct(AuthService $authService)
+    public function __construct(AuthAdminService $authAdminService)
     {
-        $this->authService = $authService;
+        $this->authAdminService = $authAdminService;
         if (session()->has('app_data')) {
             $oldSessApp = $this->__sess_app;
             $appData = AppSettings::where('is_auto', "Y");
@@ -39,27 +41,31 @@ class AuthC extends Controller
         }
     }
 
-    public function index()
+    public function index(): View
     {
         $data = [
             "__title" => "Login",
-            'title_auth' => "Admin",
-            // 'title_auth' => $this->__sess_app['title_auth_admin'],
+            'title_app' => "Admin",
         ];
 
-        return view('auth.v_login', $data);
+        return view('auth.v_login_admin', $data);
     }
 
-    public function logout(Request $request)
+    public function login(Request $request): JsonResponse
     {
-        $group_id = $request->session()->get("user_data")["group_id"];
-        if (in_array($group_id, [1, 2])) {
-            $uri = "/auth/admin";
-        } else {
-            $uri = "/";
+        $res = [
+            "status" => true,
+            "msg" => "",
+        ];
+
+        $cekUser = $this->authAdminService->login($request->user_name, $request->user_password);
+        if (!$cekUser["status"]) {
+            return response()->json($cekUser);
         }
 
-        session()->flush();
-        return redirect()->to($uri);
+        session(["user_data" => $cekUser["data"]]);
+        $res["route"] = $cekUser["route"];
+
+        return response()->json($res);
     }
 }

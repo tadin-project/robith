@@ -15,6 +15,7 @@ class MsUsersC extends MyC
     public function __construct(MsUsersService $msUsersService)
     {
         parent::__construct();
+        $this->middleware("has_akses:ms-users");
         $this->msUsersService = $msUsersService;
     }
 

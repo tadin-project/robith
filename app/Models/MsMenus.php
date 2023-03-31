@@ -16,6 +16,6 @@ class MsMenus extends Model
 
     public function groups(): BelongsToMany
     {
-        return $this->belongsToMany(MsGroups::class, "group_menus", "group_id", "group_id");
+        return $this->belongsToMany(MsGroups::class, "group_menus", "menu_id", "group_id");
     }
 }
