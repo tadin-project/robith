@@ -177,6 +177,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         App\Providers\My\MsGroupsServiceProvider::class,
+        App\Providers\My\MsUsersServiceProvider::class,
 
     ],
 

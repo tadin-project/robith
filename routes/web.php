@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthC;
 use App\Http\Controllers\MsGroupsC;
+use App\Http\Controllers\MsUsersC;
 use App\Http\Controllers\ProfilC;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,15 @@ Route::group(['prefix' => 'ms-groups'], function () {
     Route::delete('{id}', [MsGroupsC::class, 'delete'])->name('ms-groups.delete');
     Route::get('', [MsGroupsC::class, 'index'])->name('ms-groups.index');
     Route::post('', [MsGroupsC::class, 'save'])->name('ms-groups.save');
+});
+
+Route::group(['prefix' => 'ms-users'], function () {
+    Route::get('check-duplicate', [MsUsersC::class, 'checkDuplicate'])->name('ms-users.check-duplicate');
+    Route::get('get-data', [MsUsersC::class, 'getData'])->name('ms-users.get-data');
+    Route::get('{id}', [MsUsersC::class, 'getById'])->name('ms-users.get');
+    Route::delete('{id}', [MsUsersC::class, 'delete'])->name('ms-users.delete');
+    Route::get('', [MsUsersC::class, 'index'])->name('ms-users.index');
+    Route::post('', [MsUsersC::class, 'save'])->name('ms-users.save');
 });
 
 Route::group(['prefix' => 'profil'], function () {

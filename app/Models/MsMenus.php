@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class MsMenus extends Model
 {
@@ -12,4 +13,9 @@ class MsMenus extends Model
     protected $primaryKey = "menu_id";
     protected $guarded = [];
     public $timestamps = false;
+
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(MsGroups::class, "group_menus", "group_id", "group_id");
+    }
 }

@@ -30,24 +30,59 @@
           <div class="col-12">
             <form id="formVendor">
               <input type="hidden" id="act" name="act" value="add">
-              <input type="hidden" id="group_id" name="group_id">
+              <input type="hidden" id="user_id" name="user_id">
               <div class="row form-group">
-                <label class="col-md-3 control-label">Kode</label>
+                <label class="col-md-3 control-label">Username</label>
                 <div class="col-md-5">
-                  <input type="text" class="form-control" id="group_kode" name="group_kode">
+                  <input type="text" class="form-control" id="user_name" name="user_name">
                 </div>
-                <input type="hidden" id="old_group_kode">
+                <input type="hidden" id="old_user_name">
               </div>
               <div class="row form-group">
-                <label class="col-md-3 control-label">Nama</label>
+                <label class="col-md-3 control-label">Nama Lengkap</label>
                 <div class="col-md-5">
-                  <input type="text" class="form-control" id="group_nama" name="group_nama">
+                  <input type="text" class="form-control" id="user_fullname" name="user_fullname">
+                </div>
+              </div>
+              <div class="row form-group">
+                <label class="col-md-3 control-label">Email</label>
+                <div class="col-md-5">
+                  <input type="text" class="form-control" id="user_email" name="user_email">
+                </div>
+                <input type="hidden" id="old_user_email">
+              </div>
+              <div class="row form-group">
+                <label class="col-md-3 control-label">Password</label>
+                <div class="col-md-5">
+                  <input type="password" class="form-control" id="user_password" name="user_password">
+                </div>
+                <div class="col-md-3" id="colGantiPass" style="display: none">
+                  <div class="form-check">
+                    <input class="form-check-input" id="is_ganti_pass" name="is_ganti_pass" type="checkbox">
+                    <label class="form-check-label" for="is_ganti_pass">Ganti Password</label>
+                  </div>
+                </div>
+              </div>
+              <div class="row form-group">
+                <label class="col-md-3 control-label">Confirm Password</label>
+                <div class="col-md-5">
+                  <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                </div>
+              </div>
+              <div class="row form-group">
+                <label class="col-md-3 control-label">Hak Akses</label>
+                <div class="col-md-3">
+                  <select name="group_id" id="group_id" class="form-control">
+                    @foreach ($opt_group as $v)
+                      <option value="{{ $v->group_id }}">{{ $v->group_nama }}</option>
+                    @endforeach
+                  </select>
                 </div>
               </div>
               <div class="row form-group">
                 <label class="col-md-3 control-label">Status</label>
                 <div class="col-md-3">
-                  <select name="group_status" id="group_status" class="form-control">
+                  <select name="user_status" id="user_status" class="form-control">
                     <option value="1">Aktif</option>
                     <option value="0">Non Aktif</option>
                   </select>
@@ -64,12 +99,15 @@
         </div>
         <div class="row" id="rowData">
           <div class="col-12">
-            <table class="table table-sm table-striped table-bordered table-hover" id="tableVendor" style="width: 100%">
+            <table class="table table-sm table-striped table-bordered table-hover" id="tableVendor"
+              style="width: 100%">
               <thead>
                 <tr>
                   <th class="text-center">No</th>
-                  <th class="text-center">Kode</th>
-                  <th class="text-center">Nama</th>
+                  <th class="text-center">Username</th>
+                  <th class="text-center">Nama Lengkap</th>
+                  <th class="text-center">Email</th>
+                  <th class="text-center">Hak Akses</th>
                   <th class="text-center">Status</th>
                   <th class="text-center">Aksi</th>
                 </tr>
@@ -83,57 +121,34 @@
 </section>
 <!-- /.content -->
 
-<!-- Modal -->
-<div class="modal fade" id="modalAkses" tabindex="-1" aria-labelledby="modalAksesLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modalAksesLabel">Modal title</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form id="settingGroupMenu">
-          <input type="hidden" name="setting_group_id" id="setting_group_id">
-          <div id="list_menu"></div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-        <button type="button" id="btnSimpanMenu" class="btn btn-primary">Simpan</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
   // init component
   // global
-  const baseDir = baseUrl + '/ms-groups',
+  const baseDir = baseUrl + '/ms-users',
     rowForm = $("#rowForm"),
     rowData = $("#rowData");
 
   // form
   const formVendor = $("#formVendor"),
     act = $("#act"),
+    userId = $("#user_id"),
+    userFullname = $("#user_fullname"),
+    userName = $("#user_name"),
+    oldUserName = $("#old_user_name"),
+    userEmail = $("#user_email"),
+    oldUserEmail = $("#old_user_email"),
+    userPassword = $("#user_password"),
+    confirmPassword = $("#confirm_password"),
+    isGantiPass = $("#is_ganti_pass"),
+    colGantiPass = $("#colGantiPass"),
     groupId = $("#group_id"),
-    groupNama = $("#group_nama"),
-    groupKode = $("#group_kode"),
-    oldGroupKode = $("#old_group_kode"),
-    groupStatus = $("#group_status"),
+    userStatus = $("#user_status"),
     btnBatal = $("#btnBatal"),
     btnSimpan = $("#btnSimpan");
 
   // datatable
   const tableVendor = $("#tableVendor"),
     btnTambah = $("#btnTambah");
-
-  const modalAkses = $("#modalAkses"),
-    modalAksesLabel = $("#modalAksesLabel"),
-    listMenu = $("#list_menu"),
-    settingGroupId = $("#setting_group_id"),
-    btnSimpanMenu = $("#btnSimpanMenu");
 
   // Class definition
   var PageAdvanced = function() {
@@ -164,14 +179,11 @@
           targets: [0],
           width: "5%"
         }, {
-          targets: [1],
+          targets: [-1],
           width: "12%"
         }, {
-          targets: [-1],
-          width: "15%"
-        }, {
           targets: [-2],
-          width: "10%"
+          width: "8%"
         }, ],
         language: {
           lengthMenu: "Show _MENU_",
@@ -187,7 +199,7 @@
         errorElement: 'span',
         ignore: 'input[type=hidden]',
         rules: {
-          group_kode: {
+          user_name: {
             required: true,
             remote: {
               url: baseDir + '/check-duplicate',
@@ -196,23 +208,62 @@
                 act: function() {
                   return act.val();
                 },
-                key: "group_kode",
+                key: "user_name",
                 val: function() {
-                  return groupKode.val();
+                  return userName.val();
                 },
                 old: function() {
-                  return act.val() == 'edit' ? oldGroupKode.val() : "";
+                  return act.val() == 'edit' ? oldUserName.val() : "";
                 }
               }
             },
           },
+          user_email: {
+            required: true,
+            remote: {
+              url: baseDir + '/check-duplicate',
+              cache: false,
+              data: {
+                act: function() {
+                  return act.val();
+                },
+                key: "user_email",
+                val: function() {
+                  return userEmail.val();
+                },
+                old: function() {
+                  return act.val() == 'edit' ? oldUserEmail.val() : "";
+                }
+              }
+            },
+          },
+          user_password: {
+            required: function() {
+              if (act.val() == 'edit' && !isGantiPass.prop('checked')) {
+                return false;
+              }
+              return true;
+            }
+          },
+          confirm_password: {
+            required: function() {
+              if (act.val() == 'edit' && !isGantiPass.prop('checked')) {
+                return false;
+              }
+              return true;
+            },
+            equalTo: "#user_password",
+          },
+          group_id: {
+            required: true,
+          }
         },
         messages: {
-          group_nama: {
-            remote: "Nama sudah digunakan. Gunakan yang lain",
+          user_name: {
+            remote: "Username sudah digunakan. Gunakan yang lain",
           },
-          group_kode: {
-            remote: "Kode sudah digunakan. Gunakan yang lain",
+          user_email: {
+            remote: "Email sudah digunakan. Gunakan yang lain",
           },
         },
         highlight: function(el, errorClass) {
@@ -291,7 +342,12 @@
     formVendor.validate().resetForm();
     $('.has-error').removeClass('has-error');
     act.val('add');
-    groupId.val('');
+    userId.val('');
+    oldUserEmail.val('');
+    oldUserName.val('');
+    colGantiPass.hide();
+    userPassword.removeAttr('disabled', 'disabled');
+    confirmPassword.removeAttr('disabled', 'disabled');
   }
 
   function fnLoadTbl() {
@@ -308,11 +364,18 @@
           var dt = res.data;
 
           act.val('edit');
-          groupId.val(id);
-          groupNama.val(dt.group_nama);
-          groupKode.val(dt.group_kode);
-          oldGroupKode.val(dt.group_kode);
-          groupStatus.val(dt.group_status);
+          userId.val(id);
+          userFullname.val(dt.user_fullname);
+          userName.val(dt.user_name);
+          oldUserName.val(dt.user_name);
+          userEmail.val(dt.user_email);
+          oldUserEmail.val(dt.user_email);
+          userStatus.val(dt.user_status);
+          groupId.val(dt.group_id);
+
+          colGantiPass.show();
+          userPassword.attr("disabled", "disabled")
+          confirmPassword.attr("disabled", "disabled")
 
           rowForm.slideDown(500);
           rowData.slideUp(500);
@@ -325,9 +388,9 @@
     });
   }
 
-  function fnDel(id, group_nama) {
+  function fnDel(id, nama) {
     Swal.fire({
-      title: `Apakah Anda yakin menghapus ${group_nama}?`,
+      title: `Apakah Anda yakin menghapus ${nama}?`,
       text: "Data yang dihapus tidak dapat dikembalikan!",
       icon: 'warning',
       showCancelButton: true,
@@ -360,46 +423,6 @@
     })
   }
 
-  function fnAkses(id, nama) {
-    modalAksesLabel.text('Setting Menu untuk Grup: ' + nama);
-    modalAkses.modal('show');
-    settingGroupId.val(id);
-    listMenu.jstree(true).refresh(false, true);
-  }
-
-  function fnGetListMenu() {
-    listMenu
-      .jstree({
-        "core": {
-          "themes": {
-            "responsive": false
-          },
-          // so that create works
-          "check_callback": true,
-          'data': {
-            'url': function(node) {
-              return baseDir + '/akses'
-            },
-            'data': function(node) {
-              return {
-                'parent_menu_id': node.id,
-                'group_id': settingGroupId.val(),
-              };
-            }
-          }
-        },
-        "types": {
-          "default": {
-            "icon": "fa fa-folder text-primary"
-          },
-          "file": {
-            "icon": "fa fa-file  text-primary"
-          }
-        },
-        "plugins": ["dnd", "wholerow", "checkbox", "state", "types"]
-      })
-  }
-
   $(document).ready(function() {
     PageAdvanced.init();
 
@@ -416,57 +439,15 @@
       formVendor.submit();
     });
 
-    btnSimpanMenu.click(function() {
-      btnSimpanMenu.attr('disabled', 'disabled').text('Loading...');
-      const data = {
-        group_id: settingGroupId.val(),
-        menu_id: [],
-      };
-
-      listMenu.find('.jstree-clicked').each(function(index, i) {
-        data.menu_id.push($(i).attr('menu_id'));
-      })
-
-      listMenu.find('.jstree-undetermined').each(function(index, i) {
-        data.menu_id.push($(i).parent().attr('menu_id'));
-      })
-
-      $.ajax({
-        url: baseDir + '/akses',
-        data: data,
-        dataType: 'json',
-        method: 'post',
-        error: function(res) {
-          btnSimpanMenu.removeAttr('disabled', 'disabled').text('Simpan');
-        },
-        complete: function() {
-          btnSimpanMenu.removeAttr('disabled', 'disabled').text('Simpan');
-        },
-        success: function(res) {
-          btnSimpanMenu.removeAttr('disabled', 'disabled').text('Simpan');
-          if (res.status) {
-            Swal.fire({
-              icon: 'success',
-              title: 'Sukses',
-              html: 'Data berhasil disimpan',
-              showConfirmButton: false,
-              timer: 1500
-            })
-            modalAkses.modal('hide');
-            settingGroupId.val('');
-            fnLoadTbl();
-          } else {
-            Swal.fire({
-              title: 'Gagal',
-              text: res.msg,
-              icon: 'error',
-            });
-          }
-        }
-      })
-    });
-
-    fnGetListMenu();
+    isGantiPass.change(function() {
+      if ($(this).prop('checked')) {
+        userPassword.removeAttr("disabled", "disablede");
+        confirmPassword.removeAttr("disabled", "disablede");
+      } else {
+        userPassword.attr("disabled", "disablede");
+        confirmPassword.attr("disabled", "disablede");
+      }
+    })
 
   });
 </script>
