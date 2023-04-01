@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthAdminC;
 use App\Http\Controllers\AuthC;
 use App\Http\Controllers\DashboardC;
 use App\Http\Controllers\MsGroupsC;
+use App\Http\Controllers\MsMenusC;
 use App\Http\Controllers\MsUsersC;
 use App\Http\Controllers\ProfilC;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +39,16 @@ Route::group(["middleware" => "has_auth"], function () {
         Route::delete('{id}', [MsUsersC::class, 'delete'])->name('ms-users.delete');
         Route::get('', [MsUsersC::class, 'index'])->name('ms-users.index');
         Route::post('', [MsUsersC::class, 'save'])->name('ms-users.save');
+    });
+
+    Route::group(['prefix' => 'ms-menus'], function () {
+        Route::get('check-duplicate', [MsMenusC::class, 'checkDuplicate'])->name('ms-menus.check-duplicate');
+        Route::get('get-parent', [MsMenusC::class, 'getParent'])->name('ms-menus.get-parent');
+        Route::get('get-data', [MsMenusC::class, 'getData'])->name('ms-menus.get-data');
+        Route::get('{id}', [MsMenusC::class, 'getById'])->name('ms-menus.get');
+        Route::delete('{id}', [MsMenusC::class, 'delete'])->name('ms-menus.delete');
+        Route::get('', [MsMenusC::class, 'index'])->name('ms-menus.index');
+        Route::post('', [MsMenusC::class, 'save'])->name('ms-menus.save');
     });
 
     Route::group(['prefix' => 'profil'], function () {
