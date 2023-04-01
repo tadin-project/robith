@@ -13,7 +13,7 @@ class MsMenusC extends MyC
     public function __construct(MsMenusService $msMenusService)
     {
         parent::__construct();
-        $this->middleware("has_akses:ms-users");
+        $this->middleware("has_akses:ms-menus");
         $this->msMenusService = $msMenusService;
     }
 
