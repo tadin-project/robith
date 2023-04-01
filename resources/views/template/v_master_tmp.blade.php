@@ -32,6 +32,10 @@
   <!-- Bootstrap Datepicker -->
   <link rel="stylesheet"
     href="{{ asset('') }}assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="{{ asset('') }}assets/plugins/select2/css/select2.min.css">
+  <!-- Select2 Plugin Bootstrap 4-->
+  <link rel="stylesheet" href="{{ asset('') }}assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
   <style>
     .has-error .help-block {
       color: red;
@@ -106,6 +110,10 @@
   <script src="{{ asset('') }}assets/plugins/inputmask/jquery.inputmask.min.js"></script>
   <!-- Bootstrap Datepicker -->
   <script src="{{ asset('') }}assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+  <!-- Select2 -->
+  <script src="{{ asset('') }}assets/plugins/select2/js/select2.full.min.js"></script>
+  <!-- Select2 Plugin -->
+  <script src="{{ asset('') }}assets/plugins/select2/js/i18n/id.js"></script>
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">

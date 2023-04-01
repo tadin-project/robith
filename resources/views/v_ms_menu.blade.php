@@ -30,59 +30,53 @@
           <div class="col-12">
             <form id="formVendor">
               <input type="hidden" id="act" name="act" value="add">
-              <input type="hidden" id="user_id" name="user_id">
+              <input type="hidden" id="menu_id" name="menu_id">
               <div class="row form-group">
-                <label class="col-md-3 control-label">Username</label>
-                <div class="col-md-5">
-                  <input type="text" class="form-control" id="user_name" name="user_name">
-                </div>
-                <input type="hidden" id="old_user_name">
-              </div>
-              <div class="row form-group">
-                <label class="col-md-3 control-label">Nama Lengkap</label>
-                <div class="col-md-5">
-                  <input type="text" class="form-control" id="user_fullname" name="user_fullname">
-                </div>
-              </div>
-              <div class="row form-group">
-                <label class="col-md-3 control-label">Email</label>
-                <div class="col-md-5">
-                  <input type="text" class="form-control" id="user_email" name="user_email">
-                </div>
-                <input type="hidden" id="old_user_email">
-              </div>
-              <div class="row form-group">
-                <label class="col-md-3 control-label">Password</label>
-                <div class="col-md-5">
-                  <input type="password" class="form-control" id="user_password" name="user_password">
-                </div>
-                <div class="col-md-3" id="colGantiPass" style="display: none">
-                  <div class="form-check">
-                    <input class="form-check-input" id="is_ganti_pass" name="is_ganti_pass" type="checkbox">
-                    <label class="form-check-label" for="is_ganti_pass">Ganti Password</label>
-                  </div>
-                </div>
-              </div>
-              <div class="row form-group">
-                <label class="col-md-3 control-label">Confirm Password</label>
-                <div class="col-md-5">
-                  <input type="password" class="form-control" id="confirm_password" name="confirm_password">
-                </div>
-              </div>
-              <div class="row form-group">
-                <label class="col-md-3 control-label">Hak Akses</label>
+                <label class="col-md-3 control-label">Parent</label>
                 <div class="col-md-3">
-                  <select name="group_id" id="group_id" class="form-control">
-                    @foreach ($opt_group as $v)
-                      <option value="{{ $v->group_id }}">{{ $v->group_nama }}</option>
-                    @endforeach
+                  <select name="parent_menu_id" id="parent_menu_id" class="form-control">
+                    <option value="0">-- No Parent --</option>
                   </select>
                 </div>
               </div>
               <div class="row form-group">
+                <label class="col-md-3 control-label">Kode</label>
+                <div class="col-md-5">
+                  <input type="text" class="form-control" id="menu_kode" name="menu_kode">
+                </div>
+                <input type="hidden" id="old_menu_kode">
+              </div>
+              <div class="row form-group">
+                <label class="col-md-3 control-label">Nama</label>
+                <div class="col-md-5">
+                  <input type="text" class="form-control" id="menu_nama" name="menu_nama">
+                </div>
+              </div>
+              <div class="row form-group">
+                <label class="col-md-3 control-label">Tipe</label>
+                <div class="col-md-2">
+                  <select class="form-control" id="menu_type" name="menu_type">
+                    <option value="1">Link</option>
+                    <option value="2">Text</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row form-group">
+                <label class="col-md-3 control-label">Link</label>
+                <div class="col-md-5">
+                  <input type="text" class="form-control" id="menu_link" name="menu_link">
+                </div>
+              </div>
+              <div class="row form-group">
+                <label class="col-md-3 control-label">Ikon</label>
+                <div class="col-md-5">
+                  <input type="text" class="form-control" id="menu_ikon" name="menu_ikon">
+                </div>
+              </div>
+              <div class="row form-group">
                 <label class="col-md-3 control-label">Status</label>
-                <div class="col-md-3">
-                  <select name="user_status" id="user_status" class="form-control">
+                <div class="col-md-2">
+                  <select name="menu_status" id="menu_status" class="form-control">
                     <option value="1">Aktif</option>
                     <option value="0">Non Aktif</option>
                   </select>
@@ -104,10 +98,12 @@
               <thead>
                 <tr>
                   <th class="text-center">No</th>
-                  <th class="text-center">Username</th>
-                  <th class="text-center">Nama Lengkap</th>
-                  <th class="text-center">Email</th>
-                  <th class="text-center">Hak Akses</th>
+                  <th class="text-center">Kode</th>
+                  <th class="text-center">Nama</th>
+                  <th class="text-center">Tipe</th>
+                  <th class="text-center">Link</th>
+                  <th class="text-center">Ikon</th>
+                  <th class="text-center">Parent</th>
                   <th class="text-center">Status</th>
                   <th class="text-center">Aksi</th>
                 </tr>
@@ -124,25 +120,22 @@
 <script>
   // init component
   // global
-  const baseDir = baseUrl + '/ms-users',
+  const baseDir = baseUrl + '/ms-menus',
     rowForm = $("#rowForm"),
     rowData = $("#rowData");
 
   // form
   const formVendor = $("#formVendor"),
     act = $("#act"),
-    userId = $("#user_id"),
-    userFullname = $("#user_fullname"),
-    userName = $("#user_name"),
-    oldUserName = $("#old_user_name"),
-    userEmail = $("#user_email"),
-    oldUserEmail = $("#old_user_email"),
-    userPassword = $("#user_password"),
-    confirmPassword = $("#confirm_password"),
-    isGantiPass = $("#is_ganti_pass"),
-    colGantiPass = $("#colGantiPass"),
-    groupId = $("#group_id"),
-    userStatus = $("#user_status"),
+    menuId = $("#menu_id"),
+    menuKode = $("#menu_kode"),
+    oldMenuKode = $("#old_menu_kode"),
+    menuNama = $("#menu_nama"),
+    menuType = $("#menu_type"),
+    menuLink = $("#menu_link"),
+    menuIkon = $("#menu_ikon"),
+    menuStatus = $("#menu_status"),
+    parentMenuId = $("#parent_menu_id"),
     btnBatal = $("#btnBatal"),
     btnSimpan = $("#btnSimpan");
 
@@ -199,7 +192,10 @@
         errorElement: 'span',
         ignore: 'input[type=hidden]',
         rules: {
-          user_name: {
+          menu_nama: {
+            required: true,
+          },
+          menu_kode: {
             required: true,
             remote: {
               url: baseDir + '/check-duplicate',
@@ -208,62 +204,20 @@
                 act: function() {
                   return act.val();
                 },
-                key: "user_name",
+                key: "menu_kode",
                 val: function() {
-                  return userName.val();
+                  return menuKode.val();
                 },
                 old: function() {
-                  return act.val() == 'edit' ? oldUserName.val() : "";
+                  return act.val() == 'edit' ? oldMenuKode.val() : "";
                 }
               }
             },
           },
-          user_email: {
-            required: true,
-            remote: {
-              url: baseDir + '/check-duplicate',
-              cache: false,
-              data: {
-                act: function() {
-                  return act.val();
-                },
-                key: "user_email",
-                val: function() {
-                  return userEmail.val();
-                },
-                old: function() {
-                  return act.val() == 'edit' ? oldUserEmail.val() : "";
-                }
-              }
-            },
-          },
-          user_password: {
-            required: function() {
-              if (act.val() == 'edit' && !isGantiPass.prop('checked')) {
-                return false;
-              }
-              return true;
-            }
-          },
-          confirm_password: {
-            required: function() {
-              if (act.val() == 'edit' && !isGantiPass.prop('checked')) {
-                return false;
-              }
-              return true;
-            },
-            equalTo: "#user_password",
-          },
-          group_id: {
-            required: true,
-          }
         },
         messages: {
-          user_name: {
-            remote: "Username sudah digunakan. Gunakan yang lain",
-          },
-          user_email: {
-            remote: "Email sudah digunakan. Gunakan yang lain",
+          menu_kode: {
+            remote: "Kode menu sudah digunakan. Gunakan yang lain",
           },
         },
         highlight: function(el, errorClass) {
@@ -327,6 +281,7 @@
     if (isShow) {
       rowForm.slideDown(500);
       rowData.slideUp(500);
+      fnGetParent();
       btnBatal.show();
       btnTambah.hide();
     } else {
@@ -342,12 +297,9 @@
     formVendor.validate().resetForm();
     $('.has-error').removeClass('has-error');
     act.val('add');
-    userId.val('');
-    oldUserEmail.val('');
-    oldUserName.val('');
-    colGantiPass.hide();
-    userPassword.removeAttr('disabled', 'disabled');
-    confirmPassword.removeAttr('disabled', 'disabled');
+    menuId.val('');
+    oldMenuKode.val('');
+    parentMenuId.select2("val", "0");
   }
 
   function fnLoadTbl() {
@@ -364,18 +316,15 @@
           var dt = res.data;
 
           act.val('edit');
-          userId.val(id);
-          userFullname.val(dt.user_fullname);
-          userName.val(dt.user_name);
-          oldUserName.val(dt.user_name);
-          userEmail.val(dt.user_email);
-          oldUserEmail.val(dt.user_email);
-          userStatus.val(dt.user_status);
-          groupId.val(dt.group_id);
-
-          colGantiPass.show();
-          userPassword.attr("disabled", "disabled")
-          confirmPassword.attr("disabled", "disabled")
+          menuId.val(dt.menu_id);
+          menuKode.val(dt.menu_kode);
+          oldMenuKode.val(dt.menu_kode);
+          menuNama.val(dt.menu_nama);
+          menuType.val(dt.menu_type);
+          menuLink.val(dt.menu_link);
+          menuIkon.val(dt.menu_ikon);
+          menuStatus.val(dt.menu_status);
+          parentMenuId.val(dt.parent_menu_id);
 
           rowForm.slideDown(500);
           rowData.slideUp(500);
@@ -423,6 +372,31 @@
     })
   }
 
+  function fnGetParent() {
+    parentMenuId.find("option[value!=0]").remove();
+    parentMenuId.select2("val", "0");
+    $.ajax({
+      url: baseDir + "/get-parent",
+      cache: false,
+      dataType: 'json',
+      success: function(res) {
+        if (res.status) {
+          let opt = "";
+          if (res.data.length > 0) {
+            $.each(res.data, function(index, i) {
+              opt += `<option value="${i.menu_id}">${i.menu_kode} - ${i.menu_nama}</option>`;
+            });
+            parentMenuId.append(opt);
+          } else {
+            parentMenuId.append(opt);
+          }
+        } else {
+          alert(res.msg);
+        }
+      }
+    });
+  }
+
   $(document).ready(function() {
     PageAdvanced.init();
 
@@ -439,15 +413,7 @@
       formVendor.submit();
     });
 
-    isGantiPass.change(function() {
-      if ($(this).prop('checked')) {
-        userPassword.removeAttr("disabled", "disablede");
-        confirmPassword.removeAttr("disabled", "disablede");
-      } else {
-        userPassword.attr("disabled", "disablede");
-        confirmPassword.attr("disabled", "disablede");
-      }
-    })
+    parentMenuId.select2();
 
   });
 </script>
