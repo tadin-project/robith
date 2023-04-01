@@ -181,6 +181,7 @@ return [
         App\Providers\My\MsGroupsServiceProvider::class,
         App\Providers\My\MsKategoriServiceProvider::class,
         App\Providers\My\MsMenusServiceProvider::class,
+        App\Providers\My\MsSubKategoriServiceProvider::class,
         App\Providers\My\MsUsersServiceProvider::class,
 
     ],

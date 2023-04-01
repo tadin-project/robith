@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class MsSubKategori extends Model
+class MsSubKriteria extends Model
 {
     use HasFactory;
-    protected $table = "ms_sub_kategori";
+    protected $table = "ms_sub_kriteria";
     protected $primaryKey = "msk_id";
     protected $guarded = [];
     public $timestamps = false;
 
-    public function kategori(): BelongsTo
+    public function kriteria(): BelongsTo
     {
-        return $this->belongsTo(MsKategori::class, "mk_id", "mk_id");
+        return $this->belongsTo(MsKriteria::class, "mk_id", "mk_id");
     }
 }

@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class MsKategori extends Model
+class MsDimensi extends Model
 {
     use HasFactory;
-    protected $table = "ms_kategori";
-    protected $primaryKey = "mk_id";
+    protected $table = "ms_dimensi";
+    protected $primaryKey = "md_id";
     protected $guarded = [];
     public $timestamps = false;
 
-    public function subKategories(): HasMany
+    public function kriteria(): HasMany
     {
-        return $this->hasMany(MsSubKategori::class, "mk_id", "mk_id");
+        return $this->hasMany(MsKriteria::class, "md_id", "md_id");
     }
 }

@@ -1,8 +1,12 @@
 ### Tasklist sementara
 
--   [ ] crud ms group
--   [ ] crud ms user
--   [ ] crud hak akses
--   [ ] dynamic sidebar
--   [ ] autentikasi
--   [ ] otorisasi
+-   [x] crud ms group
+-   [x] crud ms user
+-   [x] crud ms menu
+-   [x] crud hak akses
+-   [x] dynamic sidebar
+-   [x] autentikasi
+-   [x] otorisasi
+-   [ ] master dimensi
+-   [ ] master kategori
+-   [ ] master sub kategori

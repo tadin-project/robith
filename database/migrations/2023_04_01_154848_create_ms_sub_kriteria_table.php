@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMsSubKategoriTable extends Migration
+class CreateMsSubKriteriaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,15 @@ class CreateMsSubKategoriTable extends Migration
      */
     public function up()
     {
-        Schema::create('ms_sub_kategori', function (Blueprint $table) {
+        Schema::create('ms_sub_kriteria', function (Blueprint $table) {
             $table->unsignedSmallInteger("msk_id", true);
-            $table->char("msk_kode", 2)->unique();
+            $table->char("msk_kode", 2);
             $table->char("msk_nama", 255);
             $table->boolean("msk_status")->nullable()->default(true);
             $table->unsignedSmallInteger("mk_id")->nullable();
 
-            $table->foreign("mk_id", "fk_ms_sub_kategori_mk_id")->references("mk_id")->on("ms_kategori")->onDelete("cascade")->onUpdate("cascade");
+            $table->unique(array('mk_id', 'msk_kode'));
+            $table->foreign("mk_id", "fk_ms_sub_kriteria_mk_id")->references("mk_id")->on("ms_kriteria")->onDelete("cascade")->onUpdate("cascade");
         });
     }
 
@@ -31,6 +32,6 @@ class CreateMsSubKategoriTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ms_sub_kategori');
+        Schema::dropIfExists('ms_sub_kriteria');
     }
 }

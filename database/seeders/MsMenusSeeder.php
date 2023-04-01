@@ -77,6 +77,42 @@ class MsMenusSeeder extends Seeder
             'menu_link' => "dashboard",
             'menu_ikon' => "",
             'parent_menu_id' => 0,
+        ], [
+            'menu_id' => 8,
+            'menu_kode' => '01.02',
+            'menu_nama' => 'Master Data',
+            'menu_status' => true,
+            'menu_type' => 1,
+            'menu_link' => "#",
+            'menu_ikon' => "",
+            'parent_menu_id' => 1,
+        ], [
+            'menu_id' => 9,
+            'menu_kode' => '01.02.01',
+            'menu_nama' => 'Master Dimensi',
+            'menu_status' => true,
+            'menu_type' => 1,
+            'menu_link' => "ms-dimensi",
+            'menu_ikon' => "",
+            'parent_menu_id' => 8,
+        ], [
+            'menu_id' => 10,
+            'menu_kode' => '01.02.02',
+            'menu_nama' => 'Master Kriteria',
+            'menu_status' => true,
+            'menu_type' => 1,
+            'menu_link' => "ms-kriteria",
+            'menu_ikon' => "",
+            'parent_menu_id' => 8,
+        ], [
+            'menu_id' => 11,
+            'menu_kode' => '01.02.03',
+            'menu_nama' => 'Master Sub Kriteria',
+            'menu_status' => true,
+            'menu_type' => 1,
+            'menu_link' => "ms-sub-kriteria",
+            'menu_ikon' => "",
+            'parent_menu_id' => 8,
         ],]);
     }
 }
