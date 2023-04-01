@@ -19,5 +19,6 @@ class DatabaseSeeder extends Seeder
         $this->call(MsMenusSeeder::class);
         $this->call(GroupMenusSeeder::class);
         $this->call(AppSettingsSeeder::class);
+        $this->call(MsKategoriSeeder::class);
     }
 }

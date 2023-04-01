@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthAdminC;
 use App\Http\Controllers\AuthC;
 use App\Http\Controllers\DashboardC;
 use App\Http\Controllers\MsGroupsC;
+use App\Http\Controllers\MsKategoriC;
 use App\Http\Controllers\MsMenusC;
 use App\Http\Controllers\MsUsersC;
 use App\Http\Controllers\ProfilC;
@@ -49,6 +50,15 @@ Route::group(["middleware" => "has_auth"], function () {
         Route::delete('{id}', [MsMenusC::class, 'delete'])->name('ms-menus.delete');
         Route::get('', [MsMenusC::class, 'index'])->name('ms-menus.index');
         Route::post('', [MsMenusC::class, 'save'])->name('ms-menus.save');
+    });
+
+    Route::group(['prefix' => 'ms-kategori'], function () {
+        Route::get('check-duplicate', [MsKategoriC::class, 'checkDuplicate'])->name('ms-kategori.check-duplicate');
+        Route::get('get-data', [MsKategoriC::class, 'getData'])->name('ms-kategori.get-data');
+        Route::get('{id}', [MsKategoriC::class, 'getById'])->name('ms-kategori.get');
+        Route::delete('{id}', [MsKategoriC::class, 'delete'])->name('ms-kategori.delete');
+        Route::get('', [MsKategoriC::class, 'index'])->name('ms-kategori.index');
+        Route::post('', [MsKategoriC::class, 'save'])->name('ms-kategori.save');
     });
 
     Route::group(['prefix' => 'profil'], function () {
