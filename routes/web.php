@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthAdminC;
 use App\Http\Controllers\AuthC;
 use App\Http\Controllers\DashboardC;
+use App\Http\Controllers\MsDimensiC;
 use App\Http\Controllers\MsGroupsC;
 use App\Http\Controllers\MsKategoriC;
 use App\Http\Controllers\MsMenusC;
@@ -50,6 +51,15 @@ Route::group(["middleware" => "has_auth"], function () {
         Route::delete('{id}', [MsMenusC::class, 'delete'])->name('ms-menus.delete');
         Route::get('', [MsMenusC::class, 'index'])->name('ms-menus.index');
         Route::post('', [MsMenusC::class, 'save'])->name('ms-menus.save');
+    });
+
+    Route::group(['prefix' => 'ms-dimensi'], function () {
+        Route::get('check-duplicate', [MsDimensiC::class, 'checkDuplicate'])->name('ms-dimensi.check-duplicate');
+        Route::get('get-data', [MsDimensiC::class, 'getData'])->name('ms-dimensi.get-data');
+        Route::get('{id}', [MsDimensiC::class, 'getById'])->name('ms-dimensi.get');
+        Route::delete('{id}', [MsDimensiC::class, 'delete'])->name('ms-dimensi.delete');
+        Route::get('', [MsDimensiC::class, 'index'])->name('ms-dimensi.index');
+        Route::post('', [MsDimensiC::class, 'save'])->name('ms-dimensi.save');
     });
 
     Route::group(['prefix' => 'ms-kategori'], function () {
