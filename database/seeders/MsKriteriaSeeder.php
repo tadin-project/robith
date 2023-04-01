@@ -12,7 +12,7 @@ class MsKriteriaSeeder extends Seeder
         MsKriteria::insert([[
             'mk_id' => 1,
             'mk_kode' => '01',
-            'mk_nama' => 'Purpose, Vision & Startegy',
+            'mk_nama' => 'Purpose, Vision & Strategy',
             'mk_status' => true,
             'md_id' => 1,
         ], [

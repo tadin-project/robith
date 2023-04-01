@@ -2,28 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\MsKategoriService;
+use App\Services\MsKriteriaService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class MsKategoriC extends MyC
+class MsKriteriaC extends MyC
 {
-    private MsKategoriService $msKategoriService;
-    public function __construct(MsKategoriService $msKategoriService)
+    private MsKriteriaService $msKriteriaService;
+    public function __construct(MsKriteriaService $msKriteriaService)
     {
         parent::__construct();
-        $this->middleware("has_akses:ms-kategori");
-        $this->msKategoriService = $msKategoriService;
+        $this->middleware("has_akses:ms-kriteria");
+        $this->msKriteriaService = $msKriteriaService;
     }
 
     public function index(): View
     {
+        $optDimensi = [];
+        $cekDimensi = $this->msKriteriaService->getDimensi();
+        if ($cekDimensi["status"]) {
+            $optDimensi = $cekDimensi["data"];
+        }
+
         $data = [
-            "__title" => "Master Kategori",
+            "__title" => "Master Kriteria",
+            "optDimensi" => $optDimensi,
         ];
 
-        return $this->my_view("v_ms_kategori", $data);
+        return $this->my_view("v_ms_kriteria", $data);
     }
 
     public function getData(Request $request): JsonResponse
@@ -32,6 +39,7 @@ class MsKategoriC extends MyC
             "mk.mk_id",
             "mk.mk_kode",
             "mk.mk_nama",
+            "coalesce(msk.tot_bobot, 0) as tot_bobot",
             "mk.mk_status",
         ];
 
@@ -44,8 +52,12 @@ class MsKategoriC extends MyC
         $inputOrder = $request->order;
         $inputStart = $request->start;
         $inputLength = $request->length;
+        $fil_md_id = $request->fil_md_id;
 
         $sWhere = "";
+        if (!empty($fil_md_id)) {
+            $sWhere .= " AND mk.md_id = $fil_md_id ";
+        }
 
         if (!empty($inputSearch) && array_key_exists("value", $inputSearch)) {
             if (!empty($inputSearch['value'])) {
@@ -61,7 +73,7 @@ class MsKategoriC extends MyC
         }
 
         $totalData = 0;
-        $getTotal = $this->msKategoriService->getTotal($sWhere);
+        $getTotal = $this->msKriteriaService->getTotal($sWhere);
         if ($getTotal['status']) {
             $totalData = $getTotal['total'];
         }
@@ -90,7 +102,7 @@ class MsKategoriC extends MyC
 
         $detailData = [];
 
-        $getData = $this->msKategoriService->getData($sWhere, $sOrder, $sLimit, $cols);
+        $getData = $this->msKriteriaService->getData($sWhere, $sOrder, $sLimit, $cols);
         if ($getData['status']) {
             $detailData = $getData['data'];
         }
@@ -127,6 +139,7 @@ class MsKategoriC extends MyC
                 $no,
                 $v->mk_kode,
                 $v->mk_nama,
+                $v->tot_bobot,
                 $status,
                 $aksi,
             ];
@@ -144,7 +157,7 @@ class MsKategoriC extends MyC
             'msg' => '',
         ];
 
-        $cekValidasi = $this->msKategoriService->validateData($request);
+        $cekValidasi = $this->msKriteriaService->validateData($request);
         if (!$cekValidasi['status']) {
             return response()->json($cekValidasi);
         }
@@ -153,12 +166,13 @@ class MsKategoriC extends MyC
             'mk_nama' => $request->mk_nama,
             'mk_kode' => $request->mk_kode,
             'mk_status' => $request->mk_status,
+            'md_id' => $request->md_id,
         ];
 
         if ($request->act == 'edit') {
-            $res = $this->msKategoriService->edit($request->mk_id, $data);
+            $res = $this->msKriteriaService->edit($request->mk_id, $data);
         } else {
-            $res = $this->msKategoriService->add($data);
+            $res = $this->msKriteriaService->add($data);
         }
 
         return response()->json($res);
@@ -166,20 +180,20 @@ class MsKategoriC extends MyC
 
     public function delete(int $id): JsonResponse
     {
-        $res = $this->msKategoriService->del($id);
+        $res = $this->msKriteriaService->del($id);
 
         return response()->json($res);
     }
 
     public function checkDuplicate(Request $request): string
     {
-        $res = $this->msKategoriService->checkDuplicate($request->act, $request->key, $request->val, (!empty($request->old) ? $request->old : ""));
+        $res = $this->msKriteriaService->checkDuplicate($request->act, $request->key, $request->val, (!empty($request->old) ? $request->old : ""));
         return $res;
     }
 
     public function getById($id): JsonResponse
     {
-        $res = $this->msKategoriService->getById($id);
+        $res = $this->msKriteriaService->getById($id);
         if ($res['status']) {
             $dt = $res["data"];
             $data = [
@@ -187,6 +201,7 @@ class MsKategoriC extends MyC
                 "mk_nama" => $dt->mk_nama,
                 "mk_kode" => $dt->mk_kode,
                 "mk_status" => $dt->mk_status,
+                "md_id" => $dt->md_id,
             ];
             $res["data"] = $data;
         }

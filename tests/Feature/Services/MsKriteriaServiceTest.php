@@ -2,52 +2,52 @@
 
 namespace Tests\Feature\Services;
 
-use App\Models\MsKategori;
-use App\Services\MsKategoriService;
+use App\Models\MsKriteria;
+use App\Services\MsKriteriaService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class MsKategoriServiceTest extends TestCase
+class MsKriteriaServiceTest extends TestCase
 {
-    private MsKategoriService $msKategoriService;
+    private MsKriteriaService $msKriteriaService;
 
     public function setUp(): void
     {
         parent::setUp();
-        $this->msKategoriService = $this->app->make(MsKategoriService::class);
+        $this->msKriteriaService = $this->app->make(MsKriteriaService::class);
     }
 
     public function testGetTotalSuccess()
     {
-        $res = $this->msKategoriService->getTotal("");
+        $res = $this->msKriteriaService->getTotal("");
         self::assertTrue($res['status']);
         self::assertGreaterThanOrEqual(0, $res['total']);
     }
 
     public function testGetTotalByParamSuccess()
     {
-        $res = $this->msKategoriService->getTotal(" AND lower(cast(mk.mk_id as char)) like lower('%1%') ");
+        $res = $this->msKriteriaService->getTotal(" AND lower(cast(mk.mk_id as char)) like lower('%1%') ");
         self::assertTrue($res['status']);
         self::assertGreaterThanOrEqual(0, $res['total']);
     }
 
     public function testGetTotalFailed()
     {
-        $res = $this->msKategoriService->getTotal(" AND lower(cast(mu.mk_id as char ");
+        $res = $this->msKriteriaService->getTotal(" AND lower(cast(mu.mk_id as char ");
         self::assertFalse($res['status']);
     }
 
     public function testGetDataSuccess()
     {
-        $res = $this->msKategoriService->getData();
+        $res = $this->msKriteriaService->getData();
         self::assertTrue($res['status']);
         self::assertGreaterThanOrEqual(0, count($res['data']));
     }
 
     public function testGetDataByParamSuccess()
     {
-        $res = $this->msKategoriService->getData(" AND lower(cast(mk.mk_id as char)) like lower('%1%') ", " ORDER BY mk.mk_nama asc ", " LIMIT 10 OFFSET 0 ", [
+        $res = $this->msKriteriaService->getData(" AND lower(cast(mk.mk_id as char)) like lower('%1%') ", " ORDER BY mk.mk_nama asc ", " LIMIT 10 OFFSET 0 ", [
             "mk.mk_id",
             "mk.mk_kode",
             "mk.mk_nama",
@@ -59,16 +59,17 @@ class MsKategoriServiceTest extends TestCase
 
     public function testGetDataFailed()
     {
-        $res = $this->msKategoriService->getData(" AND lower(cast(mu.mk_id as char ");
+        $res = $this->msKriteriaService->getData(" AND lower(cast(mu.mk_id as char ");
         self::assertFalse($res['status']);
     }
 
     public function testValidateDataSuccess()
     {
-        $res = $this->msKategoriService->validateData([
+        $res = $this->msKriteriaService->validateData([
             "act" => "add",
             "mk_kode" => "xx",
             "mk_nama" => "Tes",
+            "md_id" => 1,
             "mk_status" => true,
         ]);
         self::assertTrue($res['status']);
@@ -76,7 +77,7 @@ class MsKategoriServiceTest extends TestCase
 
     public function testValidateDataUnknownRequest()
     {
-        $res = $this->msKategoriService->validateData([
+        $res = $this->msKriteriaService->validateData([
             "act" => "tes",
             "mk_kode" => "xx",
             "mk_nama" => "Tes",
@@ -88,28 +89,29 @@ class MsKategoriServiceTest extends TestCase
 
     public function testValidateDataCredentialInvalid()
     {
-        $res = $this->msKategoriService->validateData([
+        $res = $this->msKriteriaService->validateData([
             "act" => "add",
             "mk_nama" => "Tes",
             "mk_status" => true,
         ]);
         self::assertFalse($res['status']);
-        self::assertEquals("Kode dan nama tidak boleh kosong!", $res['msg']);
+        self::assertEquals("Kode, nama, dan dimensi tidak boleh kosong!", $res['msg']);
     }
 
     public function testAddSuccess()
     {
-        $res = $this->msKategoriService->add([
+        $res = $this->msKriteriaService->add([
             "mk_kode" => "xx",
             "mk_nama" => "Tes",
             "mk_status" => true,
+            "md_id" => 1,
         ]);
         self::assertTrue($res['status']);
     }
 
     public function testAddFailed()
     {
-        $res = $this->msKategoriService->add([
+        $res = $this->msKriteriaService->add([
             "mk_nama" => "Tes",
             "mk_status" => true,
         ]);
@@ -118,19 +120,20 @@ class MsKategoriServiceTest extends TestCase
 
     public function testUpdateSuccess()
     {
-        $last_id = MsKategori::orderBy("mk_kode", "desc")->first()->mk_id;
+        $last_id = MsKriteria::orderBy("mk_kode", "desc")->first()->mk_id;
 
-        $res = $this->msKategoriService->edit($last_id, [
+        $res = $this->msKriteriaService->edit($last_id, [
             "mk_kode" => "xx",
-            "mk_nama" => "Tes",
-            "mk_status" => true,
+            "mk_nama" => "Tes update",
+            "mk_status" => false,
+            "md_id" => 2,
         ]);
         self::assertTrue($res['status']);
     }
 
     public function testUpdateNotFound()
     {
-        $res = $this->msKategoriService->edit(250, [
+        $res = $this->msKriteriaService->edit(0, [
             "mk_kode" => "tes01",
             "mk_nama" => "Tes update",
         ]);
@@ -140,7 +143,7 @@ class MsKategoriServiceTest extends TestCase
 
     public function testUpdateFailed()
     {
-        $res = $this->msKategoriService->edit("", [
+        $res = $this->msKriteriaService->edit("", [
             "mk_kode" => "tes01",
             "mk_nama" => "Tes update",
         ]);
@@ -149,75 +152,85 @@ class MsKategoriServiceTest extends TestCase
 
     public function testDeleteSuccess()
     {
-        $last_id = MsKategori::orderBy("mk_kode", "desc")->first()->mk_id;
+        $last_id = MsKriteria::orderBy("mk_kode", "desc")->first()->mk_id;
 
-        $res = $this->msKategoriService->del($last_id);
+        $res = $this->msKriteriaService->del($last_id);
         self::assertTrue($res['status']);
     }
 
     public function testDeleteNotFound()
     {
-        $res = $this->msKategoriService->del(0);
+        $res = $this->msKriteriaService->del(0);
         self::assertFalse($res['status']);
         self::assertEquals("Data tidak ditemukan!", $res['msg']);
     }
 
     public function testDeleteFailed()
     {
-        $res = $this->msKategoriService->del("");
+        $res = $this->msKriteriaService->del("");
         self::assertFalse($res['status']);
     }
 
     public function testFoundDuplicateOnAdd()
     {
-        $res = $this->msKategoriService->checkDuplicate("add", "mk_kode", "01");
+        $res = $this->msKriteriaService->checkDuplicate("add", ["mk_kode", "md_id"], ["01", 1]);
         self::assertEquals("false", $res);
     }
 
     public function testNotFoundDuplicateOnAdd()
     {
-        $res = $this->msKategoriService->checkDuplicate("add", "mk_kode", "xx");
+        $res = $this->msKriteriaService->checkDuplicate("add", "mk_kode", "xx");
         self::assertEquals("true", $res);
     }
 
     public function testFoundDuplicateOnEdit()
     {
-        $res = $this->msKategoriService->checkDuplicate("edit", "mk_kode", "01", "02");
+        $res = $this->msKriteriaService->checkDuplicate("edit", "mk_kode", "01", "02");
         self::assertEquals("false", $res);
     }
 
     public function testNotFoundDuplicateOnEdit()
     {
-        $res = $this->msKategoriService->checkDuplicate("edit", "mk_kode", "02", "02");
+        $res = $this->msKriteriaService->checkDuplicate("edit", "mk_kode", "02", "02");
         self::assertEquals("true", $res);
     }
 
     public function testDuplicateFailed()
     {
-        $res = $this->msKategoriService->checkDuplicate("edit", "group_kodera", "-01");
+        $res = $this->msKriteriaService->checkDuplicate("edit", "group_kodera", "-01");
         self::assertEquals("false", $res);
     }
 
     public function testGetByIdSuccess()
     {
-        $res = $this->msKategoriService->getById(1);
+        $res = $this->msKriteriaService->getById(1);
         self::assertTrue($res['status']);
         self::assertEquals(1, $res['data']->mk_id);
         self::assertEquals("01", $res['data']->mk_kode);
-        self::assertEquals("Direction", $res['data']->mk_nama);
+        self::assertEquals("Purpose, Vision & Strategy", $res['data']->mk_nama);
         self::assertEquals(true, $res['data']->mk_status);
+        self::assertEquals(1, $res['data']->md_id);
+        self::assertEquals("01", $res['data']->dimensi->md_kode);
+        self::assertEquals("Direction", $res['data']->dimensi->md_nama);
+        self::assertEquals(true, $res['data']->dimensi->md_status);
     }
 
     public function testGetByIdNotFound()
     {
-        $res = $this->msKategoriService->getById(0);
+        $res = $this->msKriteriaService->getById(0);
         self::assertFalse($res["status"]);
         self::assertEquals("Data tidak ditemukan!", $res['msg']);
     }
 
     public function testGetByIdFailed()
     {
-        $res = $this->msKategoriService->getById("");
+        $res = $this->msKriteriaService->getById("");
         self::assertFalse($res["status"]);
+    }
+
+    public function testGetDimensi()
+    {
+        $res = $this->msKriteriaService->getDimensi();
+        self::assertTrue($res["status"]);
     }
 }

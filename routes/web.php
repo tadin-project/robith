@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardC;
 use App\Http\Controllers\MsDimensiC;
 use App\Http\Controllers\MsGroupsC;
 use App\Http\Controllers\MsKategoriC;
+use App\Http\Controllers\MsKriteriaC;
 use App\Http\Controllers\MsMenusC;
 use App\Http\Controllers\MsUsersC;
 use App\Http\Controllers\ProfilC;
@@ -62,13 +63,13 @@ Route::group(["middleware" => "has_auth"], function () {
         Route::post('', [MsDimensiC::class, 'save'])->name('ms-dimensi.save');
     });
 
-    Route::group(['prefix' => 'ms-kategori'], function () {
-        Route::get('check-duplicate', [MsKategoriC::class, 'checkDuplicate'])->name('ms-kategori.check-duplicate');
-        Route::get('get-data', [MsKategoriC::class, 'getData'])->name('ms-kategori.get-data');
-        Route::get('{id}', [MsKategoriC::class, 'getById'])->name('ms-kategori.get');
-        Route::delete('{id}', [MsKategoriC::class, 'delete'])->name('ms-kategori.delete');
-        Route::get('', [MsKategoriC::class, 'index'])->name('ms-kategori.index');
-        Route::post('', [MsKategoriC::class, 'save'])->name('ms-kategori.save');
+    Route::group(['prefix' => 'ms-kriteria'], function () {
+        Route::get('check-duplicate', [MsKriteriaC::class, 'checkDuplicate'])->name('ms-kriteria.check-duplicate');
+        Route::get('get-data', [MsKriteriaC::class, 'getData'])->name('ms-kriteria.get-data');
+        Route::get('{id}', [MsKriteriaC::class, 'getById'])->name('ms-kriteria.get');
+        Route::delete('{id}', [MsKriteriaC::class, 'delete'])->name('ms-kriteria.delete');
+        Route::get('', [MsKriteriaC::class, 'index'])->name('ms-kriteria.index');
+        Route::post('', [MsKriteriaC::class, 'save'])->name('ms-kriteria.save');
     });
 
     Route::group(['prefix' => 'profil'], function () {

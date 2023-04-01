@@ -2,11 +2,12 @@
 
 namespace App\Services\Impl;
 
-use App\Models\MsKategori;
-use App\Services\MsKategoriService;
+use App\Models\MsDimensi;
+use App\Models\MsKriteria;
+use App\Services\MsKriteriaService;
 use Illuminate\Support\Facades\DB;
 
-class MsKategoriServiceImpl implements MsKategoriService
+class MsKriteriaServiceImpl implements MsKriteriaService
 {
     /**
      * @param $id
@@ -20,7 +21,7 @@ class MsKategoriServiceImpl implements MsKategoriService
         ];
 
         try {
-            $dt = MsKategori::find($id);
+            $dt = MsKriteria::find($id);
             if (!$dt) {
                 $res = [
                     'status' => false,
@@ -53,7 +54,18 @@ class MsKategoriServiceImpl implements MsKategoriService
             $qtotal = "SELECT
                             count(mk.mk_id) as total
                         from
-                            ms_kategori mk
+                            ms_kriteria mk
+                        left join (
+                            select
+                                sum(msk_bobot) as tot_bobot,
+                                mk_id
+                            from
+                                ms_sub_kriteria
+                            where
+                                msk_status = true
+                            group by
+                                mk_id ) msk on
+                            msk.mk_id = mk.mk_id
                         where
                             0 = 0 $where";
             $total = DB::select($qtotal);
@@ -89,6 +101,7 @@ class MsKategoriServiceImpl implements MsKategoriService
                     "mk.mk_kode",
                     "mk.mk_nama",
                     "mk.mk_status",
+                    "coalesce(msk.tot_bobot, 0) as tot_bobot",
                 ];
             }
 
@@ -96,7 +109,18 @@ class MsKategoriServiceImpl implements MsKategoriService
             $qdata = "SELECT
                             $slc
                         from
-                            ms_kategori mk
+                            ms_kriteria mk
+                        left join (
+                            select
+                                sum(msk_bobot) as tot_bobot,
+                                mk_id
+                            from
+                                ms_sub_kriteria
+                            where
+                                msk_status = true
+                            group by
+                                mk_id ) msk on
+                            msk.mk_id = mk.mk_id
                         where
                             0 = 0 $where
                         $order $limit";
@@ -133,10 +157,10 @@ class MsKategoriServiceImpl implements MsKategoriService
                     return $res;
                 }
 
-                if (empty($req['mk_kode']) || empty($req['mk_nama'])) {
+                if (empty($req['mk_kode']) || empty($req['mk_nama']) || empty($req['md_id'])) {
                     $res = [
                         'status' => false,
-                        'msg' => 'Kode dan nama tidak boleh kosong!',
+                        'msg' => 'Kode, nama, dan dimensi tidak boleh kosong!',
                     ];
                     return $res;
                 }
@@ -149,10 +173,10 @@ class MsKategoriServiceImpl implements MsKategoriService
                     return $res;
                 }
 
-                if (empty($req->mk_kode) || empty($req->mk_nama)) {
+                if (empty($req->mk_kode) || empty($req->mk_nama) || empty($req->md_id)) {
                     $res = [
                         'status' => false,
-                        'msg' => 'Kode dan nama tidak boleh kosong!',
+                        'msg' => 'Kode, nama, dan dimensi tidak boleh kosong!',
                     ];
                     return $res;
                 }
@@ -179,7 +203,7 @@ class MsKategoriServiceImpl implements MsKategoriService
         ];
 
         try {
-            $dt = MsKategori::create($data);
+            $dt = MsKriteria::create($data);
             if (!isset($dt->mk_id)) {
                 $res = [
                     'status' => false,
@@ -275,21 +299,40 @@ class MsKategoriServiceImpl implements MsKategoriService
 
     /**
      * @param string $act
-     * @param string $key
-     * @param string $val
+     * @param mixed $key
+     * @param mixed $val
      * @param string $old
      * @return array
      */
-    public function checkDuplicate(string $act, string $key, string $val, string $old = ""): string
+    public function checkDuplicate(string $act, $key, $val, string $old = ""): string
     {
         $res = "true";
 
         try {
-            $dt = MsKategori::where($key, $val);
-            if ($act == 'edit') {
-                $dt = $dt->where($key, "!=", $old);
+            // DB::enableQueryLog();
+            if (gettype($key) == "array") {
+                $val = explode(",", $val);
+                $dt = MsKriteria::where($key[0], $val[0]);
+                for ($i = 1; $i < count($key); $i++) {
+                    $dt = $dt->where($key[$i], $val[$i]);
+                }
+
+                if ($act == 'edit') {
+                    $dt = $dt->where($key[0], "!=", $old);
+                }
+            } else {
+                $dt = MsKriteria::where($key, $val);
+
+                if ($act == 'edit') {
+                    $dt = $dt->where($key, "!=", $old);
+                }
             }
 
+            // $dt = $dt->get();
+            // dd($dt->toSql());
+            // dd($dt, DB::getQueryLog());
+
+            // $res = "false";
             if ($dt->count() > 0) {
                 $res = "false";
             }
@@ -313,6 +356,28 @@ class MsKategoriServiceImpl implements MsKategoriService
 
         try {
             $res = $this->__cekData($id);
+        } catch (\Throwable $th) {
+            $res = [
+                'status' => false,
+                'msg' => $th->getMessage(),
+            ];
+        }
+
+        return $res;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDimensi(): array
+    {
+        $res = [
+            'status' => true,
+            'msg' => "",
+        ];
+
+        try {
+            $res["data"] = MsDimensi::where("md_status", true)->orderBy("md_kode")->get();
         } catch (\Throwable $th) {
             $res = [
                 'status' => false,

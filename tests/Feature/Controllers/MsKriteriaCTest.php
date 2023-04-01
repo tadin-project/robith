@@ -2,13 +2,13 @@
 
 namespace Tests\Feature\Controllers;
 
-use App\Models\MsKategori;
+use App\Models\MsKriteria;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Config;
 use Tests\TestCase;
 
-class MsKategoriCTest extends TestCase
+class MsKriteriaCTest extends TestCase
 {
     private $sess_user;
     public function setUp(): void
@@ -19,15 +19,15 @@ class MsKategoriCTest extends TestCase
     public function testPage()
     {
         $this->withSession($this->sess_user)
-            ->get(route("ms-kategori.index"))
+            ->get(route("ms-kriteria.index"))
             ->assertStatus(200)
-            ->assertSeeText("Master Kategori");
+            ->assertSeeText("Master Kriteria");
     }
 
     public function testGetDataSuccess()
     {
         $dt = $this->withSession($this->sess_user)
-            ->get(route("ms-kategori.get-data"));
+            ->get(route("ms-kriteria.get-data"));
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
         self::assertGreaterThanOrEqual(0, $jsonDt["recordsTotal"]);
@@ -37,7 +37,7 @@ class MsKategoriCTest extends TestCase
     public function testGetDataByParamSuccess()
     {
         $dt = $this->withSession($this->sess_user)
-            ->get(route("ms-kategori.get-data") . "?search[value]=ADMIN");
+            ->get(route("ms-kriteria.get-data") . "?search[value]=ADMIN");
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
         self::assertGreaterThanOrEqual(0, $jsonDt["recordsTotal"]);
@@ -47,11 +47,12 @@ class MsKategoriCTest extends TestCase
     public function testAddSuccess()
     {
         $dt = $this->withSession($this->sess_user)
-            ->post(route("ms-kategori.save"), [
+            ->post(route("ms-kriteria.save"), [
                 "act" => "add",
                 "mk_kode" => "xx",
                 "mk_nama" => "Tes",
                 "mk_status" => true,
+                "md_id" => 1,
             ]);
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
@@ -61,7 +62,7 @@ class MsKategoriCTest extends TestCase
     public function testAddError()
     {
         $dt = $this->withSession($this->sess_user)
-            ->post(route("ms-kategori.save"), [
+            ->post(route("ms-kriteria.save"), [
                 "act" => "add",
                 "mk_nama" => "Tes",
                 "mk_status" => true,
@@ -73,15 +74,16 @@ class MsKategoriCTest extends TestCase
 
     public function testEditSuccess()
     {
-        $last_id = MsKategori::orderBy("mk_id", "desc")->first()->mk_id;
+        $last_id = MsKriteria::orderBy("mk_id", "desc")->first()->mk_id;
 
         $dt = $this->withSession($this->sess_user)
-            ->post(route("ms-kategori.save"), [
+            ->post(route("ms-kriteria.save"), [
                 "act" => "edit",
                 "mk_id" => $last_id,
-                "mk_kode" => "xx",
+                "mk_kode" => "x1",
                 "mk_nama" => "Tes Update",
                 "mk_status" => false,
+                "md_id" => 1,
             ]);
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
@@ -91,7 +93,7 @@ class MsKategoriCTest extends TestCase
     public function testEditError()
     {
         $dt = $this->withSession($this->sess_user)
-            ->post(route("ms-kategori.save"), [
+            ->post(route("ms-kriteria.save"), [
                 "act" => "edit",
                 "mk_id" => 0,
                 "mk_kode" => "xx",
@@ -104,10 +106,10 @@ class MsKategoriCTest extends TestCase
 
     public function testDelSuccess()
     {
-        $last_id = MsKategori::orderBy("mk_id", "desc")->first()->mk_id;
+        $last_id = MsKriteria::orderBy("mk_id", "desc")->first()->mk_id;
 
         $dt = $this->withSession($this->sess_user)
-            ->delete(route("ms-kategori.delete", ['id' => $last_id]));
+            ->delete(route("ms-kriteria.delete", ['id' => $last_id]));
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
         self::assertTrue($jsonDt["status"]);
@@ -116,7 +118,7 @@ class MsKategoriCTest extends TestCase
     public function testDelError()
     {
         $dt = $this->withSession($this->sess_user)
-            ->delete(route("ms-kategori.delete", ["id" => 0]));
+            ->delete(route("ms-kriteria.delete", ["id" => 0]));
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
         self::assertFalse($jsonDt["status"]);
@@ -125,7 +127,7 @@ class MsKategoriCTest extends TestCase
     public function testNotFoundDuplicate()
     {
         $dt = $this->withSession($this->sess_user)
-            ->get(route("ms-kategori.check-duplicate") . "?act=add&key=mk_kode&val=-01&old=");
+            ->get(route("ms-kriteria.check-duplicate") . "?act=add&key=mk_kode&val=-01&old=");
         $dt->assertStatus(200);
         self::assertEquals("true", $dt->getContent());
     }
@@ -133,7 +135,7 @@ class MsKategoriCTest extends TestCase
     public function testFoundDuplicate()
     {
         $dt = $this->withSession($this->sess_user)
-            ->get(route("ms-kategori.check-duplicate") . "?act=add&key=mk_kode&val=01&old=xx");
+            ->get(route("ms-kriteria.check-duplicate") . "?act=add&key[0]=mk_kode&key[1]=md_id&val[0]=01&val[1]=1&old=xx");
         $dt->assertStatus(200);
         self::assertEquals("false", $dt->getContent());
     }
@@ -141,20 +143,21 @@ class MsKategoriCTest extends TestCase
     public function testGetByIdSuccess()
     {
         $dt = $this->withSession($this->sess_user)
-            ->get(route("ms-kategori.get", ["id" => 1]));
+            ->get(route("ms-kriteria.get", ["id" => 1]));
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
         self::assertTrue($jsonDt['status']);
         self::assertEquals(1, $jsonDt['data']["mk_id"]);
         self::assertEquals("01", $jsonDt['data']["mk_kode"]);
-        self::assertEquals("Direction", $jsonDt['data']["mk_nama"]);
+        self::assertEquals("Purpose, Vision & Strategy", $jsonDt['data']["mk_nama"]);
         self::assertEquals(true, $jsonDt['data']["mk_status"]);
+        self::assertEquals(1, $jsonDt['data']["md_id"]);
     }
 
     public function testGetByIdNotFound()
     {
         $dt = $this->withSession($this->sess_user)
-            ->get(route("ms-kategori.get", ["id" => 0]));
+            ->get(route("ms-kriteria.get", ["id" => 0]));
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
         self::assertFalse($jsonDt['status']);
@@ -164,7 +167,7 @@ class MsKategoriCTest extends TestCase
     public function testGetByIdFailed()
     {
         $dt = $this->withSession($this->sess_user)
-            ->get(route("ms-kategori.get", ["id" => "-"]));
+            ->get(route("ms-kriteria.get", ["id" => "-"]));
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
         self::assertFalse($jsonDt['status']);

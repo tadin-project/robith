@@ -7,6 +7,6 @@
 -   [x] dynamic sidebar
 -   [x] autentikasi
 -   [x] otorisasi
--   [ ] master dimensi
+-   [x] master dimensi
 -   [ ] master kategori
 -   [ ] master sub kategori

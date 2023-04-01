@@ -18,6 +18,7 @@ class CreateMsSubKriteriaTable extends Migration
             $table->char("msk_kode", 2);
             $table->char("msk_nama", 255);
             $table->boolean("msk_status")->nullable()->default(true);
+            $table->unsignedSmallInteger("msk_bobot")->nullable()->default(0);
             $table->unsignedSmallInteger("mk_id")->nullable();
 
             $table->unique(array('mk_id', 'msk_kode'));

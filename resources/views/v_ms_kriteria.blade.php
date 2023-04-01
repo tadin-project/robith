@@ -32,9 +32,19 @@
               <input type="hidden" id="act" name="act" value="add">
               <input type="hidden" id="mk_id" name="mk_id">
               <div class="row form-group">
+                <label class="col-md-3 control-label">Dimensi</label>
+                <div class="col-md-2">
+                  <select class="form-control" id="md_id" name="md_id">
+                    @foreach ($optDimensi as $v)
+                      <option value="{{ $v->md_id }}">{{ $v->md_nama }}</option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+              <div class="row form-group">
                 <label class="col-md-3 control-label">Kode</label>
-                <div class="col-md-5">
-                  <input type="text" class="form-control" id="mk_kode" name="mk_kode">
+                <div class="col-md-2">
+                  <input type="text" class="form-control" id="mk_kode" name="mk_kode" maxlength="2">
                 </div>
                 <input type="hidden" id="old_mk_kode">
               </div>
@@ -46,7 +56,7 @@
               </div>
               <div class="row form-group">
                 <label class="col-md-3 control-label">Status</label>
-                <div class="col-md-3">
+                <div class="col-md-2">
                   <select name="mk_status" id="mk_status" class="form-control">
                     <option value="1">Aktif</option>
                     <option value="0">Non Aktif</option>
@@ -64,12 +74,27 @@
         </div>
         <div class="row" id="rowData">
           <div class="col-12">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="row form-group">
+                  <label class="col-md-3 control-label">Dimensi</label>
+                  <div class="col-md-5">
+                    <select class="form-control" id="fil_md_id" name="fil_md_id">
+                      @foreach ($optDimensi as $v)
+                        <option value="{{ $v->md_id }}">{{ $v->md_nama }}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
             <table class="table table-sm table-striped table-bordered table-hover" id="tableVendor" style="width: 100%">
               <thead>
                 <tr>
                   <th class="text-center">No</th>
                   <th class="text-center">Kode</th>
                   <th class="text-center">Nama</th>
+                  <th class="text-center">Bobot</th>
                   <th class="text-center">Status</th>
                   <th class="text-center">Aksi</th>
                 </tr>
@@ -86,7 +111,7 @@
 <script>
   // init component
   // global
-  const baseDir = baseUrl + '/ms-kategori',
+  const baseDir = baseUrl + '/ms-kriteria',
     rowForm = $("#rowForm"),
     rowData = $("#rowData");
 
@@ -94,6 +119,7 @@
   const formVendor = $("#formVendor"),
     act = $("#act"),
     mkId = $("#mk_id"),
+    mdId = $("#md_id"),
     mkNama = $("#mk_nama"),
     mkKode = $("#mk_kode"),
     oldMkKode = $("#old_mk_kode"),
@@ -103,6 +129,7 @@
 
   // datatable
   const tableVendor = $("#tableVendor"),
+    filMdId = $("#fil_md_id"),
     btnTambah = $("#btnTambah");
 
   // Class definition
@@ -123,10 +150,16 @@
         ],
         ajax: {
           url: baseDir + "/get-data",
+          data: function(d) {
+            d.fil_md_id = filMdId.val();
+          },
         },
         columnDefs: [{
-          targets: [0, -1],
+          targets: [0, -3, -1],
           orderable: false,
+        }, {
+          targets: [-3],
+          className: "text-right"
         }, {
           targets: [0, -2, -1],
           className: "text-center"
@@ -166,9 +199,9 @@
                 act: function() {
                   return act.val();
                 },
-                key: "mk_kode",
+                key: ["mk_kode", "md_id"],
                 val: function() {
-                  return mkKode.val();
+                  return [mkKode.val(), mdId.val()];
                 },
                 old: function() {
                   return act.val() == 'edit' ? oldMkKode.val() : "";
@@ -243,6 +276,7 @@
     if (isShow) {
       rowForm.slideDown(500);
       rowData.slideUp(500);
+      mdId.val(filMdId.val());
       btnBatal.show();
       btnTambah.hide();
     } else {
@@ -277,6 +311,7 @@
 
           act.val('edit');
           mkId.val(id);
+          mdId.val(dt.md_id);
           mkKode.val(dt.mk_kode);
           oldMkKode.val(dt.mk_kode);
           mkNama.val(dt.mk_nama);
@@ -342,6 +377,10 @@
 
     btnSimpan.click(function() {
       formVendor.submit();
+    });
+
+    filMdId.change(function() {
+      fnLoadTbl();
     });
 
   });
