@@ -17,18 +17,23 @@ class HasAuth
      */
     public function handle(Request $request, Closure $next)
     {
+
         $listRouteAuth = [
             "/",
             "auth/admin",
         ];
 
-        if (in_array($request->path(), $listRouteAuth)) { // ini halaman autentikasi
+        if (in_array($request->path(), $listRouteAuth)) { // redirect halaman dashboard jika punya session user_data
             if ($request->session()->has("user_data") && $request->session()->get("user_data")) {
                 $group_id = $request->session()->get("user_data")["group_id"];
                 $urlRedirect = MsGroups::find($group_id)->menus()->orderBy("menu_kode", "asc")->first()->menu_link;
-                return redirect()->to($urlRedirect);
+                if ($request->ajax()) {
+                    return response(json_encode(["status" => true, "" => $urlRedirect]));
+                } else {
+                    return redirect()->to($urlRedirect);
+                }
             }
-        } else { // ini halaman di web
+        } else { // redirect ke halaman login jika tidak punya session user_data
             if (!$request->session()->has("user_data") || !$request->session()->get("user_data")) {
                 return redirect()->to('/');
             }
