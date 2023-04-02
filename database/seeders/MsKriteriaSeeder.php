@@ -42,13 +42,13 @@ class MsKriteriaSeeder extends Seeder
         ], [
             'mk_id' => 6,
             'mk_kode' => '01',
-            'mk_nama' => 'Strategic & Operational Performance',
+            'mk_nama' => 'Stakeholder Perceptions',
             'mk_status' => true,
             'md_id' => 3,
         ], [
             'mk_id' => 7,
             'mk_kode' => '02',
-            'mk_nama' => 'Stakeholder Perceptions',
+            'mk_nama' => 'Strategic & Operational Performance',
             'mk_status' => true,
             'md_id' => 3,
         ],]);

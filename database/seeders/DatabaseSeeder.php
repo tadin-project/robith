@@ -21,5 +21,6 @@ class DatabaseSeeder extends Seeder
         $this->call(AppSettingsSeeder::class);
         $this->call(MsDimensiSeeder::class);
         $this->call(MsKriteriaSeeder::class);
+        $this->call(MsSubKriteriaSeeder::class);
     }
 }

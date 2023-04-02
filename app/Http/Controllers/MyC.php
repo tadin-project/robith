@@ -13,9 +13,6 @@ class MyC extends Controller
 
     public function __construct()
     {
-        $this->__sess_user = session()->get('user_data');
-        // dd($this->__sess_user);
-
         if (session()->has('app_data')) {
             $oldSessApp = $this->__sess_app;
             $appData = AppSettings::where('is_auto', 'Y');
@@ -39,6 +36,11 @@ class MyC extends Controller
             session(['app_data' => $sessApp]);
             $this->__sess_app = session()->get('app_data');
         }
+
+        $this->middleware(function ($request, $next) {
+            $this->__sess_user = $request->session()->get("user_data");
+            return $next($request);
+        });
     }
 
     public function my_view($filename, array $data = [])
