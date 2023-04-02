@@ -182,7 +182,7 @@ return [
         App\Providers\My\MsGroupsServiceProvider::class,
         App\Providers\My\MsKriteriaServiceProvider::class,
         App\Providers\My\MsMenusServiceProvider::class,
-        App\Providers\My\MsSubKategoriServiceProvider::class,
+        App\Providers\My\MsSubKriteriaServiceProvider::class,
         App\Providers\My\MsUsersServiceProvider::class,
 
     ],

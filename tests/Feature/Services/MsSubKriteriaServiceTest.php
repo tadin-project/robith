@@ -70,6 +70,7 @@ class MsSubKriteriaServiceTest extends TestCase
             "msk_kode" => "xx",
             "msk_nama" => "Tes",
             "msk_status" => true,
+            "mk_id" => 1,
         ]);
         self::assertTrue($res['status']);
     }
@@ -94,7 +95,7 @@ class MsSubKriteriaServiceTest extends TestCase
             "msk_status" => true,
         ]);
         self::assertFalse($res['status']);
-        self::assertEquals("Kode dan nama tidak boleh kosong!", $res['msg']);
+        self::assertEquals("Kode, nama, dan kriteria tidak boleh kosong!", $res['msg']);
     }
 
     public function testAddSuccess()
@@ -102,6 +103,7 @@ class MsSubKriteriaServiceTest extends TestCase
         $res = $this->msSubKriteriaService->add([
             "msk_kode" => "xx",
             "msk_nama" => "Tes",
+            "msk_bobot" => 60,
             "msk_status" => true,
             "mk_id" => 1,
         ]);
@@ -119,12 +121,14 @@ class MsSubKriteriaServiceTest extends TestCase
 
     public function testUpdateSuccess()
     {
-        $last_id = MsSubKriteria::orderBy("msk_kode", "desc")->first()->msk_id;
+        $last_id = MsSubKriteria::orderBy("msk_id", "desc")->first()->msk_id;
 
         $res = $this->msSubKriteriaService->edit($last_id, [
             "msk_kode" => "xx",
-            "msk_nama" => "Tes",
-            "msk_status" => true,
+            "msk_nama" => "Tes Update",
+            "msk_status" => false,
+            "msk_bobot" => 65,
+            "mk_id" => 2,
         ]);
         self::assertTrue($res['status']);
     }
@@ -150,7 +154,7 @@ class MsSubKriteriaServiceTest extends TestCase
 
     public function testDeleteSuccess()
     {
-        $last_id = MsSubKriteria::orderBy("msk_kode", "desc")->first()->msk_id;
+        $last_id = MsSubKriteria::orderBy("msk_id", "desc")->first()->msk_id;
 
         $res = $this->msSubKriteriaService->del($last_id);
         self::assertTrue($res['status']);
@@ -205,11 +209,13 @@ class MsSubKriteriaServiceTest extends TestCase
         self::assertTrue($res['status']);
         self::assertEquals(1, $res['data']->msk_id);
         self::assertEquals("01", $res['data']->msk_kode);
-        self::assertEquals("Direction", $res['data']->msk_nama);
-        self::assertEquals(1, $res['data']->mk_id);
-        self::assertEquals("01", $res['data']->kategori->mk_kode);
-        self::assertEquals("Direction", $res['data']->kategori->mk_nama);
+        self::assertEquals("Menetapkan Tujuan & Visi", $res['data']->msk_nama);
+        self::assertEquals(20, $res['data']->msk_bobot);
         self::assertEquals(true, $res['data']->msk_status);
+        self::assertEquals(1, $res['data']->mk_id);
+        self::assertEquals("01", $res['data']->kriteria->mk_kode);
+        self::assertEquals("Purpose, Vision & Strategy", $res['data']->kriteria->mk_nama);
+        self::assertEquals(true, $res['data']->kriteria->mk_status);
     }
 
     public function testGetByIdNotFound()
@@ -225,9 +231,10 @@ class MsSubKriteriaServiceTest extends TestCase
         self::assertFalse($res["status"]);
     }
 
-    public function testGetKategori()
+    public function testGetKriteria()
     {
-        $res = $this->msSubKriteriaService->getKategori();
+        $res = $this->msSubKriteriaService->getKriteria();
         self::assertTrue($res["status"]);
+        self::assertGreaterThanOrEqual(0, $res["data"]->count());
     }
 }

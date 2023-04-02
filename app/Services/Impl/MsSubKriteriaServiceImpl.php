@@ -2,12 +2,12 @@
 
 namespace App\Services\Impl;
 
-use App\Models\MsKategori;
-use App\Models\MsSubKategori;
-use App\Services\MsSubKategoriService;
+use App\Models\MsKriteria;
+use App\Models\MsSubKriteria;
+use App\Services\MsSubKriteriaService;
 use Illuminate\Support\Facades\DB;
 
-class MsSubKategoriServiceImpl implements MsSubKategoriService
+class MsSubKriteriaServiceImpl implements MsSubKriteriaService
 {
     /**
      * @param $id
@@ -21,7 +21,7 @@ class MsSubKategoriServiceImpl implements MsSubKategoriService
         ];
 
         try {
-            $dt = MsSubKategori::find($id);
+            $dt = MsSubKriteria::find($id);
             if (!$dt) {
                 $res = [
                     'status' => false,
@@ -54,7 +54,7 @@ class MsSubKategoriServiceImpl implements MsSubKategoriService
             $qtotal = "SELECT
                             count(msk.msk_id) as total
                         from
-                            ms_sub_kategori msk
+                            ms_sub_kriteria msk
                         where
                             0 = 0 $where";
             $total = DB::select($qtotal);
@@ -89,7 +89,9 @@ class MsSubKategoriServiceImpl implements MsSubKategoriService
                     "msk.msk_id",
                     "msk.msk_kode",
                     "msk.msk_nama",
+                    "msk.msk_bobot",
                     "msk.msk_status",
+                    "msk.mk_id",
                 ];
             }
 
@@ -97,7 +99,7 @@ class MsSubKategoriServiceImpl implements MsSubKategoriService
             $qdata = "SELECT
                             $slc
                         from
-                            ms_sub_kategori msk
+                            ms_sub_kriteria msk
                         where
                             0 = 0 $where
                         $order $limit";
@@ -134,10 +136,10 @@ class MsSubKategoriServiceImpl implements MsSubKategoriService
                     return $res;
                 }
 
-                if (empty($req['msk_kode']) || empty($req['msk_nama'])) {
+                if (empty($req['msk_kode']) || empty($req['msk_nama']) || empty($req['mk_id'])) {
                     $res = [
                         'status' => false,
-                        'msg' => 'Kode dan nama tidak boleh kosong!',
+                        'msg' => 'Kode, nama, dan kriteria tidak boleh kosong!',
                     ];
                     return $res;
                 }
@@ -150,10 +152,10 @@ class MsSubKategoriServiceImpl implements MsSubKategoriService
                     return $res;
                 }
 
-                if (empty($req->msk_kode) || empty($req->msk_nama)) {
+                if (empty($req->msk_kode) || empty($req->msk_nama) || empty($req->mk_id)) {
                     $res = [
                         'status' => false,
-                        'msg' => 'Kode dan nama tidak boleh kosong!',
+                        'msg' => 'Kode, nama, dan kriteria tidak boleh kosong!',
                     ];
                     return $res;
                 }
@@ -180,7 +182,7 @@ class MsSubKategoriServiceImpl implements MsSubKategoriService
         ];
 
         try {
-            $dt = MsSubKategori::create($data);
+            $dt = MsSubKriteria::create($data);
             if (!isset($dt->msk_id)) {
                 $res = [
                     'status' => false,
@@ -219,6 +221,8 @@ class MsSubKategoriServiceImpl implements MsSubKategoriService
 
             $dt->msk_kode = $data["msk_kode"];
             $dt->msk_nama = $data["msk_nama"];
+            $dt->msk_bobot = $data["msk_bobot"];
+            $dt->mk_id = $data["mk_id"];
             if (!is_null($data["msk_status"])) {
                 $dt->msk_status = $data["msk_status"];
             }
@@ -276,19 +280,30 @@ class MsSubKategoriServiceImpl implements MsSubKategoriService
 
     /**
      * @param string $act
-     * @param string $key
-     * @param string $val
+     * @param mixed $key
+     * @param mixed $val
      * @param string $old
      * @return array
      */
-    public function checkDuplicate(string $act, string $key, string $val, string $old = ""): string
+    public function checkDuplicate(string $act, $key, $val, string $old = ""): string
     {
         $res = "true";
 
         try {
-            $dt = MsSubKategori::where($key, $val);
-            if ($act == 'edit') {
-                $dt = $dt->where($key, "!=", $old);
+            if (gettype($key) == "array") {
+                $val = explode(",", $val);
+                $dt = MsSubKriteria::where($key[0], $val[0]);
+                for ($i = 1; $i < count($key); $i++) {
+                    $dt = $dt->where($key[$i], $val[$i]);
+                }
+                if ($act == 'edit') {
+                    $dt = $dt->where($key[0], "!=", $old);
+                }
+            } else {
+                $dt = MsSubKriteria::where($key, $val);
+                if ($act == 'edit') {
+                    $dt = $dt->where($key, "!=", $old);
+                }
             }
 
             if ($dt->count() > 0) {
@@ -328,7 +343,7 @@ class MsSubKategoriServiceImpl implements MsSubKategoriService
      * @param $id
      * @return array
      */
-    public function getKategori(): array
+    public function getKriteria(): array
     {
         $res = [
             'status' => true,
@@ -336,7 +351,7 @@ class MsSubKategoriServiceImpl implements MsSubKategoriService
         ];
 
         try {
-            $res = MsKategori::where("msk_status", true)->orderBy("msk_kode", "asc")->get();
+            $res["data"] = MsKriteria::where("mk_status", true)->orderBy("mk_kode", "asc")->get();
         } catch (\Throwable $th) {
             $res = [
                 'status' => false,

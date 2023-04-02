@@ -2,41 +2,32 @@
 
 namespace Tests\Feature\Controllers;
 
-use App\Models\MsMenus;
-use App\Models\MsUsers;
+use App\Models\MsSubKriteria;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Config;
 use Tests\TestCase;
 
-class MsMenusCTest extends TestCase
+class MsSubKriteriaCTest extends TestCase
 {
     private $sess_user;
     public function setUp(): void
     {
         parent::setUp();
-        $this->sess_user = [
-            "user_data" => [
-                "user_id" => 1,
-                "user_name" => "root",
-                "user_email" => "root@gmail.com",
-                "user_fullname" => "Root",
-                "group_id" => 1,
-            ]
-        ];
+        $this->sess_user = Config::get("constants.session");
     }
     public function testPage()
     {
         $this->withSession($this->sess_user)
-            ->get(route("ms-menus.index"))
+            ->get(route("ms-sub-kriteria.index"))
             ->assertStatus(200)
-            ->assertSeeText("Master Menu");
+            ->assertSeeText("Master Sub Kriteria");
     }
 
     public function testGetDataSuccess()
     {
         $dt = $this->withSession($this->sess_user)
-            ->get(route("ms-menus.get-data"));
+            ->get(route("ms-sub-kriteria.get-data"));
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
         self::assertGreaterThanOrEqual(0, $jsonDt["recordsTotal"]);
@@ -46,25 +37,23 @@ class MsMenusCTest extends TestCase
     public function testGetDataByParamSuccess()
     {
         $dt = $this->withSession($this->sess_user)
-            ->get(route("ms-menus.get-data") . "?search[value]=ADMIN");
+            ->get(route("ms-sub-kriteria.get-data") . "?search[value]=ADMIN");
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
-        self::assertGreaterThanOrEqual(1, $jsonDt["recordsTotal"]);
+        self::assertGreaterThanOrEqual(0, $jsonDt["recordsTotal"]);
         self::assertGreaterThanOrEqual(1, $jsonDt["data"]);
     }
 
     public function testAddSuccess()
     {
         $dt = $this->withSession($this->sess_user)
-            ->post(route("ms-menus.save"), [
+            ->post(route("ms-sub-kriteria.save"), [
                 "act" => "add",
-                "menu_kode" => "xx1",
-                "menu_nama" => "Menu tes",
-                "menu_link" => "#",
-                "menu_type" => 1,
-                "menu_ikon" => "",
-                "parent_menu_id" => 0,
-                "menu_status" => true,
+                "msk_kode" => "xx",
+                "msk_nama" => "Tes",
+                "msk_status" => true,
+                "msk_bobot" => 60,
+                "mk_id" => 1,
             ]);
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
@@ -74,11 +63,10 @@ class MsMenusCTest extends TestCase
     public function testAddError()
     {
         $dt = $this->withSession($this->sess_user)
-            ->post(route("ms-menus.save"), [
+            ->post(route("ms-sub-kriteria.save"), [
                 "act" => "add",
-                "user_name" => "tes01",
-                "user_fullname" => "Tes",
-                "user_email" => "tes01@gmail.com",
+                "msk_nama" => "Tes",
+                "msk_status" => true,
             ]);
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
@@ -87,19 +75,17 @@ class MsMenusCTest extends TestCase
 
     public function testEditSuccess()
     {
-        $last_menu_id = MsMenus::orderBy("menu_id", "desc")->first()->menu_id;
+        $last_id = MsSubKriteria::orderBy("msk_id", "desc")->first()->msk_id;
 
         $dt = $this->withSession($this->sess_user)
-            ->post(route("ms-menus.save"), [
+            ->post(route("ms-sub-kriteria.save"), [
                 "act" => "edit",
-                "menu_id" => $last_menu_id,
-                "menu_kode" => "xx1 update",
-                "menu_nama" => "Menu tes update",
-                "menu_link" => "#",
-                "menu_type" => 1,
-                "menu_ikon" => "i",
-                "parent_menu_id" => 1,
-                "menu_status" => false,
+                "msk_id" => $last_id,
+                "msk_kode" => "x1",
+                "msk_nama" => "Tes Update",
+                "msk_status" => false,
+                "msk_bobot" => 61,
+                "mk_id" => 2,
             ]);
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
@@ -109,12 +95,11 @@ class MsMenusCTest extends TestCase
     public function testEditError()
     {
         $dt = $this->withSession($this->sess_user)
-            ->post(route("ms-menus.save"), [
+            ->post(route("ms-sub-kriteria.save"), [
                 "act" => "edit",
-                "menu_id" => 0,
-                "menu_kode" => "xx1 update",
-                "menu_nama" => "Menu tes update",
-                "menu_link" => "#",
+                "msk_id" => 0,
+                "msk_kode" => "xx",
+                "msk_nama" => "Tes Update",
             ]);
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
@@ -123,10 +108,10 @@ class MsMenusCTest extends TestCase
 
     public function testDelSuccess()
     {
-        $last_menu_id = MsMenus::orderBy("menu_id", "desc")->first()->menu_id;
+        $last_id = MsSubKriteria::orderBy("msk_id", "desc")->first()->msk_id;
 
         $dt = $this->withSession($this->sess_user)
-            ->delete(route("ms-menus.delete", ['id' => $last_menu_id]));
+            ->delete(route("ms-sub-kriteria.delete", ['id' => $last_id]));
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
         self::assertTrue($jsonDt["status"]);
@@ -135,7 +120,7 @@ class MsMenusCTest extends TestCase
     public function testDelError()
     {
         $dt = $this->withSession($this->sess_user)
-            ->delete(route("ms-menus.delete", ["id" => 0]));
+            ->delete(route("ms-sub-kriteria.delete", ["id" => 0]));
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
         self::assertFalse($jsonDt["status"]);
@@ -144,7 +129,7 @@ class MsMenusCTest extends TestCase
     public function testNotFoundDuplicate()
     {
         $dt = $this->withSession($this->sess_user)
-            ->get(route("ms-menus.check-duplicate") . "?act=add&key=menu_kode&val=-01&old=");
+            ->get(route("ms-sub-kriteria.check-duplicate") . "?act=add&key=msk_kode&val=-01&old=");
         $dt->assertStatus(200);
         self::assertEquals("true", $dt->getContent());
     }
@@ -152,7 +137,7 @@ class MsMenusCTest extends TestCase
     public function testFoundDuplicate()
     {
         $dt = $this->withSession($this->sess_user)
-            ->get(route("ms-menus.check-duplicate") . "?act=add&key=menu_kode&val=01&old=xx1");
+            ->get(route("ms-sub-kriteria.check-duplicate") . "?act=add&key[0]=msk_kode&key[1]=mk_id&val=01,1=1&old=xx");
         $dt->assertStatus(200);
         self::assertEquals("false", $dt->getContent());
     }
@@ -160,24 +145,22 @@ class MsMenusCTest extends TestCase
     public function testGetByIdSuccess()
     {
         $dt = $this->withSession($this->sess_user)
-            ->get(route("ms-menus.get", ["id" => 7]));
+            ->get(route("ms-sub-kriteria.get", ["id" => 1]));
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
         self::assertTrue($jsonDt['status']);
-        self::assertEquals(7, $jsonDt['data']["menu_id"]);
-        self::assertEquals("00", $jsonDt['data']["menu_kode"]);
-        self::assertEquals("Dashboard", $jsonDt['data']["menu_nama"]);
-        self::assertEquals(1, $jsonDt['data']["menu_type"]);
-        self::assertEquals("dashboard", $jsonDt['data']["menu_link"]);
-        self::assertEquals("", $jsonDt['data']["menu_ikon"]);
-        self::assertEquals(true, $jsonDt['data']["menu_status"]);
-        self::assertEquals(0, $jsonDt['data']["parent_menu_id"]);
+        self::assertEquals(1, $jsonDt['data']["msk_id"]);
+        self::assertEquals("01", $jsonDt['data']["msk_kode"]);
+        self::assertEquals("Menetapkan Tujuan & Visi", $jsonDt['data']["msk_nama"]);
+        self::assertEquals(20, $jsonDt['data']["msk_bobot"]);
+        self::assertEquals(true, $jsonDt['data']["msk_status"]);
+        self::assertEquals(1, $jsonDt['data']["mk_id"]);
     }
 
     public function testGetByIdNotFound()
     {
         $dt = $this->withSession($this->sess_user)
-            ->get(route("ms-menus.get", ["id" => 0]));
+            ->get(route("ms-sub-kriteria.get", ["id" => 0]));
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
         self::assertFalse($jsonDt['status']);
@@ -187,18 +170,9 @@ class MsMenusCTest extends TestCase
     public function testGetByIdFailed()
     {
         $dt = $this->withSession($this->sess_user)
-            ->get(route("ms-menus.get", ["id" => "-"]));
+            ->get(route("ms-sub-kriteria.get", ["id" => "-"]));
         $dt->assertStatus(200);
         $jsonDt = json_decode($dt->getContent(), true);
         self::assertFalse($jsonDt['status']);
-    }
-
-    public function testGetOptParentSuccess()
-    {
-        $dt = $this->withSession($this->sess_user)
-            ->get(route("ms-menus.get-parent"));
-        $dt->assertStatus(200);
-        $jsonDt = json_decode($dt->getContent(), true);
-        self::assertTrue($jsonDt['status']);
     }
 }

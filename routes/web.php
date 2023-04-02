@@ -8,6 +8,7 @@ use App\Http\Controllers\MsGroupsC;
 use App\Http\Controllers\MsKategoriC;
 use App\Http\Controllers\MsKriteriaC;
 use App\Http\Controllers\MsMenusC;
+use App\Http\Controllers\MsSubKriteriaC;
 use App\Http\Controllers\MsUsersC;
 use App\Http\Controllers\ProfilC;
 use Illuminate\Support\Facades\Route;
@@ -70,6 +71,15 @@ Route::group(["middleware" => "has_auth"], function () {
         Route::delete('{id}', [MsKriteriaC::class, 'delete'])->name('ms-kriteria.delete');
         Route::get('', [MsKriteriaC::class, 'index'])->name('ms-kriteria.index');
         Route::post('', [MsKriteriaC::class, 'save'])->name('ms-kriteria.save');
+    });
+
+    Route::group(['prefix' => 'ms-sub-kriteria'], function () {
+        Route::get('check-duplicate', [MsSubKriteriaC::class, 'checkDuplicate'])->name('ms-sub-kriteria.check-duplicate');
+        Route::get('get-data', [MsSubKriteriaC::class, 'getData'])->name('ms-sub-kriteria.get-data');
+        Route::get('{id}', [MsSubKriteriaC::class, 'getById'])->name('ms-sub-kriteria.get');
+        Route::delete('{id}', [MsSubKriteriaC::class, 'delete'])->name('ms-sub-kriteria.delete');
+        Route::get('', [MsSubKriteriaC::class, 'index'])->name('ms-sub-kriteria.index');
+        Route::post('', [MsSubKriteriaC::class, 'save'])->name('ms-sub-kriteria.save');
     });
 
     Route::group(['prefix' => 'profil'], function () {

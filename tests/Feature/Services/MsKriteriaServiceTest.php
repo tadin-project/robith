@@ -120,7 +120,7 @@ class MsKriteriaServiceTest extends TestCase
 
     public function testUpdateSuccess()
     {
-        $last_id = MsKriteria::orderBy("mk_kode", "desc")->first()->mk_id;
+        $last_id = MsKriteria::orderBy("mk_id", "desc")->first()->mk_id;
 
         $res = $this->msKriteriaService->edit($last_id, [
             "mk_kode" => "xx",
@@ -152,7 +152,7 @@ class MsKriteriaServiceTest extends TestCase
 
     public function testDeleteSuccess()
     {
-        $last_id = MsKriteria::orderBy("mk_kode", "desc")->first()->mk_id;
+        $last_id = MsKriteria::orderBy("mk_id", "desc")->first()->mk_id;
 
         $res = $this->msKriteriaService->del($last_id);
         self::assertTrue($res['status']);

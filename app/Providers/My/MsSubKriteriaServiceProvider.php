@@ -2,20 +2,20 @@
 
 namespace App\Providers\My;
 
-use App\Services\Impl\MsSubKategoriServiceImpl;
-use App\Services\MsSubKategoriService;
+use App\Services\Impl\MsSubKriteriaServiceImpl;
+use App\Services\MsSubKriteriaService;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class MsSubKategoriServiceProvider extends ServiceProvider implements DeferrableProvider
+class MsSubKriteriaServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     public $singletons = [
-        MsSubKategoriService::class => MsSubKategoriServiceImpl::class,
+        MsSubKriteriaService::class => MsSubKriteriaServiceImpl::class,
     ];
 
     public function provides(): array
     {
-        return [MsSubKategoriService::class];
+        return [MsSubKriteriaService::class];
     }
 
     /**

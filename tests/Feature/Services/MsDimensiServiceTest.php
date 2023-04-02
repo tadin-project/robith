@@ -118,7 +118,7 @@ class MsDimensiServiceTest extends TestCase
 
     public function testUpdateSuccess()
     {
-        $last_id = MsDimensi::orderBy("md_kode", "desc")->first()->md_id;
+        $last_id = MsDimensi::orderBy("md_id", "desc")->first()->md_id;
 
         $res = $this->msDimensiService->edit($last_id, [
             "md_kode" => "xx",
@@ -149,7 +149,7 @@ class MsDimensiServiceTest extends TestCase
 
     public function testDeleteSuccess()
     {
-        $last_id = MsDimensi::orderBy("md_kode", "desc")->first()->md_id;
+        $last_id = MsDimensi::orderBy("md_id", "desc")->first()->md_id;
 
         $res = $this->msDimensiService->del($last_id);
         self::assertTrue($res['status']);
