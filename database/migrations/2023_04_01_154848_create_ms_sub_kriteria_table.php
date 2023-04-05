@@ -20,6 +20,7 @@ class CreateMsSubKriteriaTable extends Migration
             $table->boolean("msk_status")->nullable()->default(true);
             $table->unsignedSmallInteger("msk_bobot")->nullable()->default(0);
             $table->unsignedSmallInteger("mk_id")->nullable();
+            $table->boolean("msk_is_submission")->nullable()->default(false);
 
             $table->unique(array('mk_id', 'msk_kode'));
             $table->foreign("mk_id", "fk_ms_sub_kriteria_mk_id")->references("mk_id")->on("ms_kriteria")->onDelete("cascade")->onUpdate("cascade");

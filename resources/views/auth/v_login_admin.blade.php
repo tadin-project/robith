@@ -140,8 +140,9 @@
               type: 'POST',
               url: "{{ route('auth-admin.login') }}",
               data: $data,
-              error: function() {
+              error: function(r) {
                 btnSubmit.removeAttr('disabled', 'disabled').text('Sign In');
+                Swal.fire("Error", r.message, "error");
               },
               complete: function() {
                 btnSubmit.removeAttr('disabled', 'disabled').text('Sign In');

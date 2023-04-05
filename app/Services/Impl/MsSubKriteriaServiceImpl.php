@@ -90,6 +90,7 @@ class MsSubKriteriaServiceImpl implements MsSubKriteriaService
                     "msk.msk_kode",
                     "msk.msk_nama",
                     "msk.msk_bobot",
+                    "msk.msk_is_submission",
                     "msk.msk_status",
                     "msk.mk_id",
                 ];
@@ -222,6 +223,7 @@ class MsSubKriteriaServiceImpl implements MsSubKriteriaService
             $dt->msk_kode = $data["msk_kode"];
             $dt->msk_nama = $data["msk_nama"];
             $dt->msk_bobot = $data["msk_bobot"];
+            $dt->msk_is_submission = $data["msk_is_submission"];
             $dt->mk_id = $data["mk_id"];
             if (!is_null($data["msk_status"])) {
                 $dt->msk_status = $data["msk_status"];

@@ -42,6 +42,7 @@ MyC
             "msk.msk_kode",
             "msk.msk_nama",
             "msk.msk_bobot",
+            "msk.msk_is_submission",
             "msk.msk_status",
             "msk.mk_id",
         ];
@@ -120,6 +121,7 @@ MyC
         $no = $i + $inputStart;
 
         $status = "";
+        $isSubmission = "";
         $aksi = "";
 
         foreach ($detailData as $v) {
@@ -128,6 +130,12 @@ MyC
                 $status = "<span class='badge badge-success'>Aktif</span>";
             } else {
                 $status = "<span class='badge badge-danger'>Non Aktif</span>";
+            }
+
+            if ($v->msk_is_submission == 1) {
+                $isSubmission = "<span class='badge badge-success'>Ya</span>";
+            } else {
+                $isSubmission = "<span class='badge badge-danger'>Tidak</span>";
             }
 
             $id = $v->msk_id;
@@ -143,6 +151,7 @@ MyC
                 $v->msk_kode,
                 $v->msk_nama,
                 $v->msk_bobot,
+                $isSubmission,
                 $status,
                 $aksi,
             ];
@@ -170,6 +179,7 @@ MyC
             'msk_kode' => $request->msk_kode,
             'msk_status' => $request->msk_status,
             'msk_bobot' => $request->msk_bobot,
+            'msk_is_submission' => $request->msk_is_submission,
             'mk_id' => $request->mk_id,
         ];
 
@@ -206,6 +216,7 @@ MyC
                 "msk_kode" => $dt->msk_kode,
                 "msk_bobot" => $dt->msk_bobot,
                 "msk_status" => $dt->msk_status,
+                "msk_is_submission" => $dt->msk_is_submission,
                 "mk_id" => $dt->mk_id,
             ];
             $res["data"] = $data;

@@ -33,7 +33,7 @@
               <input type="hidden" id="msk_id" name="msk_id">
               <div class="row form-group">
                 <label class="col-md-3 control-label">Kriteria</label>
-                <div class="col-md-2">
+                <div class="col-md-5">
                   <select class="form-control" id="mk_id" name="mk_id">
                     @foreach ($optKriteria as $v)
                       <option value="{{ $v->mk_id }}">{{ $v->mk_kode }} - {{ $v->mk_nama }}</option>
@@ -56,8 +56,17 @@
               </div>
               <div class="row form-group">
                 <label class="col-md-3 control-label">Bobot</label>
-                <div class="col-md-5">
+                <div class="col-md-2">
                   <input type="text" class="form-control" id="msk_bobot" name="msk_bobot">
+                </div>
+              </div>
+              <div class="row form-group">
+                <label class="col-md-3 control-label">Perlu Submission?</label>
+                <div class="col-md-2">
+                  <select name="msk_is_submission" id="msk_is_submission" class="form-control">
+                    <option value="1">Ya</option>
+                    <option value="0">Tidak</option>
+                  </select>
                 </div>
               </div>
               <div class="row form-group">
@@ -94,13 +103,15 @@
                 </div>
               </div>
             </div>
-            <table class="table table-sm table-striped table-bordered table-hover" id="tableVendor" style="width: 100%">
+            <table class="table table-sm table-striped table-bordered table-hover" id="tableVendor"
+              style="width: 100%">
               <thead>
                 <tr>
                   <th class="text-center">No</th>
                   <th class="text-center">Kode</th>
                   <th class="text-center">Nama</th>
                   <th class="text-center">Bobot</th>
+                  <th class="text-center">Butuh<br>Submission</th>
                   <th class="text-center">Status</th>
                   <th class="text-center">Aksi</th>
                 </tr>
@@ -130,6 +141,7 @@
     mskKode = $("#msk_kode"),
     oldMskKode = $("#old_msk_kode"),
     mskBobot = $("#msk_bobot"),
+    mskIsSubmission = $("#msk_is_submission"),
     mskStatus = $("#msk_status"),
     btnBatal = $("#btnBatal"),
     btnSimpan = $("#btnSimpan");
@@ -165,10 +177,10 @@
           targets: [0, -1],
           orderable: false,
         }, {
-          targets: [-3],
+          targets: [-4],
           className: "text-right"
         }, {
-          targets: [0, -2, -1],
+          targets: [0, -3, -2, -1],
           className: "text-center"
         }, {
           targets: [0],
@@ -324,6 +336,7 @@
           mskNama.val(dt.msk_nama);
           mskBobot.val(dt.msk_bobot);
           mskStatus.val(dt.msk_status);
+          mskIsSubmission.val(dt.msk_is_submission);
 
           rowForm.slideDown(500);
           rowData.slideUp(500);

@@ -48,6 +48,9 @@ class GroupMenusSeeder extends Seeder
             'group_id' => 1,
             'menu_id' => 11,
         ], [
+            'group_id' => 1,
+            'menu_id' => 12,
+        ], [
             'group_id' => 2,
             'menu_id' => 1,
         ], [
@@ -77,6 +80,9 @@ class GroupMenusSeeder extends Seeder
         ], [
             'group_id' => 2,
             'menu_id' => 11,
+        ], [
+            'group_id' => 2,
+            'menu_id' => 12,
         ], [
             'group_id' => 3,
             'menu_id' => 7,

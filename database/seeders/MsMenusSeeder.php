@@ -113,6 +113,15 @@ class MsMenusSeeder extends Seeder
             'menu_link' => "ms-sub-kriteria",
             'menu_ikon' => "",
             'parent_menu_id' => 8,
+        ], [
+            'menu_id' => 12,
+            'menu_kode' => '01.02.04',
+            'menu_nama' => 'Master Kategori Usaha',
+            'menu_status' => true,
+            'menu_type' => 1,
+            'menu_link' => "ms-kategori-usaha",
+            'menu_ikon' => "",
+            'parent_menu_id' => 8,
         ],]);
     }
 }
