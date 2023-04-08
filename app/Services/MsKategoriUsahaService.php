@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-interface MsSubKriteriaService
+interface MsKategoriUsahaService
 {
     public function getTotal(string $where): array;
     public function getData(string $where = "", string $order = "", string $limit = "", array $cols = []): array;
@@ -12,6 +12,4 @@ interface MsSubKriteriaService
     public function del($id): array;
     public function checkDuplicate(string $act, $key, $val, string $old = ""): string;
     public function getById($id): array;
-    public function getDimensi(): array;
-    public function getKriteria(int $dimensi_id): array;
 }

@@ -76,6 +76,7 @@ Route::group(["middleware" => "has_auth"], function () {
     Route::group(['prefix' => 'ms-sub-kriteria'], function () {
         Route::get('check-duplicate', [MsSubKriteriaC::class, 'checkDuplicate'])->name('ms-sub-kriteria.check-duplicate');
         Route::get('get-data', [MsSubKriteriaC::class, 'getData'])->name('ms-sub-kriteria.get-data');
+        Route::get('get-kriteria', [MsSubKriteriaC::class, 'getKriteria'])->name('ms-sub-kriteria.get-kriteria');
         Route::get('{id}', [MsSubKriteriaC::class, 'getById'])->name('ms-sub-kriteria.get');
         Route::delete('{id}', [MsSubKriteriaC::class, 'delete'])->name('ms-sub-kriteria.delete');
         Route::get('', [MsSubKriteriaC::class, 'index'])->name('ms-sub-kriteria.index');

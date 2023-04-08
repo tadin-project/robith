@@ -2,13 +2,11 @@
 
 namespace App\Services\Impl;
 
-use App\Models\MsDimensi;
-use App\Models\MsKriteria;
-use App\Models\MsSubKriteria;
-use App\Services\MsSubKriteriaService;
+use App\Models\MsKategoriUsaha;
+use App\Services\MsKategoriUsahaService;
 use Illuminate\Support\Facades\DB;
 
-class MsSubKriteriaServiceImpl implements MsSubKriteriaService
+class MsKategoriUsahaServiceImpl implements MsKategoriUsahaService
 {
     /**
      * @param $id
@@ -22,7 +20,7 @@ class MsSubKriteriaServiceImpl implements MsSubKriteriaService
         ];
 
         try {
-            $dt = MsSubKriteria::find($id);
+            $dt = MsKategoriUsaha::find($id);
             if (!$dt) {
                 $res = [
                     'status' => false,
@@ -53,9 +51,9 @@ class MsSubKriteriaServiceImpl implements MsSubKriteriaService
 
         try {
             $qtotal = "SELECT
-                            count(msk.msk_id) as total
+                            count(mku.mku_id) as total
                         from
-                            ms_sub_kriteria msk
+                            ms_kategori_usaha
                         where
                             0 = 0 $where";
             $total = DB::select($qtotal);
@@ -87,13 +85,13 @@ class MsSubKriteriaServiceImpl implements MsSubKriteriaService
         try {
             if (count($cols) == 0) {
                 $cols = [
-                    "msk.msk_id",
-                    "msk.msk_kode",
-                    "msk.msk_nama",
-                    "msk.msk_bobot",
-                    "msk.msk_is_submission",
-                    "msk.msk_status",
-                    "msk.mk_id",
+                    "mku.mku_id",
+                    "mku.mku_kode",
+                    "mku.mku_nama",
+                    "mku.mku_bobot",
+                    "mku.mku_is_submission",
+                    "mku.mku_status",
+                    "mku.mk_id",
                 ];
             }
 
@@ -138,7 +136,7 @@ class MsSubKriteriaServiceImpl implements MsSubKriteriaService
                     return $res;
                 }
 
-                if (empty($req['msk_kode']) || empty($req['msk_nama']) || empty($req['mk_id'])) {
+                if (empty($req['mku_kode']) || empty($req['mku_nama']) || empty($req['mk_id'])) {
                     $res = [
                         'status' => false,
                         'msg' => 'Kode, nama, dan kriteria tidak boleh kosong!',
@@ -154,7 +152,7 @@ class MsSubKriteriaServiceImpl implements MsSubKriteriaService
                     return $res;
                 }
 
-                if (empty($req->msk_kode) || empty($req->msk_nama) || empty($req->mk_id)) {
+                if (empty($req->mku_kode) || empty($req->mku_nama) || empty($req->mk_id)) {
                     $res = [
                         'status' => false,
                         'msg' => 'Kode, nama, dan kriteria tidak boleh kosong!',
@@ -184,8 +182,8 @@ class MsSubKriteriaServiceImpl implements MsSubKriteriaService
         ];
 
         try {
-            $dt = MsSubKriteria::create($data);
-            if (!isset($dt->msk_id)) {
+            $dt = MsKategoriUsaha::create($data);
+            if (!isset($dt->mku_id)) {
                 $res = [
                     'status' => false,
                     'msg' => 'Data gagal ditambahkan. Silahkan hubungi Admin!',
@@ -221,13 +219,13 @@ class MsSubKriteriaServiceImpl implements MsSubKriteriaService
 
             $dt = $cekData['data'];
 
-            $dt->msk_kode = $data["msk_kode"];
-            $dt->msk_nama = $data["msk_nama"];
-            $dt->msk_bobot = $data["msk_bobot"];
-            $dt->msk_is_submission = $data["msk_is_submission"];
+            $dt->mku_kode = $data["mku_kode"];
+            $dt->mku_nama = $data["mku_nama"];
+            $dt->mku_bobot = $data["mku_bobot"];
+            $dt->mku_is_submission = $data["mku_is_submission"];
             $dt->mk_id = $data["mk_id"];
-            if (!is_null($data["msk_status"])) {
-                $dt->msk_status = $data["msk_status"];
+            if (!is_null($data["mku_status"])) {
+                $dt->mku_status = $data["mku_status"];
             }
 
             $d = $dt->save();
@@ -295,7 +293,7 @@ class MsSubKriteriaServiceImpl implements MsSubKriteriaService
         try {
             if (gettype($key) == "array") {
                 $val = explode(",", $val);
-                $dt = MsSubKriteria::where($key[0], $val[0]);
+                $dt = MsKategoriUsaha::where($key[0], $val[0]);
                 for ($i = 1; $i < count($key); $i++) {
                     $dt = $dt->where($key[$i], $val[$i]);
                 }
@@ -303,7 +301,7 @@ class MsSubKriteriaServiceImpl implements MsSubKriteriaService
                     $dt = $dt->where($key[0], "!=", $old);
                 }
             } else {
-                $dt = MsSubKriteria::where($key, $val);
+                $dt = MsKategoriUsaha::where($key, $val);
                 if ($act == 'edit') {
                     $dt = $dt->where($key, "!=", $old);
                 }
@@ -332,51 +330,6 @@ class MsSubKriteriaServiceImpl implements MsSubKriteriaService
 
         try {
             $res = $this->__cekData($id);
-        } catch (\Throwable $th) {
-            $res = [
-                'status' => false,
-                'msg' => $th->getMessage(),
-            ];
-        }
-
-        return $res;
-    }
-
-    /**
-     * @return array
-     */
-    public function getDimensi(): array
-    {
-        $res = [
-            'status' => true,
-            'msg' => "",
-        ];
-
-        try {
-            $res["data"] = MsDimensi::where("md_status", true)->orderBy("md_kode", "asc")->get();
-        } catch (\Throwable $th) {
-            $res = [
-                'status' => false,
-                'msg' => $th->getMessage(),
-            ];
-        }
-
-        return $res;
-    }
-
-    /**
-     * @param int $dimensi_id
-     * @return array
-     */
-    public function getKriteria(int $dimensi_id): array
-    {
-        $res = [
-            'status' => true,
-            'msg' => "",
-        ];
-
-        try {
-            $res["data"] = MsKriteria::where("md_id", $dimensi_id)->where("mk_status", true)->orderBy("mk_kode", "asc")->get();
         } catch (\Throwable $th) {
             $res = [
                 'status' => false,

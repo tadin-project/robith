@@ -7,9 +7,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class MsSubKriteriaC extends
-
-MyC
+class MsSubKriteriaC extends MyC
 {
     private MsSubKriteriaService $msSubKriteriaService;
     public function __construct(MsSubKriteriaService $msSubKriteriaService)
@@ -21,15 +19,15 @@ MyC
 
     public function index(): View
     {
-        $optKriteria = [];
-        $cekKriteria = $this->msSubKriteriaService->getKriteria();
-        if ($cekKriteria["status"]) {
-            $optKriteria = $cekKriteria["data"];
+        $optDimensi = [];
+        $cekDimensi = $this->msSubKriteriaService->getDimensi();
+        if ($cekDimensi["status"]) {
+            $optDimensi = $cekDimensi["data"];
         }
 
         $data = [
             "__title" => "Master Sub Kriteria",
-            "optKriteria" => $optKriteria,
+            "optDimensi" => $optDimensi,
         ];
 
         return $this->my_view("v_ms_sub_kriteria", $data);
@@ -218,9 +216,18 @@ MyC
                 "msk_status" => $dt->msk_status,
                 "msk_is_submission" => $dt->msk_is_submission,
                 "mk_id" => $dt->mk_id,
+                "md_id" => $dt->kriteria->md_id,
             ];
             $res["data"] = $data;
         }
+        return response()->json($res);
+    }
+
+    public function getKriteria(Request $request): JsonResponse
+    {
+        $dimensi_id = $request->dimensi_id;
+        if (empty($dimensi_id)) $dimensi_id = 0;
+        $res = $this->msSubKriteriaService->getKriteria($dimensi_id);
         return response()->json($res);
     }
 }

@@ -32,12 +32,19 @@
               <input type="hidden" id="act" name="act" value="add">
               <input type="hidden" id="msk_id" name="msk_id">
               <div class="row form-group">
+                <label class="col-md-3 control-label">Dimensi</label>
+                <div class="col-md-4">
+                  <select class="form-control" id="md_id" name="md_id">
+                    @foreach ($optDimensi as $v)
+                      <option value="{{ $v->md_id }}">{{ $v->md_kode }} - {{ $v->md_nama }}</option>
+                    @endforeach
+                  </select>
+                </div>
+              </div>
+              <div class="row form-group">
                 <label class="col-md-3 control-label">Kriteria</label>
                 <div class="col-md-5">
                   <select class="form-control" id="mk_id" name="mk_id">
-                    @foreach ($optKriteria as $v)
-                      <option value="{{ $v->mk_id }}">{{ $v->mk_kode }} - {{ $v->mk_nama }}</option>
-                    @endforeach
                   </select>
                 </div>
               </div>
@@ -92,12 +99,21 @@
             <div class="row">
               <div class="col-md-6">
                 <div class="row form-group">
+                  <label class="col-md-3 control-label">Dimensi</label>
+                  <div class="col-md-9">
+                    <select class="form-control" id="fil_md_id" name="fil_md_id">
+                      @foreach ($optDimensi as $v)
+                        <option value="{{ $v->md_id }}">{{ $v->md_kode }} - {{ $v->md_nama }}</option>
+                      @endforeach
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row form-group">
                   <label class="col-md-3 control-label">Kriteria</label>
                   <div class="col-md-9">
                     <select class="form-control" id="fil_mk_id" name="fil_mk_id">
-                      @foreach ($optKriteria as $v)
-                        <option value="{{ $v->mk_id }}">{{ $v->mk_kode }} - {{ $v->mk_nama }}</option>
-                      @endforeach
                     </select>
                   </div>
                 </div>
@@ -136,6 +152,7 @@
   const formVendor = $("#formVendor"),
     act = $("#act"),
     mskId = $("#msk_id"),
+    mdId = $("#md_id"),
     mkId = $("#mk_id"),
     mskNama = $("#msk_nama"),
     mskKode = $("#msk_kode"),
@@ -148,6 +165,7 @@
 
   // datatable
   const tableVendor = $("#tableVendor"),
+    filMdId = $("#fil_md_id"),
     filMkId = $("#fil_mk_id"),
     btnTambah = $("#btnTambah");
 
@@ -295,7 +313,8 @@
     if (isShow) {
       rowForm.slideDown(500);
       rowData.slideUp(500);
-      mkId.val(filMkId.val());
+      mdId.val(filMdId.val());
+      fnGetKriteria("#" + mkId.attr("id"), filMdId.val(), filMkId.val());
       btnBatal.show();
       btnTambah.hide();
     } else {
@@ -319,6 +338,36 @@
     tableVendor.DataTable().draw()
   }
 
+  function fnGetKriteria(target, dimensi_id, selectedId = "") {
+    $(target).find("option[value!=0]").remove();
+    $.ajax({
+      url: "{{ route('ms-sub-kriteria.get-kriteria') }}",
+      cache: false,
+      dataType: 'json',
+      data: {
+        dimensi_id: dimensi_id
+      },
+      success: function(res) {
+        if (res.status) {
+          if (res.data.length > 0) {
+            let opt = "",
+              selected = "";
+            $.each(res.data, function(index, i) {
+              selected = i.mk_id == selectedId ? "selected" : "";
+              opt += `<option value="${i.mk_id}" ${selected}>${i.mk_kode} - ${i.mk_nama}</option>`;
+            });
+            $(target).append(opt);
+            if (target == "#fil_mk_id") {
+              fnLoadTbl();
+            }
+          }
+        } else {
+          Swal.fire("Error", res.msg, "error");
+        }
+      }
+    })
+  }
+
   function fnEdit(id) {
     $.ajax({
       url: baseDir + '/' + id,
@@ -330,7 +379,8 @@
 
           act.val('edit');
           mskId.val(id);
-          mkId.val(dt.mk_id);
+          mdId.val(dt.md_id);
+          fnGetKriteria("#" + mkId.attr("id"), dt.md_id, dt.mk_id);
           mskKode.val(dt.msk_kode);
           oldMskKode.val(dt.msk_kode);
           mskNama.val(dt.msk_nama);
@@ -404,5 +454,14 @@
       fnLoadTbl();
     });
 
+    filMdId.change(function() {
+      fnGetKriteria("#" + filMkId.attr("id"), $(this).val());
+    });
+
+    mdId.change(function() {
+      fnGetKriteria("#" + mkId.attr("id"), $(this).val());
+    });
+
+    fnGetKriteria("#" + filMkId.attr("id"), filMdId.val());
   });
 </script>
