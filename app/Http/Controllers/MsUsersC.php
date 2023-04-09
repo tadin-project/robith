@@ -21,7 +21,7 @@ class MsUsersC extends MyC
 
     public function index(): View
     {
-        $cekOptGroup = $this->msUsersService->getOptGroup();
+        $cekOptGroup = $this->msUsersService->getOptGroup(($this->__sess_user["group_id"] == 1 ? true : false));
         $optGroup = [];
 
         if ($cekOptGroup['status']) {

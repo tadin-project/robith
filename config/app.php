@@ -185,6 +185,7 @@ return [
         App\Providers\My\MsMenusServiceProvider::class,
         App\Providers\My\MsSubKriteriaServiceProvider::class,
         App\Providers\My\MsUsersServiceProvider::class,
+        App\Providers\My\TenantServiceProvider::class,
 
     ],
 

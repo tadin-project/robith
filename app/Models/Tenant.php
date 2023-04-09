@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Tenant extends Model
 {
     use HasFactory;
+    protected $table = "tenant";
+    protected $primaryKey = "tenant_id";
+    protected $guarded = [];
+    public $timestamps = true;
 }

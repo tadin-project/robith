@@ -12,5 +12,5 @@ interface MsUsersService
     public function del($id): array;
     public function checkDuplicate(string $act, string $key, string $val, string $old = ""): string;
     public function getById($id): array;
-    public function getOptGroup(): array;
+    public function getOptGroup(bool $isRoot = false): array;
 }
