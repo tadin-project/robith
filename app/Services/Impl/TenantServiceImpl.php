@@ -96,8 +96,8 @@ class TenantServiceImpl implements TenantService
             if ($ku->count() > 0) {
                 foreach ($ku as $v) {
                     $data[] = [
-                        "id" => $v->mku_id,
-                        "nama" => $v->mku_nama,
+                        "mku_id" => $v->mku_id,
+                        "mku_nama" => $v->mku_nama,
                     ];
                 }
             }
@@ -161,6 +161,10 @@ class TenantServiceImpl implements TenantService
                             count(t.tenant_id) as total
                         from
                             tenant t
+                        inner join ms_users mu on
+                            mu.user_id = t.user_id
+                        inner join ms_kategori_usaha mku  on
+                            mku.mku_id = t.mku_id 
                         where
                             0 = 0 $where";
             $total = DB::select($qtotal);
@@ -195,10 +199,10 @@ class TenantServiceImpl implements TenantService
                 $cols = [
                     "t.tenant_id",
                     "t.tenant_nama",
-                    "t.tenant_desc",
+                    "mu.user_name",
+                    "mku.mku_nama",
                     "t.tenant_status",
-                    "t.user_id",
-                    "t.mku_id",
+                    "mu.user_fullname",
                 ];
             }
 
@@ -207,6 +211,10 @@ class TenantServiceImpl implements TenantService
                             $slc
                         from
                             tenant t
+                        inner join ms_users mu on
+                            mu.user_id = t.user_id
+                        inner join ms_kategori_usaha mku  on
+                            mku.mku_id = t.mku_id 
                         where
                             0 = 0 $where
                         $order $limit";

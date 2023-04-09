@@ -12,6 +12,7 @@ use App\Http\Controllers\MsMenusC;
 use App\Http\Controllers\MsSubKriteriaC;
 use App\Http\Controllers\MsUsersC;
 use App\Http\Controllers\ProfilC;
+use App\Http\Controllers\TenantC;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -91,6 +92,15 @@ Route::group(["middleware" => "has_auth"], function () {
         Route::delete('{id}', [MsKategoriUsahaC::class, 'delete'])->name('ms-kategori-usaha.delete');
         Route::get('', [MsKategoriUsahaC::class, 'index'])->name('ms-kategori-usaha.index');
         Route::post('', [MsKategoriUsahaC::class, 'save'])->name('ms-kategori-usaha.save');
+    });
+
+    Route::group(['prefix' => 'tenant'], function () {
+        Route::get('get-data', [TenantC::class, 'getData'])->name('tenant.get-data');
+        Route::get('get-users', [TenantC::class, 'getUsers'])->name('tenant.get-user');
+        Route::get('{id}', [TenantC::class, 'getById'])->name('tenant.get');
+        Route::delete('{id}', [TenantC::class, 'delete'])->name('tenant.delete');
+        Route::get('', [TenantC::class, 'index'])->name('tenant.index');
+        Route::post('', [TenantC::class, 'save'])->name('tenant.save');
     });
 
     Route::group(['prefix' => 'profil'], function () {
