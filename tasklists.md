@@ -18,8 +18,8 @@
 -   [x] 02 - master data
 -   [x] 02.01 - master dimensi
 -   [x] 02.02 - master kriteria
--   [ ] 02.03 - master sub kriteria (kurang alur pilih dimensi, baru kriteria)
--   [ ] 02.04 - master kategori usaha
+-   [x] 02.03 - master sub kriteria (kurang alur pilih dimensi, baru kriteria)
+-   [x] 02.04 - master kategori usaha
 -   [ ] 02.05 - master lampiran
 -   [ ] 03 - tenant
 

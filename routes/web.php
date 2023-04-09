@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardC;
 use App\Http\Controllers\MsDimensiC;
 use App\Http\Controllers\MsGroupsC;
 use App\Http\Controllers\MsKategoriC;
+use App\Http\Controllers\MsKategoriUsahaC;
 use App\Http\Controllers\MsKriteriaC;
 use App\Http\Controllers\MsMenusC;
 use App\Http\Controllers\MsSubKriteriaC;
@@ -81,6 +82,15 @@ Route::group(["middleware" => "has_auth"], function () {
         Route::delete('{id}', [MsSubKriteriaC::class, 'delete'])->name('ms-sub-kriteria.delete');
         Route::get('', [MsSubKriteriaC::class, 'index'])->name('ms-sub-kriteria.index');
         Route::post('', [MsSubKriteriaC::class, 'save'])->name('ms-sub-kriteria.save');
+    });
+
+    Route::group(['prefix' => 'ms-kategori-usaha'], function () {
+        Route::get('check-duplicate', [MsKategoriUsahaC::class, 'checkDuplicate'])->name('ms-kategori-usaha.check-duplicate');
+        Route::get('get-data', [MsKategoriUsahaC::class, 'getData'])->name('ms-kategori-usaha.get-data');
+        Route::get('{id}', [MsKategoriUsahaC::class, 'getById'])->name('ms-kategori-usaha.get');
+        Route::delete('{id}', [MsKategoriUsahaC::class, 'delete'])->name('ms-kategori-usaha.delete');
+        Route::get('', [MsKategoriUsahaC::class, 'index'])->name('ms-kategori-usaha.index');
+        Route::post('', [MsKategoriUsahaC::class, 'save'])->name('ms-kategori-usaha.save');
     });
 
     Route::group(['prefix' => 'profil'], function () {

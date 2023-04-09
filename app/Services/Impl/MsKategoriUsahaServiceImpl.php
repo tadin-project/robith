@@ -53,7 +53,7 @@ class MsKategoriUsahaServiceImpl implements MsKategoriUsahaService
             $qtotal = "SELECT
                             count(mku.mku_id) as total
                         from
-                            ms_kategori_usaha
+                            ms_kategori_usaha mku
                         where
                             0 = 0 $where";
             $total = DB::select($qtotal);
@@ -88,10 +88,7 @@ class MsKategoriUsahaServiceImpl implements MsKategoriUsahaService
                     "mku.mku_id",
                     "mku.mku_kode",
                     "mku.mku_nama",
-                    "mku.mku_bobot",
-                    "mku.mku_is_submission",
                     "mku.mku_status",
-                    "mku.mk_id",
                 ];
             }
 
@@ -99,7 +96,7 @@ class MsKategoriUsahaServiceImpl implements MsKategoriUsahaService
             $qdata = "SELECT
                             $slc
                         from
-                            ms_sub_kriteria msk
+                            ms_kategori_usaha mku
                         where
                             0 = 0 $where
                         $order $limit";
@@ -136,10 +133,10 @@ class MsKategoriUsahaServiceImpl implements MsKategoriUsahaService
                     return $res;
                 }
 
-                if (empty($req['mku_kode']) || empty($req['mku_nama']) || empty($req['mk_id'])) {
+                if (empty($req['mku_kode']) || empty($req['mku_nama'])) {
                     $res = [
                         'status' => false,
-                        'msg' => 'Kode, nama, dan kriteria tidak boleh kosong!',
+                        'msg' => 'Kode dan nama tidak boleh kosong!',
                     ];
                     return $res;
                 }
@@ -152,10 +149,10 @@ class MsKategoriUsahaServiceImpl implements MsKategoriUsahaService
                     return $res;
                 }
 
-                if (empty($req->mku_kode) || empty($req->mku_nama) || empty($req->mk_id)) {
+                if (empty($req->mku_kode) || empty($req->mku_nama)) {
                     $res = [
                         'status' => false,
-                        'msg' => 'Kode, nama, dan kriteria tidak boleh kosong!',
+                        'msg' => 'Kode dan nama tidak boleh kosong!',
                     ];
                     return $res;
                 }
@@ -221,9 +218,6 @@ class MsKategoriUsahaServiceImpl implements MsKategoriUsahaService
 
             $dt->mku_kode = $data["mku_kode"];
             $dt->mku_nama = $data["mku_nama"];
-            $dt->mku_bobot = $data["mku_bobot"];
-            $dt->mku_is_submission = $data["mku_is_submission"];
-            $dt->mk_id = $data["mk_id"];
             if (!is_null($data["mku_status"])) {
                 $dt->mku_status = $data["mku_status"];
             }

@@ -122,6 +122,24 @@ class MsMenusSeeder extends Seeder
             'menu_link' => "ms-kategori-usaha",
             'menu_ikon' => "",
             'parent_menu_id' => 8,
+        ], [
+            'menu_id' => 13,
+            'menu_kode' => '01.02.05',
+            'menu_nama' => 'Master Lampiran',
+            'menu_status' => true,
+            'menu_type' => 1,
+            'menu_link' => "ms-lampiran",
+            'menu_ikon' => "",
+            'parent_menu_id' => 8,
+        ], [
+            'menu_id' => 14,
+            'menu_kode' => '01.03',
+            'menu_nama' => 'Data Tenant',
+            'menu_status' => true,
+            'menu_type' => 1,
+            'menu_link' => "tenant",
+            'menu_ikon' => "",
+            'parent_menu_id' => 1,
         ],]);
     }
 }
