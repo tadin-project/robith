@@ -29,6 +29,8 @@
     href="{{ asset('') }}assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
   <!-- Jstree -->
   <link rel="stylesheet" href="{{ asset('') }}assets/plugins/jstree/css/style.min.css">
+  <!-- Toastr -->
+  <link rel="stylesheet" href="{{ asset('') }}assets/plugins/toastr/toastr.min.css">
   <style>
     .has-error .help-block {
       color: red;
@@ -55,6 +57,8 @@
   <script src="{{ asset('') }}assets/plugins/jquery-validation/jquery.validate.min.js"></script>
   <!-- Jquery Validation PLugin -->
   <script src="{{ asset('') }}assets/plugins/jquery-validation/localization/messages_id.min.js"></script>
+  <!-- Toastr -->
+  <script src="{{ asset('') }}assets/plugins/toastr/toastr.min.js"></script>
 </head>
 
 <body class="login-page">
@@ -69,7 +73,7 @@
         <form id="formVendor" method="post">
           <div class="baris-form mb-3">
             <div class="input-group">
-              <input type="text" class="form-control" placeholder="Username" id="user_name" name="user_name">
+              <input type="text" class="form-control" placeholder="Email" id="user_email" name="user_email">
               <div class="input-group-append">
                 <div class="input-group-text">
                   <span class="fas fa-envelope"></span>
@@ -94,18 +98,17 @@
             </div>
           </div>
         </form>
-        {{-- <p class="mb-1">
-          <a href="{{ url('admin/forgot-password') }}">I forgot my password</a>
-        </p> --}}
-        {{-- <p class="mb-0">
-          <a href="{{ url('admin/register') }}" class="text-center">Register a new membership</a>
-        </p> --}}
+        <p class="mb-1">
+          <a href="{{ route('auth.forgot') }}">I forgot my password</a>
+        </p>
+        <p class="mb-0">
+          <a href="{{ route('auth.register') }}" class="text-center">Register a new membership</a>
+        </p>
       </div>
 
     </div>
   </div>
   <script>
-    const baseDir = "{{ route('auth.index') }}"
     const formVendor = $("#formVendor"),
       btnSubmit = $("#btnSubmit");
     // Class definition
@@ -116,7 +119,7 @@
           errorElement: 'span',
           ignore: 'input[type=hidden]',
           rules: {
-            user_name: {
+            user_email: {
               required: true,
             },
             user_password: {
@@ -139,7 +142,7 @@
             var $data = $(form).serialize();
             $.ajax({
               type: 'POST',
-              url: baseDir,
+              url: "{{ route('auth.login.post') }}",
               data: $data,
               error: function() {
                 btnSubmit.removeAttr('disabled', 'disabled').text('Sign In');
@@ -189,9 +192,20 @@
       btnSubmit.click(function() {
         formVendor.submit();
       });
-
     });
   </script>
+
+  @if ($message = Session::get('success'))
+    <script>
+      toastr.success("{{ $message }}")
+    </script>
+  @endif
+
+  @if ($message = Session::get('error'))
+    <script>
+      toastr.error("{{ $message }}")
+    </script>
+  @endif
 </body>
 
 </html>

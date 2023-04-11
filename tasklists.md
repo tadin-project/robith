@@ -21,7 +21,7 @@
 -   [x] 02.03 - master sub kriteria (kurang alur pilih dimensi, baru kriteria)
 -   [x] 02.04 - master kategori usaha
 -   [ ] 02.05 - master lampiran
--   [ ] 03 - tenant
+-   [x] 03 - tenant
 
 ### Validator
 
@@ -35,3 +35,9 @@
 
 -   [ ] lampiran
 -   [ ] Laporan
+
+### Fitur Aplikasi
+
+-   [x] Login / Register Tenant
+-   [ ] konfirmasi email setelah register
+-   [ ] Forgot password Tenant

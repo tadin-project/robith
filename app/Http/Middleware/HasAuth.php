@@ -21,9 +21,13 @@ class HasAuth
         $listRouteAuth = [
             "/",
             "auth/admin",
+            "login",
+            "register",
+            "forgot",
         ];
 
         if (in_array($request->path(), $listRouteAuth)) { // redirect halaman dashboard jika punya session user_data
+            // dd("disini");
             if ($request->session()->has("user_data") && $request->session()->get("user_data")) {
                 $group_id = $request->session()->get("user_data")["group_id"];
                 $urlRedirect = MsGroups::find($group_id)->menus()->orderBy("menu_kode", "asc")->first()->menu_link;

@@ -110,8 +110,14 @@ Route::group(["middleware" => "has_auth"], function () {
     Route::get('dashboard', [DashboardC::class, 'index'])->name('dashboard');
     Route::get('logout', [AuthC::class, 'logout'])->name('logout');
 
-    Route::get('/', [AuthC::class, 'index'])->name('auth.index');
-    Route::post('/', [AuthC::class, 'login'])->name('auth.post');
     Route::get('/auth/admin', [AuthAdminC::class, 'index'])->name('auth-admin.index');
     Route::post('/auth/admin', [AuthAdminC::class, 'login'])->name('auth-admin.login');
+    Route::post('login', [AuthC::class, 'prosesLogin'])->name('auth.login.post');
+    Route::get('register', [AuthC::class, 'register'])->name('auth.register');
+    Route::post('register', [AuthC::class, 'prosesRegister'])->name('auth.register.post');
+    Route::get('forgot', [AuthC::class, 'forgot'])->name('auth.forgot');
+    Route::post('forgot', [AuthC::class, 'prosesForgot'])->name('auth.forgot.post');
+    Route::get('/', [AuthC::class, 'index'])->name('auth.index');
 });
+
+Route::get('activate', [AuthC::class, 'aktifasiAkun'])->name('auth.activate');
