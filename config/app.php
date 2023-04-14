@@ -178,6 +178,8 @@ return [
 
         App\Providers\My\AuthServiceProvider::class,
         App\Providers\My\AuthAdminServiceProvider::class,
+
+        App\Providers\My\AsesmenServiceProvider::class,
         App\Providers\My\MsDimensiServiceProvider::class,
         App\Providers\My\MsGroupsServiceProvider::class,
         App\Providers\My\MsKategoriUsahaServiceProvider::class,

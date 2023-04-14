@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AsesmenC;
 use App\Http\Controllers\AuthAdminC;
 use App\Http\Controllers\AuthC;
 use App\Http\Controllers\DashboardC;
@@ -101,6 +102,10 @@ Route::group(["middleware" => "has_auth"], function () {
         Route::delete('{id}', [TenantC::class, 'delete'])->name('tenant.delete');
         Route::get('', [TenantC::class, 'index'])->name('tenant.index');
         Route::post('', [TenantC::class, 'save'])->name('tenant.save');
+    });
+
+    Route::group(['prefix' => 'asesmen'], function () {
+        Route::get('', [AsesmenC::class, 'index'])->name('asesmen.index');
     });
 
     Route::group(['prefix' => 'profil'], function () {

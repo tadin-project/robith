@@ -140,6 +140,24 @@ class MsMenusSeeder extends Seeder
             'menu_link' => "tenant",
             'menu_ikon' => "",
             'parent_menu_id' => 1,
+        ], [
+            'menu_id' => 15,
+            'menu_kode' => '02',
+            'menu_nama' => 'User',
+            'menu_status' => true,
+            'menu_type' => 2,
+            'menu_link' => "",
+            'menu_ikon' => "",
+            'parent_menu_id' => 0,
+        ], [
+            'menu_id' => 16,
+            'menu_kode' => '02.01',
+            'menu_nama' => 'Asesmen',
+            'menu_status' => true,
+            'menu_type' => 1,
+            'menu_link' => "asesmen",
+            'menu_ikon' => "",
+            'parent_menu_id' => 15,
         ],]);
     }
 }

@@ -57,6 +57,12 @@ class GroupMenusSeeder extends Seeder
             'group_id' => 1,
             'menu_id' => 14,
         ], [
+            'group_id' => 1,
+            'menu_id' => 15,
+        ], [
+            'group_id' => 1,
+            'menu_id' => 16,
+        ], [
             'group_id' => 2,
             'menu_id' => 1,
         ], [
@@ -96,8 +102,20 @@ class GroupMenusSeeder extends Seeder
             'group_id' => 2,
             'menu_id' => 14,
         ], [
+            'group_id' => 2,
+            'menu_id' => 15,
+        ], [
+            'group_id' => 2,
+            'menu_id' => 16,
+        ], [
             'group_id' => 3,
             'menu_id' => 7,
+        ], [
+            'group_id' => 3,
+            'menu_id' => 15,
+        ], [
+            'group_id' => 3,
+            'menu_id' => 16,
         ],]);
     }
 }
