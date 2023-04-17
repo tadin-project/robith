@@ -15,6 +15,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Menetapkan Tujuan & Visi',
             'msk_status' => true,
             'msk_bobot' => 20,
+            'msk_is_submission' => true,
             'mk_id' => 1,
         ], [
             'msk_id' => 2,
@@ -22,6 +23,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Mengidentifikasi & Memahami Kebutuhan Pemangku Kepentingan',
             'msk_status' => true,
             'msk_bobot' => 20,
+            'msk_is_submission' => false,
             'mk_id' => 1,
         ], [
             'msk_id' => 3,
@@ -29,6 +31,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Memahami Ekosistem, Kemampuan yang Dimiliki & Tantangan Utama',
             'msk_status' => true,
             'msk_bobot' => 20,
+            'msk_is_submission' => false,
             'mk_id' => 1,
         ], [
             'msk_id' => 4,
@@ -36,6 +39,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Mengembangkan Strategi',
             'msk_status' => true,
             'msk_bobot' => 20,
+            'msk_is_submission' => true,
             'mk_id' => 1,
         ], [
             'msk_id' => 5,
@@ -43,6 +47,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Merancang & Menerapkan Sistem Tata Kelola & Manajemen Kinerja',
             'msk_status' => true,
             'msk_bobot' => 20,
+            'msk_is_submission' => false,
             'mk_id' => 1,
         ], [
             'msk_id' => 6,
@@ -50,6 +55,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Mengarahkan Budaya Organisasi dan Memelihara Nilai-Nilai Organisasi',
             'msk_status' => true,
             'msk_bobot' => 25,
+            'msk_is_submission' => false,
             'mk_id' => 2,
         ], [
             'msk_id' => 7,
@@ -57,6 +63,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Menciptakan Kondisi untuk Mewujudkan Perubahan',
             'msk_status' => true,
             'msk_bobot' => 25,
+            'msk_is_submission' => false,
             'mk_id' => 2,
         ], [
             'msk_id' => 8,
@@ -64,6 +71,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Memungkinkan Kreativitas & Inovasi',
             'msk_status' => true,
             'msk_bobot' => 25,
+            'msk_is_submission' => false,
             'mk_id' => 2,
         ], [
             'msk_id' => 9,
@@ -71,6 +79,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Menyatukan Tujuan, Visi, dan Strategi',
             'msk_status' => true,
             'msk_bobot' => 25,
+            'msk_is_submission' => false,
             'mk_id' => 2,
         ], [
             'msk_id' => 10,
@@ -78,6 +87,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Pelanggan: Membangun Hubungan yang Berkelanjutan',
             'msk_status' => true,
             'msk_bobot' => 20,
+            'msk_is_submission' => false,
             'mk_id' => 3,
         ], [
             'msk_id' => 11,
@@ -85,6 +95,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Karyawan: Menarik, Melibatkan, Mengembangkan & Mempertahankan',
             'msk_status' => true,
             'msk_bobot' => 20,
+            'msk_is_submission' => false,
             'mk_id' => 3,
         ], [
             'msk_id' => 12,
@@ -92,6 +103,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Pemangku Kepentingan Bisnis & Pemerintah: Mengamankan & Mempertahankan Dukungan yang Berkelanjutan',
             'msk_status' => true,
             'msk_bobot' => 20,
+            'msk_is_submission' => false,
             'mk_id' => 3,
         ], [
             'msk_id' => 13,
@@ -99,6 +111,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Masyarakat: Berkontribusi pada Pembangunan, Kesejahteraan & Kemakmuran',
             'msk_status' => true,
             'msk_bobot' => 20,
+            'msk_is_submission' => false,
             'mk_id' => 3,
         ], [
             'msk_id' => 14,
@@ -106,6 +119,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Mitra & Pemasok: Membangun Hubungan & Memastikan Dukungan untuk Menciptakan Nilai yang Berkelanjutan',
             'msk_status' => true,
             'msk_bobot' => 20,
+            'msk_is_submission' => false,
             'mk_id' => 3,
         ], [
             'msk_id' => 15,
@@ -113,6 +127,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Merancang Nilai & Bagaimana Nilai itu Diciptakan',
             'msk_status' => true,
             'msk_bobot' => 50,
+            'msk_is_submission' => false,
             'mk_id' => 4,
         ], [
             'msk_id' => 16,
@@ -120,6 +135,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Mengkomunikasikan & Menjual Nilai',
             'msk_status' => true,
             'msk_bobot' => 50,
+            'msk_is_submission' => false,
             'mk_id' => 4,
         ], [
             'msk_id' => 17,
@@ -127,6 +143,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Memberikan Nilai',
             'msk_status' => true,
             'msk_bobot' => 50,
+            'msk_is_submission' => false,
             'mk_id' => 4,
         ], [
             'msk_id' => 18,
@@ -134,6 +151,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Mendefinisikan & Menerapkan Pengalaman Keseluruhan',
             'msk_status' => true,
             'msk_bobot' => 50,
+            'msk_is_submission' => false,
             'mk_id' => 4,
         ], [
             'msk_id' => 19,
@@ -141,6 +159,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Mendorong Kinerja & Mengelola Risiko',
             'msk_status' => true,
             'msk_bobot' => 20,
+            'msk_is_submission' => false,
             'mk_id' => 5,
         ], [
             'msk_id' => 20,
@@ -148,6 +167,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Mentransformasi Organisasi untuk Masa Depan',
             'msk_status' => true,
             'msk_bobot' => 20,
+            'msk_is_submission' => false,
             'mk_id' => 5,
         ], [
             'msk_id' => 21,
@@ -155,6 +175,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Mendorong Inovasi & Memanfaatkan Teknologi',
             'msk_status' => true,
             'msk_bobot' => 20,
+            'msk_is_submission' => false,
             'mk_id' => 5,
         ], [
             'msk_id' => 22,
@@ -162,6 +183,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Memanfaatkan Data, Informasi & Pengetahuan',
             'msk_status' => true,
             'msk_bobot' => 20,
+            'msk_is_submission' => false,
             'mk_id' => 5,
         ], [
             'msk_id' => 23,
@@ -169,6 +191,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Mengelola Aset & Sumber Daya',
             'msk_status' => true,
             'msk_bobot' => 20,
+            'msk_is_submission' => false,
             'mk_id' => 5,
         ], [
             'msk_id' => 24,
@@ -176,6 +199,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Hasil Persepsi Pelanggan',
             'msk_status' => true,
             'msk_bobot' => 40,
+            'msk_is_submission' => false,
             'mk_id' => 6,
         ], [
             'msk_id' => 25,
@@ -183,6 +207,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Hasil Persepsi Masyarakat',
             'msk_status' => true,
             'msk_bobot' => 40,
+            'msk_is_submission' => false,
             'mk_id' => 6,
         ], [
             'msk_id' => 26,
@@ -190,6 +215,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Hasil Persepsi Pemangku Kepentingan Bisnis & Pemerintah',
             'msk_status' => true,
             'msk_bobot' => 40,
+            'msk_is_submission' => false,
             'mk_id' => 6,
         ], [
             'msk_id' => 27,
@@ -197,6 +223,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Hasil Persepsi Masyarakat',
             'msk_status' => true,
             'msk_bobot' => 40,
+            'msk_is_submission' => false,
             'mk_id' => 6,
         ], [
             'msk_id' => 28,
@@ -204,6 +231,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Hasil Persepsi Mitra & Pemasok',
             'msk_status' => true,
             'msk_bobot' => 40,
+            'msk_is_submission' => false,
             'mk_id' => 6,
         ], [
             'msk_id' => 29,
@@ -211,6 +239,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Pencapaian Tujuan Strategis',
             'msk_status' => true,
             'msk_bobot' => 50,
+            'msk_is_submission' => false,
             'mk_id' => 7,
         ], [
             'msk_id' => 30,
@@ -218,6 +247,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Pencapaian dalam Mendorong Kinerja',
             'msk_status' => true,
             'msk_bobot' => 50,
+            'msk_is_submission' => false,
             'mk_id' => 7,
         ], [
             'msk_id' => 31,
@@ -225,6 +255,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Pencapaian dalam Mendorong Transformasi',
             'msk_status' => true,
             'msk_bobot' => 50,
+            'msk_is_submission' => false,
             'mk_id' => 7,
         ], [
             'msk_id' => 32,
@@ -232,6 +263,7 @@ class MsSubKriteriaSeeder extends Seeder
             'msk_nama' => 'Langkah-langkah prediksi untuk Masa Depan',
             'msk_status' => true,
             'msk_bobot' => 50,
+            'msk_is_submission' => false,
             'mk_id' => 7,
         ],]);
     }

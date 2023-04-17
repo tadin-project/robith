@@ -13,13 +13,24 @@ class AsesmenCTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->sess_user = Config::get("constants.session");
+        $this->sess_user = Config::get("constants.session.user");
     }
+
     public function testPage()
     {
         $this->withSession($this->sess_user)
             ->get(route("asesmen.index"))
             ->assertStatus(200)
-            ->assertSeeText("asesmen");
+            ->assertSeeText("Asesmen");
+    }
+
+    public function testGetTenantNotFound()
+    {
+        $this->sess_user["user_data"]["user_id"] = 0;
+        $res = $this->withSession($this->sess_user)
+            ->get(route("asesmen.cek-data"));
+        $res->assertStatus(200);
+        $jsonDt = json_decode($res->getContent(), true);
+        self::assertEquals(0, $jsonDt["data"]);
     }
 }

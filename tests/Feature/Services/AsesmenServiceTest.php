@@ -24,16 +24,19 @@ class AsesmenServiceTest extends TestCase
         self::assertGreaterThanOrEqual(0, count($res["data"]));
     }
 
-    public function testGetSubKriteriaSuccess()
+    public function testGetTenantByUserSuccess()
     {
-        $res = $this->asesmenService->getSubKriteria(1);
+        $res = $this->asesmenService->getTenantByUser(3);
         self::assertTrue($res["status"]);
-        self::assertGreaterThanOrEqual(0, count($res["data"]));
+        self::assertEquals(1, $res["data"]->tenant_id);
+        self::assertEquals("Tenant User 01", $res["data"]->tenant_nama);
     }
 
-    public function testGetSubKriteriaFailed()
+    public function testGetTenantByUserNotFound()
     {
-        $res = $this->asesmenService->getSubKriteria("");
-        self::assertFalse($res["status"]);
+        $res = $this->asesmenService->getTenantByUser(0);
+        self::assertTrue($res["status"]);
+        self::assertEquals("", $res["msg"]);
+        self::assertEquals(0, $res["data"]);
     }
 }

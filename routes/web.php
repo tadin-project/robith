@@ -105,6 +105,9 @@ Route::group(["middleware" => "has_auth"], function () {
     });
 
     Route::group(['prefix' => 'asesmen'], function () {
+        Route::get('cek-data', [AsesmenC::class, 'cekData'])->name('asesmen.cek-data');
+        Route::post('save-tmp', [AsesmenC::class, 'saveSementara'])->name('asesmen.save-tmp');
+        Route::post('save', [AsesmenC::class, 'save'])->name('asesmen.save');
         Route::get('', [AsesmenC::class, 'index'])->name('asesmen.index');
     });
 
