@@ -14,7 +14,7 @@ class MsKriteriaCTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->sess_user = Config::get("constants.session");
+        $this->sess_user = Config::get("constants.session.admin");
     }
     public function testPage()
     {

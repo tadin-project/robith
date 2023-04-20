@@ -14,6 +14,7 @@ use App\Http\Controllers\MsSubKriteriaC;
 use App\Http\Controllers\MsUsersC;
 use App\Http\Controllers\ProfilC;
 use App\Http\Controllers\TenantC;
+use App\Http\Controllers\ValidasiAsesmenC;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -109,6 +110,14 @@ Route::group(["middleware" => "has_auth"], function () {
         Route::post('save-tmp', [AsesmenC::class, 'saveSementara'])->name('asesmen.save-tmp');
         Route::post('save', [AsesmenC::class, 'save'])->name('asesmen.save');
         Route::get('', [AsesmenC::class, 'index'])->name('asesmen.index');
+    });
+
+    Route::group(['prefix' => 'validasi-asesmen'], function () {
+        Route::get('edit/{id}', [ValidasiAsesmenC::class, 'edit'])->name('validasi-asesmen.edit');
+        Route::post('final/{id}', [ValidasiAsesmenC::class, 'final'])->name('validasi-asesmen.final');
+        Route::get('get-data', [ValidasiAsesmenC::class, 'getData'])->name('validasi-asesmen.get-data');
+        Route::post('validasi', [ValidasiAsesmenC::class, 'validasi'])->name('validasi-asesmen.validasi');
+        Route::get('', [ValidasiAsesmenC::class, 'index'])->name('validasi-asesmen.index');
     });
 
     Route::group(['prefix' => 'profil'], function () {

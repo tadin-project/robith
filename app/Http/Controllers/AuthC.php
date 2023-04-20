@@ -74,7 +74,7 @@ class AuthC extends Controller
     public function logout(Request $request)
     {
         $group_id = $request->session()->get("user_data")["group_id"];
-        if (in_array($group_id, [1, 2])) {
+        if (in_array($group_id, [1, 2, 4])) {
             $uri = "/auth/admin";
         } else {
             $uri = "/";

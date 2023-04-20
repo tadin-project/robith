@@ -18,4 +18,14 @@ class AsesmenDetail extends Model
     {
         return $this->belongsTo(Asesmen::class, "as_id", "as_id");
     }
+
+    public function subKriteria(): BelongsTo
+    {
+        return $this->belongsTo(MsSubKriteria::class, "msk_id", "msk_id");
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(MsUsers::class, "user_id", "user_id");
+    }
 }

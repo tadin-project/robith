@@ -189,6 +189,7 @@ return [
         App\Providers\My\MsSubKriteriaServiceProvider::class,
         App\Providers\My\MsUsersServiceProvider::class,
         App\Providers\My\TenantServiceProvider::class,
+        App\Providers\My\ValidasiAsesmenServiceProvider::class,
 
     ],
 

@@ -54,5 +54,15 @@ class MsUsersSeeder extends Seeder
             'user_status' => true,
             'group_id' => 3,
         ]);
+
+        MsUsers::create([
+            'user_id' => 5,
+            'user_name' => 'validator01',
+            'user_email' => 'validator01@gmail.com',
+            'user_password' => Hash::make('validator01'),
+            'user_fullname' => 'Validator 01',
+            'user_status' => true,
+            'group_id' => 4,
+        ]);
     }
 }

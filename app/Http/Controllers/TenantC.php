@@ -100,7 +100,7 @@ class TenantC extends MyC
 
         $sLimit = "";
 
-        if (!empty($inputLength) && !empty($inputStart)) {
+        if ((!empty($inputLength) || $inputLength == 0) && (!empty($inputStart) || $inputStart == 0)) {
             $sLimit = " LIMIT $inputLength OFFSET $inputStart ";
         }
 
