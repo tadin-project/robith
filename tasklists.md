@@ -25,11 +25,11 @@
 
 ### Validator
 
--   [ ] validasi data tenant(kasih filter sudah di validasi apa belum)
+-   [x] validasi data tenant(kasih filter sudah di validasi apa belum)
 
 ### User
 
--   [ ] validasi data tenant(kasih filter sudah di validasi apa belum)
+-   [x] validasi data tenant(kasih filter sudah di validasi apa belum)
 
 ### Global sidebar di bawah
 
@@ -41,3 +41,13 @@
 -   [x] Login / Register Tenant
 -   [ ] konfirmasi email setelah register
 -   [ ] Forgot password Tenant
+
+### Revisi
+
+-   [ ] laporan sesuai format yang dikirimkan tadi
+-   [ ] laporan akhir khusus tenant cuma menampilkan kriteria
+-   [ ] rumus laporan
+-   [ ] update profil
+-   [ ] menunggu konfirmasi dari dospem untuk fitur penolakan validasi
+-   [ ] dashboard tenant diberi fitur bar chart yang berdasarkan kriteria
+-   [ ] dashboard admin menunggu dari robith
