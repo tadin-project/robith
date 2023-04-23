@@ -102,12 +102,13 @@
               </div>
               <div class="form-group">
                 <label for="tenant_nama">Nama Brand/Usaha</label>
-                <input type="email" class="form-control" id="tenant_nama" placeholder="Masukkan nama brand/usaha..."
-                  required>
+                <input type="text" class="form-control" id="tenant_nama" name="tenant_nama"
+                  placeholder="Masukkan nama brand/usaha..." required>
               </div>
               <div class="form-group">
                 <label for="tenant_desc">Deskripsi Usaha</label>
-                <textarea class="form-control" cols="3" id="tenant_desc" placeholder="Masukkan deskripsi usaha..." required></textarea>
+                <textarea class="form-control" cols="3" id="tenant_desc" name="tenant_desc"
+                  placeholder="Masukkan deskripsi usaha..." required></textarea>
               </div>
               <button class="btn btn-primary" onclick="fnCekTenant()">Selanjutnya</button>
             </div>

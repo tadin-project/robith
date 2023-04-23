@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\TenantMail;
 use App\Models\AppSettings;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class AuthC extends Controller
@@ -115,13 +117,15 @@ class AuthC extends Controller
             return response()->json($res);
         }
 
+        $token = Str::random(80);
+
         $user_data = [
             "user_name" => $request->user_email,
             "user_email" => $request->user_email,
             "user_password" => Hash::make($request->user_password),
             "user_status" => false,
             "group_id" => $this->__sess_app["id_tenant"],
-            "register_token" => Str::random(80),
+            "register_token" => $token,
         ];
 
         $tenant_data = [
@@ -132,6 +136,15 @@ class AuthC extends Controller
         ];
 
         $res = $this->authService->register($user_data, $tenant_data);
+
+        $details = [
+            'title' => 'Mail from EFQM',
+            'body' => 'Terima kasih telah mendaftar ke platform kami. Untuk langkah selanjutnya, silahkan Anda aktifasi akun anda melalui link berikut : <br><br><br>
+            <a href="http://127.0.0.1/robith/public/activate?token=' . $token . '">Link Aktifasi Akun</a>
+            ',
+        ];
+
+        Mail::to($request->user_email)->send(new TenantMail($details));
 
         return response()->json($res);
     }

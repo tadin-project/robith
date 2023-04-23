@@ -39,7 +39,7 @@
 ### Fitur Aplikasi
 
 -   [x] Login / Register Tenant
--   [ ] konfirmasi email setelah register
+-   [x] konfirmasi email setelah register
 -   [ ] Forgot password Tenant
 
 ### Revisi
