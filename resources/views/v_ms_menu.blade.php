@@ -324,7 +324,7 @@
           menuLink.val(dt.menu_link);
           menuIkon.val(dt.menu_ikon);
           menuStatus.val(dt.menu_status);
-          parentMenuId.val(dt.parent_menu_id);
+          parentMenuId.select2("val", dt.parent_menu_id.toString());
 
           rowForm.slideDown(500);
           rowData.slideUp(500);
@@ -413,7 +413,9 @@
       formVendor.submit();
     });
 
-    parentMenuId.select2();
+    parentMenuId.select2({
+      theme: 'bootstrap4'
+    });
 
   });
 </script>

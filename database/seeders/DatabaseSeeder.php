@@ -19,5 +19,10 @@ class DatabaseSeeder extends Seeder
         $this->call(MsMenusSeeder::class);
         $this->call(GroupMenusSeeder::class);
         $this->call(AppSettingsSeeder::class);
+        $this->call(MsDimensiSeeder::class);
+        $this->call(MsKriteriaSeeder::class);
+        $this->call(MsSubKriteriaSeeder::class);
+        $this->call(MsKategoriUsahaSeeder::class);
+        $this->call(TenantSeeder::class);
     }
 }

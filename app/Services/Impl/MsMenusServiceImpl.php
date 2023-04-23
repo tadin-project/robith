@@ -108,6 +108,7 @@ class MsMenusServiceImpl implements MsMenusService
                 ];
             }
 
+            // DB::enableQueryLog();
             $slc = implode(',', $cols);
             $qdata = "SELECT
                             $slc
@@ -128,6 +129,8 @@ class MsMenusServiceImpl implements MsMenusService
                             0 = 0 $where
                         $order $limit";
             $data = DB::select($qdata);
+
+            // dd(DB::getQueryLog()); // Show results of log
             $res['data'] = $data;
         } catch (\Throwable $th) {
             $res = [

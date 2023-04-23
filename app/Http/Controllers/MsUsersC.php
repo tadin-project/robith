@@ -21,7 +21,7 @@ class MsUsersC extends MyC
 
     public function index(): View
     {
-        $cekOptGroup = $this->msUsersService->getOptGroup();
+        $cekOptGroup = $this->msUsersService->getOptGroup(($this->__sess_user["group_id"] == 1 ? true : false));
         $optGroup = [];
 
         if ($cekOptGroup['status']) {
@@ -98,7 +98,7 @@ class MsUsersC extends MyC
 
         $sLimit = "";
 
-        if (!empty($inputLength) && !empty($inputStart)) {
+        if ((!empty($inputLength) || $inputLength == 0) && (!empty($inputStart) || $inputStart == 0)) {
             $sLimit = " LIMIT $inputLength OFFSET $inputStart ";
         }
 

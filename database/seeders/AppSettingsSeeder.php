@@ -30,6 +30,14 @@ class AppSettingsSeeder extends Seeder
             'as_desc' => 'Nama Developer',
             'as_default' => 'Tadin',
             'is_auto' => 'Y',
+        ], [
+            'as_id' => 3,
+            'as_key' => 'id_tenant',
+            'as_value' => '3',
+            'as_nama' => 'Tenant Id',
+            'as_desc' => 'Id Hak Akses untuk tenant',
+            'as_default' => '3',
+            'is_auto' => 'Y',
         ],]);
     }
 }

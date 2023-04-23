@@ -15,7 +15,15 @@ class MsMenusCTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->sess_user = Config::get("constants.session");
+        $this->sess_user = [
+            "user_data" => [
+                "user_id" => 1,
+                "user_name" => "root",
+                "user_email" => "root@gmail.com",
+                "user_fullname" => "Root",
+                "group_id" => 1,
+            ]
+        ];
     }
     public function testPage()
     {

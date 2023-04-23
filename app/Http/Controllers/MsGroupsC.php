@@ -49,8 +49,6 @@ class MsGroupsC extends MyC
 
         $sWhere = "";
 
-        $sWhere .= " AND mg.group_id > 1 ";
-
         if (!empty($inputSearch) && array_key_exists("value", $inputSearch)) {
             if (!empty($inputSearch['value'])) {
                 $search = $inputSearch['value'];
@@ -88,7 +86,7 @@ class MsGroupsC extends MyC
 
         $sLimit = "";
 
-        if (!empty($inputLength) && !empty($inputStart)) {
+        if ((!empty($inputLength) || $inputLength == 0) && (!empty($inputStart) || $inputStart == 0)) {
             $sLimit = " LIMIT $inputLength OFFSET $inputStart ";
         }
 
@@ -132,20 +130,18 @@ class MsGroupsC extends MyC
 
             $aksi = "";
 
-            if ($v->group_id == 1) {
-                if ($this->__sess_user['user_id'] == 1) {
+            if ($id == 1) {
+                if ($this->__sess_user['group_id'] == 1) {
                     $aksi .= $aksiEdit . $aksiAkses;
                 } else {
                     continue;
                 }
-            } else if ($v->group_id == 2) {
+            } else if ($id == 2) {
                 if ($this->__sess_user['group_id'] == 1 || $this->__sess_user['group_id'] == 2) {
                     $aksi .= $aksiEdit . $aksiAkses;
                 } else {
                     $aksi = '';
                 }
-            } else if ($v->group_id == $this->__sess_user['group_id']) {
-                $aksi .= $aksiEdit . $aksiAkses;
             } else {
                 $aksi .= $aksiEdit . $aksiAkses . $aksiHapus;
             }

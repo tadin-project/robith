@@ -26,7 +26,7 @@ class AuthAdminServiceImpl implements AuthAdminService
         try {
             $quser = MsUsers::where("user_name", $user_name)
                 ->where("user_status", true)
-                ->whereIn('group_id', [1, 2])
+                ->whereIn('group_id', [1, 2, 4])
                 ->get();
 
             if ($quser->count() <= 0) {

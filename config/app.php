@@ -166,6 +166,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Mavinoo\Batch\BatchServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -178,9 +179,17 @@ return [
 
         App\Providers\My\AuthServiceProvider::class,
         App\Providers\My\AuthAdminServiceProvider::class,
+
+        App\Providers\My\AsesmenServiceProvider::class,
+        App\Providers\My\MsDimensiServiceProvider::class,
         App\Providers\My\MsGroupsServiceProvider::class,
+        App\Providers\My\MsKategoriUsahaServiceProvider::class,
+        App\Providers\My\MsKriteriaServiceProvider::class,
         App\Providers\My\MsMenusServiceProvider::class,
+        App\Providers\My\MsSubKriteriaServiceProvider::class,
         App\Providers\My\MsUsersServiceProvider::class,
+        App\Providers\My\TenantServiceProvider::class,
+        App\Providers\My\ValidasiAsesmenServiceProvider::class,
 
     ],
 
@@ -196,7 +205,6 @@ return [
     */
 
     'aliases' => [
-
         'App' => Illuminate\Support\Facades\App::class,
         'Arr' => Illuminate\Support\Arr::class,
         'Artisan' => Illuminate\Support\Facades\Artisan::class,
@@ -237,6 +245,8 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
+        // package
+        'Batch' => Mavinoo\Batch\BatchFacade::class,
     ],
 
 ];

@@ -353,9 +353,10 @@ class MsUsersServiceImpl implements MsUsersService
     }
 
     /**
+     * @param bool $isRoot
      * @return array
      */
-    public function getOptGroup(): array
+    public function getOptGroup(bool $isRoot = false): array
     {
         $res = [
             'status' => true,
@@ -363,9 +364,11 @@ class MsUsersServiceImpl implements MsUsersService
         ];
 
         try {
-            $data = MsGroups::where("group_status", true)
-                ->where("group_id", ">", 1)
-                ->orderBy("group_kode", "asc")
+            $data = MsGroups::where("group_status", true);
+            if (!$isRoot) {
+                $data = $data->where("group_id", ">", 1);
+            }
+            $data = $data->orderBy("group_kode", "asc")
                 ->get();
             $res['data'] = $data;
         } catch (\Throwable $th) {

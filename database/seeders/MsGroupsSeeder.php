@@ -30,6 +30,11 @@ class MsGroupsSeeder extends Seeder
                 'group_kode' => '02',
                 'group_nama' => 'User',
                 'group_status' => true,
+            ], [
+                'group_id' => 4,
+                'group_kode' => '03',
+                'group_nama' => 'Validator',
+                'group_status' => true,
             ],
         ]);
     }

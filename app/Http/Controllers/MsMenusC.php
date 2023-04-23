@@ -13,7 +13,7 @@ class MsMenusC extends MyC
     public function __construct(MsMenusService $msMenusService)
     {
         parent::__construct();
-        $this->middleware("has_akses:ms-users");
+        $this->middleware("has_akses:ms-menus");
         $this->msMenusService = $msMenusService;
     }
 
@@ -103,7 +103,7 @@ class MsMenusC extends MyC
 
         $sLimit = "";
 
-        if (!empty($inputLength) && !empty($inputStart)) {
+        if ((!empty($inputLength) || $inputLength == 0) && (!empty($inputStart) || $inputStart == 0)) {
             $sLimit = " LIMIT $inputLength OFFSET $inputStart ";
         }
 
