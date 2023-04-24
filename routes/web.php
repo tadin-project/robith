@@ -121,7 +121,9 @@ Route::group(["middleware" => "has_auth"], function () {
     });
 
     Route::group(['prefix' => 'profil'], function () {
+        Route::post('ganti-password', [ProfilC::class, 'savePass'])->name('profil.save-password');
         Route::get('', [ProfilC::class, 'index'])->name('profil.index');
+        Route::post('', [ProfilC::class, 'saveProfil'])->name('profil.save-profil');
     });
 
     Route::get('dashboard', [DashboardC::class, 'index'])->name('dashboard');

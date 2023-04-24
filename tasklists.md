@@ -5,7 +5,7 @@
 -   [x] autentikasi
 -   [x] otorisasi
 -   [ ] dashboard
--   [ ] Profil( jika usernya tenant, maka sekalian tampilkan profil usahanya )
+-   [x] Profil( jika usernya tenant, maka sekalian tampilkan profil usahanya )
 
 ### Admin
 
@@ -47,7 +47,7 @@
 -   [ ] laporan sesuai format yang dikirimkan tadi
 -   [ ] laporan akhir khusus tenant cuma menampilkan kriteria
 -   [ ] rumus laporan
--   [ ] update profil
+-   [x] update profil
 -   [ ] menunggu konfirmasi dari dospem untuk fitur penolakan validasi
 -   [ ] dashboard tenant diberi fitur bar chart yang berdasarkan kriteria
 -   [ ] dashboard admin menunggu dari robith
