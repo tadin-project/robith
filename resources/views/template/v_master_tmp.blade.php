@@ -114,6 +114,8 @@
   <script src="{{ asset('') }}assets/plugins/select2/js/select2.full.min.js"></script>
   <!-- Select2 Plugin -->
   <script src="{{ asset('') }}assets/plugins/select2/js/i18n/id.js"></script>
+  <!-- Chart Js -->
+  <script src="{{ asset('') }}assets/plugins/chart.js/dist/chart.umd.js"></script>
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
