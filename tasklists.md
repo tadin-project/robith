@@ -48,6 +48,6 @@
 -   [ ] laporan akhir khusus tenant cuma menampilkan kriteria
 -   [ ] rumus laporan
 -   [x] update profil
--   [ ] menunggu konfirmasi dari dospem untuk fitur penolakan validasi
 -   [ ] dashboard tenant diberi fitur bar chart yang berdasarkan kriteria
 -   [ ] dashboard admin menunggu dari robith
+-   [ ] menunggu konfirmasi dari dospem untuk fitur penolakan validasi
