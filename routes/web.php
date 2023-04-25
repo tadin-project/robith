@@ -126,7 +126,11 @@ Route::group(["middleware" => "has_auth"], function () {
         Route::post('', [ProfilC::class, 'saveProfil'])->name('profil.save-profil');
     });
 
-    Route::get('dashboard', [DashboardC::class, 'index'])->name('dashboard');
+    Route::group(['prefix' => 'dashboard'], function () {
+        Route::get('get-data-tenant', [DashboardC::class, 'getDataTenant'])->name('dashboard.get-data-tenant');
+        Route::get('', [DashboardC::class, 'index'])->name('dashboard.index');
+    });
+
     Route::get('logout', [AuthC::class, 'logout'])->name('logout');
 
     Route::get('/auth/admin', [AuthAdminC::class, 'index'])->name('auth-admin.index');

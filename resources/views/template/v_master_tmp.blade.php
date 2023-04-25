@@ -211,15 +211,15 @@
     <footer class="main-footer">
 
       @if (array_key_exists('dev_web', $__sess_app))
-        <strong>Copyright &copy; 2014-2021 <a
-            href="{{ $__sess_app['dev_web'] }}">{{ $__sess_app['dev_nama'] }}</a>.</strong>
+        <strong>Copyright &copy; {{ date('Y') }} <a
+            href="{{ $__sess_app['dev_web'] }}">{{ $__sess_app['dev_nama'] }}</a></strong>
       @else
-        <strong>Copyright &copy; 2014-2021 <a href="#">{{ $__sess_app['dev_nama'] }}</a>.</strong>
+        <strong>Copyright &copy; {{ date('Y') }} <a href="#">{{ $__sess_app['dev_nama'] }}</a></strong>
       @endif
-      All rights reserved.
+      {{-- All rights reserved.
       <div class="float-right d-none d-sm-inline-block">
         <b>Version</b> 3.2.0
-      </div>
+      </div> --}}
     </footer>
   </div>
   <!-- ./wrapper -->
