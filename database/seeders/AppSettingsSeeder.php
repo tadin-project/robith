@@ -38,6 +38,14 @@ class AppSettingsSeeder extends Seeder
             'as_desc' => 'Id Hak Akses untuk tenant',
             'as_default' => '3',
             'is_auto' => 'Y',
+        ], [
+            'as_id' => 4,
+            'as_key' => 'duration_token_reset_password',
+            'as_value' => 10,
+            'as_nama' => 'Durasi token reset password',
+            'as_desc' => 'Durasi token reset password dalam 10 menit',
+            'as_default' => 10,
+            'is_auto' => 'Y',
         ],]);
     }
 }

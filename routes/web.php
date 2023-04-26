@@ -155,6 +155,8 @@ Route::group(["middleware" => "has_auth"], function () {
     Route::post('register', [AuthC::class, 'prosesRegister'])->name('auth.register.post');
     Route::get('forgot', [AuthC::class, 'forgot'])->name('auth.forgot');
     Route::post('forgot', [AuthC::class, 'prosesForgot'])->name('auth.forgot.post');
+    Route::get('reset', [AuthC::class, 'reset'])->name('auth.reset');
+    Route::post('reset', [AuthC::class, 'prosesReset'])->name('auth.reset.post');
     Route::get('/', [AuthC::class, 'index'])->name('auth.index');
 });
 

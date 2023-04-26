@@ -9,6 +9,7 @@ use App\Models\Tenant;
 use App\Services\AuthService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 /**
  * Summary of AuthServiceImpl
@@ -20,6 +21,7 @@ class AuthServiceImpl implements AuthService
      * @var array
      */
     private $__app = [];
+    private $table_password_resets = "password_resets";
     /**
      * Summary of __construct
      */
@@ -271,6 +273,155 @@ class AuthServiceImpl implements AuthService
             $tenant->tenant_status = true;
             $tenant->save();
             $res["msg"] = "Akun sudah diaktifkan. Silahkan Login";
+        } catch (\Exception $e) {
+            $res = [
+                'status' => false,
+                'msg' => $e->getMessage(),
+            ];
+        }
+
+        return $res;
+    }
+
+    /**
+     * Summary of cekEmail
+     * @param string $group_id
+     * @param string $email
+     * @return array
+     */
+    public function cekEmail(string $group_id, string $email): array
+    {
+        DB::beginTransaction();
+
+        $res = [
+            'status' => true,
+            'msg' => "",
+        ];
+
+        try {
+            // cek email
+            $userData = MsUsers::where("user_email", $email)->where("group_id", $group_id)->get();
+            if ($userData->count() <= 0) {
+                $res = [
+                    'status' => false,
+                    'msg' => "Email tidak terdaftar",
+                ];
+                return $res;
+            }
+
+            $user = $userData[0];
+
+            if ($user->user_status == 0) {
+                $res = [
+                    'status' => false,
+                    'msg' => "User tidak aktif. Silahkan hubungi Admin untuk mengaktifkan kembali user",
+                ];
+                return $res;
+            }
+
+            $token = Str::random(60);
+            $now = date("Y-m-d H:i:s");
+            $cekEmailIsExist = DB::table($this->table_password_resets)->where("email", $user->user_email)->get();
+            if ($cekEmailIsExist->count() <= 0) {
+                DB::table($this->table_password_resets)->insert([
+                    "email" => $user->user_email,
+                    "token" => $token,
+                    "created_at" => $now,
+                ]);
+            } else {
+                DB::table($this->table_password_resets)->where("email", $user->user_email)->update([
+                    "token" => $token,
+                    "created_at" => $now,
+                ]);
+            }
+
+            $res["data"] = $token;
+            DB::commit();
+        } catch (\Exception $e) {
+            $res = [
+                'status' => false,
+                'msg' => $e->getMessage(),
+            ];
+        }
+
+        return $res;
+    }
+
+    public function cekTokenPasswordReset(string $token, string $durationToken): array
+    {
+        $res = [
+            'status' => true,
+            'msg' => "",
+        ];
+
+        if (empty($durationToken)) {
+            $durationToken = 10;
+        } else {
+            $durationToken = intval($durationToken);
+        }
+
+        try {
+            $cekToken = DB::table($this->table_password_resets)->where("token", $token)->get();
+            if ($cekToken->count() <= 0) {
+                $res = [
+                    'status' => false,
+                    'msg' => "Token Invalid",
+                ];
+                return $res;
+            }
+
+            $now = strtotime("now");
+            $created = strtotime($cekToken[0]->created_at);
+
+            if (($now - $created) > $durationToken * 60) {
+                $res = [
+                    'status' => false,
+                    'msg' => "Token expired. Silahkan ulangi lagi lupa password",
+                ];
+                return $res;
+            }
+        } catch (\Exception $e) {
+            $res = [
+                'status' => false,
+                'msg' => $e->getMessage(),
+            ];
+        }
+
+        return $res;
+    }
+
+    public function updatePass(string $token, string $user_pass): array
+    {
+        $res = [
+            'status' => true,
+            'msg' => "",
+        ];
+
+        try {
+            $dataEmail = DB::table($this->table_password_resets)->where("token", $token);
+            if ($dataEmail->count() <= 0) {
+                $res = [
+                    'status' => false,
+                    'msg' => "Token Invalid. Silahkan ulangi lupa password",
+                ];
+                return $res;
+            }
+
+            $email = $dataEmail->first()->email;
+            $user = MsUsers::where("user_email", $email)->get();
+            if ($user->count() <= 0) {
+                $res = [
+                    'status' => false,
+                    'msg' => "User unknown",
+                ];
+                return $res;
+            }
+
+            $user[0]->update([
+                "user_password" => Hash::make($user_pass),
+            ]);
+
+            $dataEmail->delete();
         } catch (\Exception $e) {
             $res = [
                 'status' => false,

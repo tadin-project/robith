@@ -48,7 +48,7 @@ class AuthC extends Controller
     {
         $data = [
             "__title" => "Login",
-            'title_auth' => "Admin",
+            'title_auth' => $this->__sess_app["app_nama"],
             // 'title_auth' => $this->__sess_app['title_auth_admin'],
         ];
 
@@ -65,12 +65,43 @@ class AuthC extends Controller
 
         $data = [
             "__title" => "Register",
-            'title_auth' => "Admin",
+            'title_auth' => $this->__sess_app["app_nama"],
             // 'title_auth' => $this->__sess_app['title_auth_admin'],
             'opt_ku' => $optKu,
         ];
 
         return view('auth.v_register', $data);
+    }
+
+    public function forgot()
+    {
+        $data = [
+            "__title" => "Lupa Password",
+            'title_auth' => $this->__sess_app["app_nama"],
+        ];
+
+        return view('auth.v_forgot', $data);
+    }
+
+    public function reset(Request $request)
+    {
+        $token = $request->token;
+        if (empty($token)) {
+            return redirect()->to(route("auth.index"))->with(["error" => "Token invalid"]);
+        }
+
+        $cekToken = $this->authService->cekTokenPasswordReset($token, $this->__sess_app["duration_token_reset_password"]);
+        if (!$cekToken["status"]) {
+            return redirect()->to(route("auth.index"))->with(["error" => $cekToken["msg"]]);
+        }
+
+        $data = [
+            "__title" => "Lupa Password",
+            'title_auth' => $this->__sess_app["app_nama"],
+            'token' => $token,
+        ];
+
+        return view('auth.v_reset', $data);
     }
 
     public function logout(Request $request)
@@ -138,6 +169,7 @@ class AuthC extends Controller
         $res = $this->authService->register($user_data, $tenant_data);
 
         $details = [
+            '__title' => $this->__sess_app["app_nama"],
             'title' => 'Mail from EFQM',
             'body' => 'Terima kasih telah mendaftar ke platform kami. Untuk langkah selanjutnya, silahkan Anda aktifasi akun anda melalui link berikut : <br><br><br>
             <a href="http://127.0.0.1/robith/public/activate?token=' . $token . '">Link Aktifasi Akun</a>
@@ -159,5 +191,42 @@ class AuthC extends Controller
         } else {
             return redirect()->to(route("auth.index"))->with(["success" => $res["msg"]]);
         }
+    }
+
+    public function prosesForgot(Request $request): JsonResponse
+    {
+        $res = [
+            "status" => true,
+            "msg" => "",
+        ];
+
+        $cekUser = $this->authService->cekEmail($this->__sess_app["id_tenant"], $request->user_email);
+        if (!$cekUser["status"]) {
+            return response()->json($cekUser);
+        }
+
+        $res = $cekUser;
+
+        $details = [
+            '__title' => $this->__sess_app["app_nama"],
+            'title' => 'Mail from EFQM',
+            'body' => 'Ini adalah email untuk reset password. Jangan bagikan email ini kepada siapapun. Silahkan klik link berikut untuk proses selanjutnya: <br><br><br>
+            <a href="http://127.0.0.1/robith/public/reset?token=' . $res["data"] . '">Link Reset Password</a>
+            ',
+        ];
+
+        Mail::to($request->user_email)->send(new TenantMail($details));
+        return response()->json($res);
+    }
+
+    public function prosesReset(Request $request): JsonResponse
+    {
+        $res = [
+            "status" => true,
+            "msg" => "",
+        ];
+
+        $res = $this->authService->updatePass($request->token, $request->user_pass);
+        return response()->json($res);
     }
 }

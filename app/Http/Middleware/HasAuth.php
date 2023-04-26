@@ -24,6 +24,7 @@ class HasAuth
             "login",
             "register",
             "forgot",
+            "reset",
         ];
 
         if (in_array($request->path(), $listRouteAuth)) { // redirect halaman dashboard jika punya session user_data

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>ItsolutionStuff.com</title>
+  <title>{!! $details['__title'] !!}</title>
 </head>
 
 <body>
