@@ -4,6 +4,7 @@ use App\Http\Controllers\AsesmenC;
 use App\Http\Controllers\AuthAdminC;
 use App\Http\Controllers\AuthC;
 use App\Http\Controllers\DashboardC;
+use App\Http\Controllers\LampiranC;
 use App\Http\Controllers\MsDimensiC;
 use App\Http\Controllers\MsGroupsC;
 use App\Http\Controllers\MsKategoriC;
@@ -139,6 +140,10 @@ Route::group(["middleware" => "has_auth"], function () {
     Route::group(['prefix' => 'dashboard'], function () {
         Route::get('get-data-tenant', [DashboardC::class, 'getDataTenant'])->name('dashboard.get-data-tenant');
         Route::get('', [DashboardC::class, 'index'])->name('dashboard.index');
+    });
+
+    Route::group(['prefix' => 'lampiran'], function () {
+        Route::get('', [LampiranC::class, 'index'])->name('lampiran.index');
     });
 
     Route::get('logout', [AuthC::class, 'logout'])->name('logout');

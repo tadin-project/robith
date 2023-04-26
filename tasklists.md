@@ -20,7 +20,7 @@
 -   [x] 02.02 - master kriteria
 -   [x] 02.03 - master sub kriteria (kurang alur pilih dimensi, baru kriteria)
 -   [x] 02.04 - master kategori usaha
--   [ ] 02.05 - master lampiran
+-   [x] 02.05 - master lampiran
 -   [x] 03 - tenant
 
 ### Validator
@@ -33,7 +33,7 @@
 
 ### Global sidebar di bawah
 
--   [ ] lampiran
+-   [x] lampiran
 -   [ ] Laporan
 
 ### Fitur Aplikasi

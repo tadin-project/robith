@@ -143,7 +143,7 @@ class MsMenusSeeder extends Seeder
         ], [
             'menu_id' => 15,
             'menu_kode' => '02',
-            'menu_nama' => 'User',
+            'menu_nama' => 'Penilaian',
             'menu_status' => true,
             'menu_type' => 2,
             'menu_link' => "",
@@ -152,7 +152,7 @@ class MsMenusSeeder extends Seeder
         ], [
             'menu_id' => 16,
             'menu_kode' => '02.01',
-            'menu_nama' => 'Asesmen',
+            'menu_nama' => 'Penilaian Performa Usaha',
             'menu_status' => true,
             'menu_type' => 1,
             'menu_link' => "asesmen",
@@ -176,6 +176,42 @@ class MsMenusSeeder extends Seeder
             'menu_link' => "validasi-asesmen",
             'menu_ikon' => "",
             'parent_menu_id' => 17,
+        ], [
+            'menu_id' => 19,
+            'menu_kode' => '04',
+            'menu_nama' => 'Laporan',
+            'menu_status' => false,
+            'menu_type' => 2,
+            'menu_link' => "",
+            'menu_ikon' => "",
+            'parent_menu_id' => 0,
+        ], [
+            'menu_id' => 20,
+            'menu_kode' => '04.01',
+            'menu_nama' => 'Laporan Penilaian',
+            'menu_status' => false,
+            'menu_type' => 1,
+            'menu_link' => "laporan-penilaian",
+            'menu_ikon' => "",
+            'parent_menu_id' => 19,
+        ], [
+            'menu_id' => 21,
+            'menu_kode' => '99',
+            'menu_nama' => 'Lampiran',
+            'menu_status' => true,
+            'menu_type' => 2,
+            'menu_link' => "",
+            'menu_ikon' => "",
+            'parent_menu_id' => 0,
+        ], [
+            'menu_id' => 22,
+            'menu_kode' => '99.01',
+            'menu_nama' => 'Lampiran',
+            'menu_status' => true,
+            'menu_type' => 1,
+            'menu_link' => "lampiran",
+            'menu_ikon' => "",
+            'parent_menu_id' => 21,
         ],]);
     }
 }
