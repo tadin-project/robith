@@ -40,7 +40,7 @@
 
 -   [x] Login / Register Tenant
 -   [x] konfirmasi email setelah register
--   [ ] Forgot password Tenant
+-   [x] Forgot password Tenant
 
 ### Revisi
 
