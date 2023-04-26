@@ -9,6 +9,7 @@ use App\Http\Controllers\MsGroupsC;
 use App\Http\Controllers\MsKategoriC;
 use App\Http\Controllers\MsKategoriUsahaC;
 use App\Http\Controllers\MsKriteriaC;
+use App\Http\Controllers\MsLampiranC;
 use App\Http\Controllers\MsMenusC;
 use App\Http\Controllers\MsSubKriteriaC;
 use App\Http\Controllers\MsUsersC;
@@ -94,6 +95,15 @@ Route::group(["middleware" => "has_auth"], function () {
         Route::delete('{id}', [MsKategoriUsahaC::class, 'delete'])->name('ms-kategori-usaha.delete');
         Route::get('', [MsKategoriUsahaC::class, 'index'])->name('ms-kategori-usaha.index');
         Route::post('', [MsKategoriUsahaC::class, 'save'])->name('ms-kategori-usaha.save');
+    });
+
+    Route::group(['prefix' => 'ms-lampiran'], function () {
+        Route::get('check-duplicate', [MsLampiranC::class, 'checkDuplicate'])->name('ms-lampiran.check-duplicate');
+        Route::get('get-data', [MsLampiranC::class, 'getData'])->name('ms-lampiran.get-data');
+        Route::get('{id}', [MsLampiranC::class, 'getById'])->name('ms-lampiran.get');
+        Route::delete('{id}', [MsLampiranC::class, 'delete'])->name('ms-lampiran.delete');
+        Route::get('', [MsLampiranC::class, 'index'])->name('ms-lampiran.index');
+        Route::post('', [MsLampiranC::class, 'save'])->name('ms-lampiran.save');
     });
 
     Route::group(['prefix' => 'tenant'], function () {
