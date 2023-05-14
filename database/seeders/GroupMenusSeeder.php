@@ -61,19 +61,22 @@ class GroupMenusSeeder extends Seeder
             'menu_id' => 15,
         ], [
             'group_id' => 1,
-            'menu_id' => 16,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 17,
-        ], [
-            'group_id' => 1,
             'menu_id' => 18,
+        ], [
+            'group_id' => 1,
+            'menu_id' => 19,
+        ], [
+            'group_id' => 1,
+            'menu_id' => 20,
         ], [
             'group_id' => 1,
             'menu_id' => 21,
         ], [
             'group_id' => 1,
             'menu_id' => 22,
+        ], [
+            'group_id' => 1,
+            'menu_id' => 23,
         ], [
             'group_id' => 2,
             'menu_id' => 1,
@@ -118,49 +121,52 @@ class GroupMenusSeeder extends Seeder
             'menu_id' => 15,
         ], [
             'group_id' => 2,
-            'menu_id' => 16,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 17,
-        ], [
-            'group_id' => 2,
             'menu_id' => 18,
+        ], [
+            'group_id' => 2,
+            'menu_id' => 19,
+        ], [
+            'group_id' => 2,
+            'menu_id' => 20,
         ], [
             'group_id' => 2,
             'menu_id' => 21,
         ], [
             'group_id' => 2,
             'menu_id' => 22,
+        ], [
+            'group_id' => 2,
+            'menu_id' => 23,
         ], [
             'group_id' => 3,
             'menu_id' => 7,
         ], [
             'group_id' => 3,
-            'menu_id' => 15,
-        ], [
-            'group_id' => 3,
             'menu_id' => 16,
         ], [
             'group_id' => 3,
-            'menu_id' => 21,
+            'menu_id' => 17,
         ], [
             'group_id' => 3,
             'menu_id' => 22,
+        ], [
+            'group_id' => 3,
+            'menu_id' => 23,
         ], [
             'group_id' => 4,
             'menu_id' => 7,
         ], [
             'group_id' => 4,
-            'menu_id' => 17,
-        ], [
-            'group_id' => 4,
             'menu_id' => 18,
         ], [
             'group_id' => 4,
-            'menu_id' => 21,
+            'menu_id' => 19,
         ], [
             'group_id' => 4,
             'menu_id' => 22,
+        ], [
+            'group_id' => 4,
+            'menu_id' => 23,
         ],]);
     }
 }

@@ -2,12 +2,11 @@
 
 namespace App\Services\Impl;
 
-use App\Models\MsDimensi;
-use App\Models\MsKriteria;
-use App\Services\MsKriteriaService;
+use App\Models\ConvertionValue;
+use App\Services\ConvertionValueService;
 use Illuminate\Support\Facades\DB;
 
-class MsKriteriaServiceImpl implements MsKriteriaService
+class ConvertionValueServiceImpl implements ConvertionValueService
 {
     /**
      * @param $id
@@ -21,7 +20,7 @@ class MsKriteriaServiceImpl implements MsKriteriaService
         ];
 
         try {
-            $dt = MsKriteria::find($id);
+            $dt = ConvertionValue::find($id);
             if (!$dt) {
                 $res = [
                     'status' => false,
@@ -52,20 +51,9 @@ class MsKriteriaServiceImpl implements MsKriteriaService
 
         try {
             $qtotal = "SELECT
-                            count(mk.mk_id) as total
+                            count(cv.cval_id) as total
                         from
-                            ms_kriteria mk
-                        left join (
-                            select
-                                sum(msk_bobot) as tot_bobot,
-                                mk_id
-                            from
-                                ms_sub_kriteria
-                            where
-                                msk_status = true
-                            group by
-                                mk_id ) msk on
-                            msk.mk_id = mk.mk_id
+                            convertion_value cv
                         where
                             0 = 0 $where";
             $total = DB::select($qtotal);
@@ -97,11 +85,11 @@ class MsKriteriaServiceImpl implements MsKriteriaService
         try {
             if (count($cols) == 0) {
                 $cols = [
-                    "mk.mk_id",
-                    "mk.mk_kode",
-                    "mk.mk_nama",
-                    "mk.mk_status",
-                    "coalesce(msk.tot_bobot, 0) as tot_bobot",
+                    "cv.cval_id",
+                    "cv.cval_kode",
+                    "cv.cval_nama",
+                    "cv.cval_nilai",
+                    "cv.cval_status",
                 ];
             }
 
@@ -109,18 +97,7 @@ class MsKriteriaServiceImpl implements MsKriteriaService
             $qdata = "SELECT
                             $slc
                         from
-                            ms_kriteria mk
-                        left join (
-                            select
-                                sum(msk_bobot) as tot_bobot,
-                                mk_id
-                            from
-                                ms_sub_kriteria
-                            where
-                                msk_status = true
-                            group by
-                                mk_id ) msk on
-                            msk.mk_id = mk.mk_id
+                            convertion_value cv
                         where
                             0 = 0 $where
                         $order $limit";
@@ -157,10 +134,10 @@ class MsKriteriaServiceImpl implements MsKriteriaService
                     return $res;
                 }
 
-                if (empty($req['mk_kode']) || empty($req['mk_nama']) || empty($req['md_id'])) {
+                if (empty($req['cval_kode']) || empty($req['cval_nama'])) {
                     $res = [
                         'status' => false,
-                        'msg' => 'Kode, nama, dan dimensi tidak boleh kosong!',
+                        'msg' => 'Kode dan nama tidak boleh kosong!',
                     ];
                     return $res;
                 }
@@ -173,10 +150,10 @@ class MsKriteriaServiceImpl implements MsKriteriaService
                     return $res;
                 }
 
-                if (empty($req->mk_kode) || empty($req->mk_nama) || empty($req->md_id)) {
+                if (empty($req->cval_kode) || empty($req->cval_nama)) {
                     $res = [
                         'status' => false,
-                        'msg' => 'Kode, nama, dan dimensi tidak boleh kosong!',
+                        'msg' => 'Kode dan nama tidak boleh kosong!',
                     ];
                     return $res;
                 }
@@ -203,8 +180,8 @@ class MsKriteriaServiceImpl implements MsKriteriaService
         ];
 
         try {
-            $dt = MsKriteria::create($data);
-            if (!isset($dt->mk_id)) {
+            $dt = ConvertionValue::create($data);
+            if (!isset($dt->cval_id)) {
                 $res = [
                     'status' => false,
                     'msg' => 'Data gagal ditambahkan. Silahkan hubungi Admin!',
@@ -239,15 +216,8 @@ class MsKriteriaServiceImpl implements MsKriteriaService
             }
 
             $dt = $cekData['data'];
+            $d = $dt->update($data);
 
-            $dt->mk_kode = $data["mk_kode"];
-            $dt->mk_nama = $data["mk_nama"];
-            $dt->mk_desc = $data["mk_desc"];
-            if (!is_null($data["mk_status"])) {
-                $dt->mk_status = $data["mk_status"];
-            }
-
-            $d = $dt->save();
             if ($d <= 0) {
                 $res = [
                     'status' => false,
@@ -300,40 +270,21 @@ class MsKriteriaServiceImpl implements MsKriteriaService
 
     /**
      * @param string $act
-     * @param mixed $key
-     * @param mixed $val
+     * @param string $key
+     * @param string $val
      * @param string $old
      * @return array
      */
-    public function checkDuplicate(string $act, $key, $val, string $old = ""): string
+    public function checkDuplicate(string $act, string $key, string $val, string $old = ""): string
     {
         $res = "true";
 
         try {
-            // DB::enableQueryLog();
-            if (gettype($key) == "array") {
-                $val = explode(",", $val);
-                $dt = MsKriteria::where($key[0], $val[0]);
-                for ($i = 1; $i < count($key); $i++) {
-                    $dt = $dt->where($key[$i], $val[$i]);
-                }
-
-                if ($act == 'edit') {
-                    $dt = $dt->where($key[0], "!=", $old);
-                }
-            } else {
-                $dt = MsKriteria::where($key, $val);
-
-                if ($act == 'edit') {
-                    $dt = $dt->where($key, "!=", $old);
-                }
+            $dt = ConvertionValue::where($key, $val);
+            if ($act == 'edit') {
+                $dt = $dt->where($key, "!=", $old);
             }
 
-            // $dt = $dt->get();
-            // dd($dt->toSql());
-            // dd($dt, DB::getQueryLog());
-
-            // $res = "false";
             if ($dt->count() > 0) {
                 $res = "false";
             }
@@ -357,28 +308,6 @@ class MsKriteriaServiceImpl implements MsKriteriaService
 
         try {
             $res = $this->__cekData($id);
-        } catch (\Throwable $th) {
-            $res = [
-                'status' => false,
-                'msg' => $th->getMessage(),
-            ];
-        }
-
-        return $res;
-    }
-
-    /**
-     * @return array
-     */
-    public function getDimensi(): array
-    {
-        $res = [
-            'status' => true,
-            'msg' => "",
-        ];
-
-        try {
-            $res["data"] = MsDimensi::where("md_status", true)->orderBy("md_kode")->get();
         } catch (\Throwable $th) {
             $res = [
                 'status' => false,

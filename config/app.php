@@ -181,6 +181,7 @@ return [
         App\Providers\My\AuthAdminServiceProvider::class,
 
         App\Providers\My\AsesmenServiceProvider::class,
+        App\Providers\My\ConvertionValueServiceProvider::class,
         App\Providers\My\DashboardServiceProvider::class,
         App\Providers\My\LampiranServiceProvider::class,
         App\Providers\My\MsDimensiServiceProvider::class,

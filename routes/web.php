@@ -3,11 +3,11 @@
 use App\Http\Controllers\AsesmenC;
 use App\Http\Controllers\AuthAdminC;
 use App\Http\Controllers\AuthC;
+use App\Http\Controllers\ConvertionValueC;
 use App\Http\Controllers\DashboardC;
 use App\Http\Controllers\LampiranC;
 use App\Http\Controllers\MsDimensiC;
 use App\Http\Controllers\MsGroupsC;
-use App\Http\Controllers\MsKategoriC;
 use App\Http\Controllers\MsKategoriUsahaC;
 use App\Http\Controllers\MsKriteriaC;
 use App\Http\Controllers\MsLampiranC;
@@ -59,6 +59,15 @@ Route::group(["middleware" => "has_auth"], function () {
         Route::delete('{id}', [MsMenusC::class, 'delete'])->name('ms-menus.delete');
         Route::get('', [MsMenusC::class, 'index'])->name('ms-menus.index');
         Route::post('', [MsMenusC::class, 'save'])->name('ms-menus.save');
+    });
+
+    Route::group(['prefix' => 'convertion-value'], function () {
+        Route::get('check-duplicate', [ConvertionValueC::class, 'checkDuplicate'])->name('convertion-value.check-duplicate');
+        Route::get('get-data', [ConvertionValueC::class, 'getData'])->name('convertion-value.get-data');
+        Route::get('{id}', [ConvertionValueC::class, 'getById'])->name('convertion-value.get');
+        Route::delete('{id}', [ConvertionValueC::class, 'delete'])->name('convertion-value.delete');
+        Route::get('', [ConvertionValueC::class, 'index'])->name('convertion-value.index');
+        Route::post('', [ConvertionValueC::class, 'save'])->name('convertion-value.save');
     });
 
     Route::group(['prefix' => 'ms-dimensi'], function () {

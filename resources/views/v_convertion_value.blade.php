@@ -30,40 +30,31 @@
           <div class="col-12">
             <form id="formVendor">
               <input type="hidden" id="act" name="act" value="add">
-              <input type="hidden" id="mk_id" name="mk_id">
-              <div class="row form-group">
-                <label class="col-md-3 control-label">Dimensi</label>
-                <div class="col-md-2">
-                  <select class="form-control" id="md_id" name="md_id">
-                    @foreach ($optDimensi as $v)
-                      <option value="{{ $v->md_id }}">{{ $v->md_nama }}</option>
-                    @endforeach
-                  </select>
-                </div>
-              </div>
+              <input type="hidden" id="cval_id" name="cval_id">
               <div class="row form-group">
                 <label class="col-md-3 control-label">Kode</label>
                 <div class="col-md-2">
-                  <input type="text" class="form-control" id="mk_kode" name="mk_kode" maxlength="2">
+                  <input type="text" class="form-control" id="cval_kode" name="cval_kode" maxlength="2">
                 </div>
-                <input type="hidden" id="old_mk_kode">
+                <input type="hidden" id="old_cval_kode">
               </div>
               <div class="row form-group">
                 <label class="col-md-3 control-label">Nama</label>
                 <div class="col-md-5">
-                  <input type="text" class="form-control" id="mk_nama" name="mk_nama">
+                  <input type="text" class="form-control" id="cval_nama" name="cval_nama">
                 </div>
               </div>
               <div class="row form-group">
-                <label class="col-md-3 control-label">Deskripsi</label>
+                <label class="col-md-3 control-label">Nilai</label>
                 <div class="col-md-5">
-                  <textarea class="form-control" id="mk_desc" name="mk_desc"></textarea>
+                  <input type="number" min="0" max="100" class="form-control" id="cval_nilai"
+                    placeholder="Masukkan nilai dalam satuan persen" name="cval_nilai">
                 </div>
               </div>
               <div class="row form-group">
                 <label class="col-md-3 control-label">Status</label>
                 <div class="col-md-2">
-                  <select name="mk_status" id="mk_status" class="form-control">
+                  <select name="cval_status" id="cval_status" class="form-control">
                     <option value="1">Aktif</option>
                     <option value="0">Non Aktif</option>
                   </select>
@@ -80,27 +71,13 @@
         </div>
         <div class="row" id="rowData">
           <div class="col-12">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="row form-group">
-                  <label class="col-md-3 control-label">Dimensi</label>
-                  <div class="col-md-5">
-                    <select class="form-control" id="fil_md_id" name="fil_md_id">
-                      @foreach ($optDimensi as $v)
-                        <option value="{{ $v->md_id }}">{{ $v->md_nama }}</option>
-                      @endforeach
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
             <table class="table table-sm table-striped table-bordered table-hover" id="tableVendor" style="width: 100%">
               <thead>
                 <tr>
                   <th class="text-center">No</th>
                   <th class="text-center">Kode</th>
                   <th class="text-center">Nama</th>
-                  <th class="text-center">Bobot</th>
+                  <th class="text-center">Nilai (%)</th>
                   <th class="text-center">Status</th>
                   <th class="text-center">Aksi</th>
                 </tr>
@@ -117,26 +94,24 @@
 <script>
   // init component
   // global
-  const baseDir = baseUrl + '/ms-kriteria',
+  const baseDir = baseUrl + '/convertion-value',
     rowForm = $("#rowForm"),
     rowData = $("#rowData");
 
   // form
   const formVendor = $("#formVendor"),
     act = $("#act"),
-    mkId = $("#mk_id"),
-    mdId = $("#md_id"),
-    mkNama = $("#mk_nama"),
-    mkKode = $("#mk_kode"),
-    oldMkKode = $("#old_mk_kode"),
-    mkDesc = $("#mk_desc"),
-    mkStatus = $("#mk_status"),
+    cvalId = $("#cval_id"),
+    cvalNama = $("#cval_nama"),
+    cvalKode = $("#cval_kode"),
+    oldCvalKode = $("#old_cval_kode"),
+    cvalNilai = $("#cval_nilai"),
+    cvalStatus = $("#cval_status"),
     btnBatal = $("#btnBatal"),
     btnSimpan = $("#btnSimpan");
 
   // datatable
   const tableVendor = $("#tableVendor"),
-    filMdId = $("#fil_md_id"),
     btnTambah = $("#btnTambah");
 
   // Class definition
@@ -157,16 +132,10 @@
         ],
         ajax: {
           url: baseDir + "/get-data",
-          data: function(d) {
-            d.fil_md_id = filMdId.val();
-          },
         },
         columnDefs: [{
-          targets: [0, -3, -1],
+          targets: [0, -1],
           orderable: false,
-        }, {
-          targets: [-3],
-          className: "text-right"
         }, {
           targets: [0, -2, -1],
           className: "text-center"
@@ -194,10 +163,10 @@
         errorElement: 'span',
         ignore: 'input[type=hidden]',
         rules: {
-          mk_nama: {
+          cval_nama: {
             required: true,
           },
-          mk_kode: {
+          cval_kode: {
             required: true,
             remote: {
               url: baseDir + '/check-duplicate',
@@ -206,19 +175,19 @@
                 act: function() {
                   return act.val();
                 },
-                key: ["mk_kode", "md_id"],
+                key: "cval_kode",
                 val: function() {
-                  return [mkKode.val(), mdId.val()];
+                  return cvalKode.val();
                 },
                 old: function() {
-                  return act.val() == 'edit' ? oldMkKode.val() : "";
+                  return act.val() == 'edit' ? oldCvalKode.val() : "";
                 }
               }
             },
           },
         },
         messages: {
-          mk_kode: {
+          cval_kode: {
             remote: "Kode sudah digunakan. Gunakan yang lain",
           },
         },
@@ -283,7 +252,6 @@
     if (isShow) {
       rowForm.slideDown(500);
       rowData.slideUp(500);
-      mdId.val(filMdId.val());
       btnBatal.show();
       btnTambah.hide();
     } else {
@@ -299,8 +267,8 @@
     formVendor.validate().resetForm();
     $('.has-error').removeClass('has-error');
     act.val('add');
-    mkId.val('');
-    oldMkKode.val('');
+    cvalId.val('');
+    oldCvalKode.val('');
   }
 
   function fnLoadTbl() {
@@ -317,13 +285,12 @@
           var dt = res.data;
 
           act.val('edit');
-          mkId.val(id);
-          mdId.val(dt.md_id);
-          mkKode.val(dt.mk_kode);
-          oldMkKode.val(dt.mk_kode);
-          mkNama.val(dt.mk_nama);
-          mkDesc.val(dt.mk_desc);
-          mkStatus.val(dt.mk_status);
+          cvalId.val(id);
+          cvalKode.val(dt.cval_kode);
+          oldCvalKode.val(dt.cval_kode);
+          cvalNama.val(dt.cval_nama);
+          cvalNilai.val(dt.cval_nilai);
+          cvalStatus.val(dt.cval_status);
 
           rowForm.slideDown(500);
           rowData.slideUp(500);
@@ -385,10 +352,6 @@
 
     btnSimpan.click(function() {
       formVendor.submit();
-    });
-
-    filMdId.change(function() {
-      fnLoadTbl();
     });
 
   });

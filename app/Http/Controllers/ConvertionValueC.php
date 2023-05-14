@@ -2,62 +2,51 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\MsKriteriaService;
+use App\Services\ConvertionValueService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class MsKriteriaC extends MyC
+class ConvertionValueC extends MyC
 {
-    private MsKriteriaService $msKriteriaService;
-    public function __construct(MsKriteriaService $msKriteriaService)
+    private ConvertionValueService $convertionValueService;
+    public function __construct(ConvertionValueService $convertionValueService)
     {
         parent::__construct();
-        $this->middleware("has_akses:ms-kriteria");
-        $this->msKriteriaService = $msKriteriaService;
+        $this->middleware("has_akses:convertion-value");
+        $this->convertionValueService = $convertionValueService;
     }
 
     public function index(): View
     {
-        $optDimensi = [];
-        $cekDimensi = $this->msKriteriaService->getDimensi();
-        if ($cekDimensi["status"]) {
-            $optDimensi = $cekDimensi["data"];
-        }
-
         $data = [
-            "__title" => "Master Kriteria",
-            "optDimensi" => $optDimensi,
+            "__title" => "Master Presentase Penilaian",
         ];
 
-        return $this->my_view("v_ms_kriteria", $data);
+        return $this->my_view("v_convertion_value", $data);
     }
 
     public function getData(Request $request): JsonResponse
     {
         $cols = [
-            "mk.mk_id",
-            "mk.mk_kode",
-            "mk.mk_nama",
-            "coalesce(msk.tot_bobot, 0) as tot_bobot",
-            "mk.mk_status",
+            "cv.cval_id",
+            "cv.cval_kode",
+            "cv.cval_nama",
+            "cv.cval_nilai",
+            "cv.cval_status",
         ];
 
         $colsSearch = [
-            "mk.mk_kode",
-            "mk.mk_nama",
+            "cv.cval_kode",
+            "cv.cval_nama",
         ];
 
         $inputSearch = $request->search;
         $inputOrder = $request->order;
         $inputStart = $request->start;
         $inputLength = $request->length;
-        $fil_md_id = $request->fil_md_id;
 
         $sWhere = "";
-        if (!empty($fil_md_id)) {
-            $sWhere .= " AND mk.md_id = $fil_md_id ";
-        }
 
         if (!empty($inputSearch) && array_key_exists("value", $inputSearch)) {
             if (!empty($inputSearch['value'])) {
@@ -73,7 +62,7 @@ class MsKriteriaC extends MyC
         }
 
         $totalData = 0;
-        $getTotal = $this->msKriteriaService->getTotal($sWhere);
+        $getTotal = $this->convertionValueService->getTotal($sWhere);
         if ($getTotal['status']) {
             $totalData = $getTotal['total'];
         }
@@ -102,7 +91,7 @@ class MsKriteriaC extends MyC
 
         $detailData = [];
 
-        $getData = $this->msKriteriaService->getData($sWhere, $sOrder, $sLimit, $cols);
+        $getData = $this->convertionValueService->getData($sWhere, $sOrder, $sLimit, $cols);
         if ($getData['status']) {
             $detailData = $getData['data'];
         }
@@ -121,25 +110,25 @@ class MsKriteriaC extends MyC
 
         foreach ($detailData as $v) {
 
-            if ($v->mk_status == 1) {
+            if ($v->cval_status == 1) {
                 $status = "<span class='badge badge-success'>Aktif</span>";
             } else {
                 $status = "<span class='badge badge-danger'>Non Aktif</span>";
             }
 
-            $id = $v->mk_id;
+            $id = $v->cval_id;
 
             $aksiEdit = '<a href="javascript:void(0)" class="btn btn-sm btn-primary mb-1 mx-1" title="Edit" onclick="fnEdit(\'' . $id . '\')"><i class="fas fa-pencil-alt"></i></a>';
-            $aksiHapus = '<a href="javascript:void(0)" class="btn btn-sm btn-danger mb-1 mx-1" title="Hapus" onclick="fnDel(\'' . $id . '\',\'' . $v->mk_nama . '\')"><i class="fas fa-trash"></i></a>';
+            $aksiHapus = '<a href="javascript:void(0)" class="btn btn-sm btn-danger mb-1 mx-1" title="Hapus" onclick="fnDel(\'' . $id . '\',\'' . $v->cval_nama . '\')"><i class="fas fa-trash"></i></a>';
 
             $aksi = "";
             $aksi .= $aksiEdit . $aksiHapus;
 
             $data['data'][] = [
                 $no,
-                $v->mk_kode,
-                $v->mk_nama,
-                $v->tot_bobot,
+                $v->cval_kode,
+                $v->cval_nama,
+                $v->cval_nilai,
                 $status,
                 $aksi,
             ];
@@ -157,23 +146,25 @@ class MsKriteriaC extends MyC
             'msg' => '',
         ];
 
-        $cekValidasi = $this->msKriteriaService->validateData($request);
+        $cekValidasi = $this->convertionValueService->validateData($request);
         if (!$cekValidasi['status']) {
             return response()->json($cekValidasi);
         }
 
+        $cval_nilai = $request->cval_nilai;
+        if (empty($cval_nilai)) $cval_nilai = 0;
+
         $data = [
-            'mk_nama' => $request->mk_nama,
-            'mk_kode' => $request->mk_kode,
-            'mk_desc' => $request->mk_desc,
-            'mk_status' => $request->mk_status,
-            'md_id' => $request->md_id,
+            'cval_nama' => $request->cval_nama,
+            'cval_kode' => $request->cval_kode,
+            'cval_nilai' => $cval_nilai,
+            'cval_status' => $request->cval_status,
         ];
 
         if ($request->act == 'edit') {
-            $res = $this->msKriteriaService->edit($request->mk_id, $data);
+            $res = $this->convertionValueService->edit($request->cval_id, $data);
         } else {
-            $res = $this->msKriteriaService->add($data);
+            $res = $this->convertionValueService->add($data);
         }
 
         return response()->json($res);
@@ -181,29 +172,28 @@ class MsKriteriaC extends MyC
 
     public function delete(int $id): JsonResponse
     {
-        $res = $this->msKriteriaService->del($id);
+        $res = $this->convertionValueService->del($id);
 
         return response()->json($res);
     }
 
     public function checkDuplicate(Request $request): string
     {
-        $res = $this->msKriteriaService->checkDuplicate($request->act, $request->key, $request->val, (!empty($request->old) ? $request->old : ""));
+        $res = $this->convertionValueService->checkDuplicate($request->act, $request->key, $request->val, (!empty($request->old) ? $request->old : ""));
         return $res;
     }
 
     public function getById($id): JsonResponse
     {
-        $res = $this->msKriteriaService->getById($id);
+        $res = $this->convertionValueService->getById($id);
         if ($res['status']) {
             $dt = $res["data"];
             $data = [
-                "mk_id" => $dt->mk_id,
-                "mk_nama" => $dt->mk_nama,
-                "mk_kode" => $dt->mk_kode,
-                "mk_desc" => $dt->mk_desc,
-                "mk_status" => $dt->mk_status,
-                "md_id" => $dt->md_id,
+                "cval_id" => $dt->cval_id,
+                "cval_nama" => $dt->cval_nama,
+                "cval_kode" => $dt->cval_kode,
+                "cval_nilai" => $dt->cval_nilai,
+                "cval_status" => $dt->cval_status,
             ];
             $res["data"] = $data;
         }

@@ -34,7 +34,7 @@
 ### Global sidebar di bawah
 
 -   [x] lampiran
--   [ ] Laporan
+-   [x] Laporan
 
 ### Fitur Aplikasi
 
@@ -44,13 +44,22 @@
 
 ### Revisi
 
--   [ ] laporan sesuai format yang dikirimkan tadi
--   [ ] laporan akhir khusus tenant cuma menampilkan kriteria
--   [ ] rumus laporan
 -   [x] update profil
 -   [x] dashboard tenant diberi fitur bar chart yang berdasarkan kriteria
 
-### Waiting
+### Revisi 2
 
--   [ ] dashboard admin menunggu dari robith
--   [ ] menunggu konfirmasi dari dospem untuk fitur penolakan validasi
+-   [x] penambahan deskripsi di master kriteria
+-   [x] penambahan fitur konversi nilai bobot
+-   [ ] penilaian dirubah memiliki proses pengisian
+-   [ ] submission di dalam sub kriteria
+-   [ ] penilaian diubah menjadi radio button yang nilainya diambil dari prosentase tiap bobot
+-   [ ] nilai bobot disimpan dalam asesmen
+-   [ ] laporan akhir menampilkan rata2 nilai kriteria dan nilai sub kriteria
+-   [ ] dalam dashboard user tampilkan prosentase pengisian asesmen
+-   [ ] kriteria dikasih deskripsi
+-   [ ] dalam form asesmen dikasih introduction sebelum proses asesmen
+-   [ ] nilai non submission otomatis statusnya valid
+-   [ ] nilai sub kriteria dengan asesmen, bisa berubah2 pada waktu divalidasi
+
+### Waiting
