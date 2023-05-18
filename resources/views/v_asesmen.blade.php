@@ -1,3 +1,6 @@
+@php
+  $mkIdFirstIndex = $dtKriteria[0]['mk_id'];
+@endphp
 <!-- Content Header (Page header) -->
 <div class="content-header">
   <div class="container-fluid">
@@ -26,86 +29,79 @@
           <button class="btn btn-sm btn-warning" title="Simpan Sementara" id="btnSimpanSementara">
             <i class="fas fa-save"></i> Simpan Sementara
           </button>
-          <button class="btn btn-sm btn-primary" title="Simpan Final" id="btnSimpanFinal">
-            <i class="fas fa-save"></i> Simpan Final
-          </button>
         </div>
       </div>
       <div class="card-body">
-        <div class="row" id="rowForm">
-          <div class="col-12">
-            <div class="card card-primary card-outline card-outline-tabs">
-              <div class="card-header p-0 border-bottom-0">
-                <ul class="nav nav-tabs" id="custom-tabs-four-tab" role="tablist">
-                  @php
-                    $aktifKriteria = false;
-                  @endphp
-                  @foreach ($dtKriteria as $k => $v)
-                    @php
-                      $aktifKriteria = $k == 0 ? 'active' : '';
-                    @endphp
-                    <li class="nav-item">
-                      <a class="nav-link {{ $aktifKriteria }}" id="kriteria-{{ $v['mk_id'] }}-tab" data-toggle="pill"
-                        href="#kriteria-{{ $v['mk_id'] }}" role="tab" aria-controls="kriteria-{{ $v['mk_id'] }}"
-                        aria-selected="true">{{ $v['mk_nama'] }}</a>
-                    </li>
-                  @endforeach
-                </ul>
-              </div>
-              <div class="card-body">
-                <form id="formVendor">
-                  <div class="tab-content" id="custom-tabs-four-tabContent">
-                    @foreach ($dtKriteria as $k => $v)
-                      @php
-                        $aktifKriteria = $k == 0 ? 'show active' : '';
-                      @endphp
-                      <div class="tab-pane fade {{ $aktifKriteria }}" id="kriteria-{{ $v['mk_id'] }}" role="tabpanel"
-                        aria-labelledby="kriteria-{{ $v['mk_id'] }}-tab">
-                        @foreach ($v['msk'] as $k1 => $v1)
-                          <div class="form-group row">
-                            <div class="col-md-12">
-                              <div class="row">
-                                <label class="control-label col-md-6"
-                                  for="formControlRange{{ $v1['msk_id'] }}">{{ $v1['msk_nama'] }}</label>
-                                <div class="col-md-6">
-                                  <div class="row align-items-center">
-                                    <div class="col">
-                                      <input type="hidden" id="idDetail{{ $v1['msk_id'] }}"
-                                        name="id_detail[{{ $k }}{{ $k1 }}]" value="" />
-                                      <input type="hidden" id="idInput{{ $v1['msk_id'] }}"
-                                        name="msk_id[{{ $k }}{{ $k1 }}]"
-                                        value="{{ $v1['msk_id'] }}" />
-                                      <input type="range" class="form-control-range"
-                                        id="formControlRange{{ $v1['msk_id'] }}" oninput="fnChangeRange(this)"
-                                        value="0" data-target="rangeval{{ $v1['msk_id'] }}"
-                                        name="msk_value[{{ $k }}{{ $k1 }}]">
-                                    </div>
-                                    <div class="col-md-2 col-3"><span class="col-md-2"
-                                        id="rangeval{{ $v1['msk_id'] }}">0</span></div>
-                                  </div>
-                                </div>
-                              </div>
-                              @if ($v1['msk_is_submission'] == 1)
-                                <div class="row">
-                                  <label class="control-label col-md-6 font-weight-normal">Upload file bukti<span
-                                      id="fileName{{ $v1['msk_id'] }}"></span></label>
-                                  <div class="col-md-6">
-                                    <input type="file" name="lampiran[{{ $k }}{{ $k1 }}]">
-                                  </div>
-                                </div>
-                              @endif
-                            </div>
-                          </div>
-                        @endforeach
-                      </div>
-                    @endforeach
-                  </div>
-                </form>
-              </div>
-              <!-- /.card -->
+        <input type="hidden" id="prevTabValue" value="0">
+        <input type="hidden" id="nextTabValue" value="{{ $dtKriteria[1]['mk_id'] }}">
+        <div class="row">
+          @foreach ($dtKriteria as $k => $v)
+            <div class="col-12 colTitle" id="colTitle{{ $v['mk_id'] }}" style="{!! $mkIdFirstIndex == $v['mk_id'] ? '' : 'display:none' !!}">
+              <h4>{{ $v['mk_nama'] }}</h4>
+              <p>{{ $v['mk_desc'] }}</p>
+              <input type="hidden" class="currentKriteria" value="{{ $v['mk_id'] }}">
+              <input type="hidden" class="prevKriteria" value="{{ $k == 0 ? 0 : $dtKriteria[$k - 1]['mk_id'] }}">
+              <input type="hidden" class="nextKriteria"
+                value="{{ $k == count($dtKriteria) - 1 ? 'max' : $dtKriteria[$k + 1]['mk_id'] }}">
             </div>
-          </div>
+          @endforeach
         </div>
+        <div class="row" id="rowFormDetail">
+          <div class="col-12">
+            <table class="table table-striped table-bordered table-sm table-responsive-sm" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th class="text-center align-middle" rowspan="2">Subkriteria</th>
+                  <th class="text-center" colspan="5">Penilaian</th>
+                </tr>
+                <tr>
+                  @foreach ($dtConvertionValue as $a)
+                    <th class="text-center align-middle" width="12%">{{ $a->cval_nama }}</th>
+                  @endforeach
+                </tr>
+              </thead>
+              <tbody>
+                @foreach ($dtSubKriteria as $k => $v)
+                  @foreach ($v as $k1 => $v1)
+                    <tr class="colTr colTr{{ $k }}" style="{!! $mkIdFirstIndex == $k ? '' : 'display:none' !!}">
+                      <td>
+                        {{ $v1['msk_nama'] }}
+                        <input type="hidden" class="msk-id" id="msk_id{{ $v1['msk_id'] }}"
+                          value="{{ $v1['msk_id'] }}">
+                        <input type="hidden" class="asd-id" id="asd_id{{ $v1['msk_id'] }}" value="">
+                        @if ($v1['msk_is_submission'] == 1)
+                          <span id="fileName{{ $v1['msk_id'] }}"></span>
+                          <br>
+                          <input type="file" class="asd-file" id="asd_file{{ $v1['msk_id'] }}">
+                        @endif
+                      </td>
+                      @foreach ($dtConvertionValue as $a)
+                        <td class="text-center align-middle">
+                          <input type="radio" class="asd-value" name="asd_value{{ $v1['msk_id'] }}"
+                            value="{{ $a->cval_nilai }}">
+                        </td>
+                      @endforeach
+                    </tr>
+                  @endforeach
+                @endforeach
+              </tbody>
+            </table>
+          </div> <!-- ./col-12 -->
+        </div> <!-- ./row -->
+        <div class="row rowBottomNavForm">
+          <div class="col-md-12 text-right">
+            <button class="btn btn-secondary" type="button" onclick="fnPrevTab()" id="btnPrevTab"
+              style="display: none">
+              <i class="fas fa-arrow-left"></i> Previous
+            </button>
+            <button class="btn btn-primary" type="button" onclick="fnNextTab()" id="btnNextTab">
+              Next <i class="fas fa-arrow-right"></i>
+            </button>
+            <button class="btn btn-success" title="Simpan Final" id="btnSimpanFinal" style="display: none">
+              <i class="fas fa-save"></i> Simpan Final
+            </button>
+          </div> <!-- ./col-md-12 text-right -->
+        </div> <!-- ./row -->
       </div>
     </div>
   </div><!-- /.container-fluid -->
@@ -115,15 +111,15 @@
 <script>
   // form
   const spinnerForm = $("#spinnerForm"),
-    formVendor = $("#formVendor"),
+    rowFormDetail = $("#rowFormDetail"),
+    prevTabValue = $("#prevTabValue"),
+    nextTabValue = $("#nextTabValue"),
+    btnPrevTab = $("#btnPrevTab"),
+    btnNextTab = $("#btnNextTab"),
     btnSimpanSementara = $("#btnSimpanSementara"),
     btnSimpanFinal = $("#btnSimpanFinal");
 
   let listHapusLampiran = [];
-
-  function fnChangeRange(e) {
-    $("#" + $(e).data("target")).html($(e).val())
-  }
 
   function fnCek() {
     spinnerForm.show()
@@ -148,20 +144,18 @@
           if (dt.as_status > 0) {
             btnSimpanFinal.hide();
             btnSimpanSementara.hide();
-            formVendor.find("input[type=file]").hide();
-            formVendor.find("input[type=range]").attr("disabled", "disabled");
+            rowFormDetail.find("input[type=file]").hide();
+            rowFormDetail.find("input[type=radio]").attr("disabled", "disabled");
           } else {
-            btnSimpanFinal.show();
             btnSimpanSementara.show();
-            formVendor.find("input[type=file]").show();
-            formVendor.find("input[type=range]").removeAttr("disabled", "disabled");
+            rowFormDetail.find("input[type=file]").show();
+            rowFormDetail.find("input[type=radio]").removeAttr("disabled", "disabled");
           }
 
           let btnHapus = "";
           $.each(dt.detail, function(index, i) {
-            $("#formControlRange" + i.msk_id).val(i.asd_value)
-            $("#idDetail" + i.msk_id).val(i.id_detail)
-            $("#rangeval" + i.msk_id).text(i.asd_value)
+            $("[name=asd_value" + i.msk_id + "][value=" + i.asd_value + "]").prop("checked", true);
+            $("#asd_id" + i.msk_id).val(i.id_detail)
             if (i.asd_file) {
               btnHapus = dt.as_status > 0 ? "" :
                 ` <button class="btn btn-sm btn-danger" type="button" onclick="fnHapusLampiran(this,${i.id_detail})"><i class="fa fa-times"></i></button>`;
@@ -178,13 +172,35 @@
   }
 
   function fnResetForm() {
-    formVendor[0].reset();
     listHapusLampiran = [];
+    rowFormDetail.find('input[type=file]').val('');
+    rowFormDetail.find('input[type=radio]').prop('checked', false);
   }
 
   function fnSimpanSementara() {
     fnSetBtnOnSubmit("tmp", "disabled");
-    let formData = new FormData(formVendor[0]);
+    let formData = new FormData();
+    let asdValue = [],
+      mskId = [],
+      idDetail = [],
+      asdFile = [];
+    $.each($('.asd-value:checked'), function(index, i) {
+      const tr = $(i).closest('.colTr');
+      const mskIdVal = tr.find('.msk-id').val();
+
+      formData.append("msk_id[" + index + "]", mskIdVal);
+      formData.append("asd_value[" + index + "]", $(i).val());
+
+      if (!fnIsEmpty($("#asd_id" + mskIdVal).val())) {
+        formData.append("asd_id[" + index + "]", $("#asd_id" + mskIdVal).val());
+      }
+
+      if ($("#asd_file" + mskIdVal).length > 0) {
+        if ($("#asd_file" + mskIdVal)[0].files.length > 0) {
+          formData.append("lampiran[" + index + "]", $("#asd_file" + mskIdVal)[0].files[0]);
+        }
+      }
+    });
     formData.append("list_hapus_lampiran", listHapusLampiran);
 
     $.ajax({
@@ -266,11 +282,37 @@
     }).then((result) => {
       if (result.isConfirmed) {
         fnSetBtnOnSubmit("final", "disabled");
+        let formData = new FormData();
+        let asdValue = [],
+          mskId = [],
+          idDetail = [],
+          asdFile = [];
+        $.each($('.asd-value:checked'), function(index, i) {
+          const tr = $(i).closest('.colTr');
+          const mskIdVal = tr.find('.msk-id').val();
+
+          formData.append("msk_id[" + index + "]", mskIdVal);
+          formData.append("asd_value[" + index + "]", $(i).val());
+
+          if (!fnIsEmpty($("#asd_id" + mskIdVal).val())) {
+            formData.append("asd_id[" + index + "]", $("#asd_id" + mskIdVal).val());
+          }
+
+          if ($("#asd_file" + mskIdVal).length > 0) {
+            if ($("#asd_file" + mskIdVal)[0].files.length > 0) {
+              formData.append("lampiran[" + index + "]", $("#asd_file" + mskIdVal)[0].files[0]);
+            }
+          }
+        });
+        formData.append("list_hapus_lampiran", listHapusLampiran);
 
         $.ajax({
           url: "{{ route('asesmen.save') }}",
           cache: false,
           type: "post",
+          data: formData,
+          contentType: false,
+          processData: false,
           dataType: "json",
           error: function(err) {
             Swal.fire("Error", err, "error");
@@ -296,6 +338,50 @@
         })
       }
     })
+  }
+
+  function fnNextTab() {
+    const currTab = nextTabValue.val();
+    $(".colTitle").hide();
+    $(".colTr").hide();
+
+    $("#colTitle" + currTab).show();
+    $(".colTr" + currTab).show();
+    const newNextTabValue = $("#colTitle" + currTab).find(".nextKriteria").val();
+    const newPrevTabValue = $("#colTitle" + currTab).find(".prevKriteria").val();
+    nextTabValue.val(newNextTabValue);
+    prevTabValue.val(newPrevTabValue);
+    fnShowHideNavForm();
+  }
+
+  function fnPrevTab() {
+    const currTab = prevTabValue.val();
+    $(".colTitle").hide();
+    $(".colTr").hide();
+
+    $("#colTitle" + currTab).show();
+    $(".colTr" + currTab).show();
+    const newPrevTabValue = $("#colTitle" + currTab).find(".prevKriteria").val();
+    const newNextTabValue = $("#colTitle" + currTab).find(".nextKriteria").val();
+    prevTabValue.val(newPrevTabValue);
+    nextTabValue.val(newNextTabValue);
+    fnShowHideNavForm();
+  }
+
+  function fnShowHideNavForm() {
+    if (nextTabValue.val() == "max") {
+      btnNextTab.hide();
+      btnSimpanFinal.show();
+    } else {
+      btnNextTab.show();
+      btnSimpanFinal.hide();
+    }
+
+    if (prevTabValue.val() == "0") {
+      btnPrevTab.hide();
+    } else {
+      btnPrevTab.show();
+    }
   }
 
   $(document).ready(function() {

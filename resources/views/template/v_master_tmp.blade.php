@@ -80,6 +80,21 @@
       return s.join(dec);
     }
 
+    function fnIsEmpty(data) {
+      if (data == null || data == undefined) {
+        return true;
+      }
+
+      const typeData = typeof data;
+      if (typeData == "string") {
+        if (data.trim() == "") {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
     $(document).ready(function() {
       $.ajaxSetup({
         headers: {

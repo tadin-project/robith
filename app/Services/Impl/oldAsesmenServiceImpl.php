@@ -4,7 +4,8 @@ namespace App\Services\Impl;
 
 use App\Models\Asesmen;
 use App\Models\AsesmenDetail;
-use App\Models\ConvertionValue;
+use App\Models\MsKriteria;
+use App\Models\MsSubKriteria;
 use App\Models\Tenant;
 use App\Services\AsesmenService;
 use Illuminate\Support\Facades\DB;
@@ -27,108 +28,30 @@ class AsesmenServiceImpl implements AsesmenService
         ];
 
         try {
-            // $mk = MsKriteria::where("mk_status", true)->orderBy("mk_kode", "asc")->get();
-            $sql = "SELECT
-                        mk.*
-                    from
-                        ms_kriteria mk
-                    inner join ms_dimensi md on
-                        md.md_id = mk.md_id
-                    where
-                        md.md_status = true
-                        and mk.mk_status = true
-                    order by
-                        md.md_kode,
-                        mk.mk_kode ";
-            $mk = DB::select($sql);
+            $mk = MsKriteria::where("mk_status", true)->orderBy("mk_kode", "asc")->get();
             $res["data"] = [];
-            if (count($mk) > 0) {
+            if ($mk->count() > 0) {
                 $dtMk = [];
                 foreach ($mk as $k => $v) {
                     $dtMk[$k] = [
                         "mk_id" => $v->mk_id,
                         "mk_nama" => $v->mk_nama,
-                        "mk_desc" => $v->mk_desc,
+                        "msk" => [],
                     ];
+
+                    $msk = $v->subKriteria()->where("msk_status", true)->orderBy("msk_kode", "asc")->get();
+                    if ($msk->count() > 0) {
+                        foreach ($msk as $k1 => $v1) {
+                            $dtMk[$k]["msk"][$k1] = [
+                                "msk_id" => $v1->msk_id,
+                                "msk_nama" => $v1->msk_nama,
+                                "msk_is_submission" => $v1->msk_is_submission,
+                            ];
+                        }
+                    }
                 }
                 $res["data"] = $dtMk;
             }
-        } catch (\Throwable $th) {
-            $res = [
-                "status" => false,
-                "msg" => $th->getMessage(),
-            ];
-        }
-
-        return $res;
-    }
-
-    /**
-     * Summary of getSubKriteria
-     * @return array
-     */
-    public function getSubKriteria(): array
-    {
-        $res = [
-            "status" => true,
-            "msg" => "",
-        ];
-
-        try {
-            $sql = "SELECT
-                        msk.*
-                    from
-                        ms_sub_kriteria msk
-                    inner join ms_kriteria mk on
-                        mk.mk_id = msk.mk_id
-                    inner join ms_dimensi md on
-                        md.md_id = mk.md_id
-                    where
-                        msk.msk_status = true
-                        and mk.mk_status = true
-                        and md.md_status = true
-                    order by
-                        md.md_kode ,
-                        mk.mk_kode ,
-                        msk.msk_kode";
-            $msk = DB::select($sql);
-            $res["data"] = [];
-            if (count($msk) > 0) {
-                $dtMsk = [];
-                foreach ($msk as $k => $v) {
-                    $dtMsk[$v->mk_id][] = [
-                        "msk_id" => $v->msk_id,
-                        "msk_nama" => $v->msk_nama,
-                        "msk_is_submission" => $v->msk_is_submission,
-                        "mk_id" => $v->mk_id,
-                    ];
-                }
-                $res["data"] = $dtMsk;
-            }
-        } catch (\Throwable $th) {
-            $res = [
-                "status" => false,
-                "msg" => $th->getMessage(),
-            ];
-        }
-
-        return $res;
-    }
-
-    /**
-     * Summary of getConvertionValue
-     * @return array
-     */
-    public function getConvertionValue(): array
-    {
-        $res = [
-            "status" => true,
-            "msg" => "",
-        ];
-
-        try {
-            $data = ConvertionValue::where("cval_status", true)->orderBy("cval_kode", "asc")->get();
-            $res["data"] = $data;
         } catch (\Throwable $th) {
             $res = [
                 "status" => false,
@@ -398,85 +321,5 @@ class AsesmenServiceImpl implements AsesmenService
         if (file_exists($file)) {
             unlink($file);
         }
-    }
-
-    public function cekHasComplete(string $tenant_id): array
-    {
-        $res = [
-            "status" => true,
-            "msg" => "",
-        ];
-
-        try {
-            $sql = "SELECT
-                        sum(1) as tot,
-                        sum(ad2.tot) as tot_fill
-                    from
-                        ms_sub_kriteria msk
-                    left join (
-                        select
-                            1 as tot,
-                            ad.msk_id
-                        from
-                            asesmen a
-                        inner join asesmen_detail ad on
-                            ad.as_id = a.as_id
-                        where
-                            a.tenant_id = $tenant_id) ad2 on
-                        ad2.msk_id = msk.msk_id";
-            $dt = DB::select($sql);
-            if ($dt[0]->tot == $dt[0]->tot_fill) {
-                $res["data"] = true;
-            } else {
-                $res["data"] = false;
-            }
-        } catch (\Throwable $th) {
-            $res = [
-                "status" => false,
-                "msg" => $th->getMessage(),
-            ];
-        }
-
-        return $res;
-    }
-
-    public function editNonSubmission(string $as_id): array
-    {
-        $res = [
-            "status" => true,
-            "msg" => "",
-        ];
-
-        try {
-            $sql = "SELECT
-                        ad.asd_id 
-                    from
-                        asesmen_detail ad
-                    inner join ms_sub_kriteria msk on
-                        msk.msk_id = ad.msk_id
-                    where
-                        ad.as_id = $as_id
-                        and msk.msk_is_submission = 0;";
-            $rawDataAsesmenDetail = DB::select($sql);
-            if (count($rawDataAsesmenDetail) <= 0) {
-                return $res;
-            }
-
-            $dataAsesmenDetail = [];
-            foreach ($rawDataAsesmenDetail as $v) {
-                $dataAsesmenDetail[] = $v->asd_id;
-            }
-
-            DB::table("asesmen_detail")->whereIn("asd_id", $dataAsesmenDetail)->update([
-                "asd_status" => 1,
-            ]);
-        } catch (\Throwable $th) {
-            $res = [
-                "status" => false,
-                "msg" => $th->getMessage(),
-            ];
-        }
-
-        return $res;
     }
 }
