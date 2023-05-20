@@ -91,7 +91,17 @@
                               <tr>
                                 <td class="text-center">{{ $k1 + 1 }}</td>
                                 <td>{{ $v1['msk_nama'] }}</td>
-                                <td class="text-center nilaiMsk" id="nilaiMsk{{ $v1['msk_id'] }}">0</td>
+                                <td class="text-center nilaiMsk" id="nilaiMsk{{ $v1['msk_id'] }}">
+                                  @if ($v1['msk_is_submission'])
+                                    <select class="form-control optNilai" id="optNilai{{ $v1['msk_id'] }}">
+                                      @foreach ($dtConvertionValue as $a)
+                                        <option value="{{ $a->cval_nilai }}">{{ $a->cval_nama }}</option>
+                                      @endforeach
+                                    </select>
+                                  @else
+                                    0
+                                  @endif
+                                </td>
                                 <td class="buktiMsk" id="buktiMsk{{ $v1['msk_id'] }}">-</td>
                                 <td class="text-center aksi" id="aksi{{ $v1['msk_id'] }}"></td>
                               </tr>
@@ -328,31 +338,41 @@
           }
 
           $.each(dt.asd, function(index, i) {
-            $("#nilaiMsk" + i.msk_id).text(i.asd_value);
+            if (i.msk_is_submission == true) {
+              $("#optNilai" + i.msk_id).val(i.asd_value);
+            } else {
+              $("#nilaiMsk" + i.msk_id).text(i.cval_nama);
+            }
+
             $("#buktiMsk" + i.msk_id).html(i.msk_is_submission == false ? "-" : (i.asd_file ?
               `<a href="{{ url($dirUploads) }}/${i.asd_file}" target="_blank">${i.asd_file}</a>` :
               "Bukti tidak diupload"));
             let aksi = "";
-            if (dt.as_status == 1) {
-              if (i.asd_status == 0) {
-                aksi = `<button type="button" class="btn btn-success btn-sm" onclick="fnValidasi(${i.asd_id},1)" title="Setujui">
-                          <i class="fas fa-check"></i>
-                        </button>
-                        <button type="button" class="btn btn-danger btn-sm" onclick="fnValidasi(${i.asd_id},2)" title="Tolak">
-                          <i class="fas fa-times"></i>
-                        </button>`;
+            if (i.msk_is_submission == true) {
+              if (dt.as_status == 1) {
+                if (i.asd_status == 0) {
+                  aksi = `<button type="button" class="btn btn-success btn-sm" onclick="fnValidasi(${i.asd_id},1,this)" title="Setujui">
+                            <i class="fas fa-check"></i>
+                          </button>
+                          <button type="button" class="btn btn-danger btn-sm" onclick="fnValidasi(${i.asd_id},2, this)" title="Tolak">
+                            <i class="fas fa-times"></i>
+                          </button>`;
+                  $("#optNilai" + i.msk_id).removeAttr("disabled", "disabled");
+                } else {
+                  aksi = `<button type="button" class="btn btn-info btn-sm" onclick="fnInfo(${i.asd_status},'${i.user_fullname}')" title="Info">
+                            <i class="fas fa-info"></i>
+                          </button>
+                          <button type="button" class="btn btn-danger btn-sm" onclick="fnValidasi(${i.asd_id},0, this)" title="Batal Validasi">
+                            <i class="fas fa-times"></i>
+                          </button>`;
+                  $("#optNilai" + i.msk_id).attr("disabled", "disabled");
+                }
               } else {
                 aksi = `<button type="button" class="btn btn-info btn-sm" onclick="fnInfo(${i.asd_status},'${i.user_fullname}')" title="Info">
                           <i class="fas fa-info"></i>
-                        </button>
-                        <button type="button" class="btn btn-danger btn-sm" onclick="fnValidasi(${i.asd_id},0)" title="Batal Validasi">
-                          <i class="fas fa-times"></i>
                         </button>`;
+                $("#optNilai" + i.msk_id).attr("disabled", "disabled");
               }
-            } else {
-              aksi = `<button type="button" class="btn btn-info btn-sm" onclick="fnInfo(${i.asd_status},'${i.user_fullname}')" title="Info">
-                        <i class="fas fa-info"></i>
-                      </button>`;
             }
 
             $("#aksi" + i.msk_id).html(aksi);
@@ -379,16 +399,18 @@
     formVendor[0].reset();
     $(".aksi").text("");
     $(".buktiMsk").text("-");
-    $(".nilaiMsk").text("0");
+    $('.nilaiMsk').find('select').prop('selectedIndex', 0);
+    $('.nilaiMsk').not($('.nilaiMsk').find('select').parent()).text("");
   }
 
-  function fnValidasi(id, val) {
+  function fnValidasi(id, val, e) {
     $.ajax({
       url: baseDir + "/validasi",
       cache: false,
       data: {
         id: id,
         val: val,
+        new_val: val == 1 ? $(e).closest('tr').find('.optNilai').val() : null,
       },
       dataType: 'json',
       type: "post",

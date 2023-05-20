@@ -4,6 +4,7 @@ namespace App\Services\Impl;
 
 use App\Models\Asesmen;
 use App\Models\AsesmenDetail;
+use App\Models\ConvertionValue;
 use App\Models\MsKategoriUsaha;
 use App\Models\MsKriteria;
 use App\Services\ValidasiAsesmenService;
@@ -174,17 +175,38 @@ class ValidasiAsesmenServiceImpl implements ValidasiAsesmenService
                 "asd" => [],
             ];
 
-            if ($dt->asesmenDetail->count() > 0) {
+            $nilaiMin = DB::select("SELECT min(cv.cval_nilai) nilai_min from convertion_value cv where cv.cval_status = true")[0]->nilai_min;
+
+            $sqlGetAsesmenDetail =
+                "SELECT
+                    ad.*,
+                    msk.msk_is_submission ,
+                    mu.user_fullname ,
+                    cv.cval_nama
+                from
+                    asesmen_detail ad
+                inner join ms_sub_kriteria msk on
+                    msk.msk_id = ad.msk_id
+                left join ms_users mu on
+                    mu.user_id = ad.user_id
+                left join convertion_value cv on
+                    cv.cval_nilai = ad.asd_value
+                where
+                    ad.as_id = $dt->as_id";
+            $rawDataAsesmenDetail = DB::select($sqlGetAsesmenDetail);
+
+            if (count($rawDataAsesmenDetail) > 0) {
                 $detail = [];
-                foreach ($dt->asesmenDetail as $k => $v) {
+                foreach ($rawDataAsesmenDetail as $k => $v) {
                     $detail[$k] = [
                         "asd_id" => $v->asd_id,
                         "msk_id" => $v->msk_id,
-                        "msk_is_submission" => $v->subKriteria->msk_is_submission,
-                        "asd_value" => $v->asd_status == 2 ? 0 : $v->asd_value,
+                        "msk_is_submission" => $v->msk_is_submission,
+                        "asd_value" => $v->asd_status == 2 ? $nilaiMin : $v->asd_value,
                         "asd_file" => $v->asd_file,
                         "asd_status" => $v->asd_status,
-                        "user_fullname" => $v->asd_status != 0 ? $v->user->user_fullname : "",
+                        "user_fullname" => $v->asd_status != 0 ? $v->user_fullname : "",
+                        "cval_nama" => $v->cval_nama,
                     ];
                 }
 
@@ -234,6 +256,25 @@ class ValidasiAsesmenServiceImpl implements ValidasiAsesmenService
 
         try {
             AsesmenDetail::find($id)->update($data);
+        } catch (\Throwable $th) {
+            $res = [
+                "status" => false,
+                "msg" => $th->getMessage(),
+            ];
+        }
+        return $res;
+    }
+
+    public function getConvertionValue(): array
+    {
+        $res = [
+            "status" => true,
+            "msg" => "",
+        ];
+
+        try {
+            $data = ConvertionValue::where("cval_status", true)->orderBy("cval_kode", "asc")->get();
+            $res["data"] = $data;
         } catch (\Throwable $th) {
             $res = [
                 "status" => false,

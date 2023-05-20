@@ -31,10 +31,17 @@ class ValidasiAsesmenC extends MyC
             $dtKriteria = $cekKriteria["data"];
         }
 
+        $dtConvertionValue = [];
+        $cekConvertionValue = $this->validasiAsesmenService->getConvertionValue();
+        if ($cekConvertionValue["status"]) {
+            $dtConvertionValue = $cekConvertionValue["data"];
+        }
+
         $data = [
             "__title" => "Validasi Asesmen",
             "opt_ku" => $optKu,
             "dtKriteria" => $dtKriteria,
+            "dtConvertionValue" => $dtConvertionValue,
             "dirUploads" => $this->dirUploads,
         ];
 
@@ -163,11 +170,16 @@ class ValidasiAsesmenC extends MyC
     {
         $id = $request->id;
         $val = $request->val;
+        $new_val = $request->new_val;
 
         $data = [
             "asd_status" => $val,
             "user_id" => $this->__sess_user["user_id"],
         ];
+
+        if ($val == 1) {
+            $data["asd_value"] = $new_val;
+        }
 
         $res = $this->validasiAsesmenService->updateDetail($id, $data);
         return response()->json($res);
