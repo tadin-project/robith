@@ -184,6 +184,8 @@ return [
         App\Providers\My\ConvertionValueServiceProvider::class,
         App\Providers\My\DashboardServiceProvider::class,
         App\Providers\My\LampiranServiceProvider::class,
+        App\Providers\My\LaporanPenilaianServiceProvider::class,
+        App\Providers\My\LaporanPenilaianUserServiceProvider::class,
         App\Providers\My\MsDimensiServiceProvider::class,
         App\Providers\My\MsGroupsServiceProvider::class,
         App\Providers\My\MsKategoriUsahaServiceProvider::class,

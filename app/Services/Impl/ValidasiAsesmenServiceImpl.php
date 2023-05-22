@@ -237,6 +237,38 @@ class ValidasiAsesmenServiceImpl implements ValidasiAsesmenService
                 ];
                 return $res;
             }
+
+            $nilaiMin = 0;
+            $dataNilai = ConvertionValue::where("cval_status", true)->orderBy("cval_kode", "asc")->get();
+            if ($dataNilai->count() > 0) {
+                $nilaiMin = floatval($dataNilai[0]->cval_nilai);
+            }
+
+            $sqlDetail = "SELECT
+                            ad.asd_value ,
+                            ad.asd_status ,
+                            msk.msk_bobot 
+                        from
+                            asesmen_detail ad
+                        inner join ms_sub_kriteria msk on
+                            msk.msk_id = ad.msk_id
+                        where
+                            ad.as_id = $id";
+            $dataDetail = DB::select($sqlDetail);
+            $as_total = 0;
+            $as_max = 0;
+            if (count($dataDetail) > 0) {
+                foreach ($dataDetail as $k => $v) {
+                    $persen = $v->asd_status == 2 ? $nilaiMin : $v->asd_value;
+                    $subTotal = floatval($persen) * floatval($v->msk_bobot) / 100;
+                    $as_total += $subTotal;
+                    $as_max += floatval($v->msk_bobot);
+                }
+            }
+
+            $data["as_total"] = $as_total;
+            $data["as_max"] = $as_max;
+
             Asesmen::find($id)->update($data);
         } catch (\Throwable $th) {
             $res = [

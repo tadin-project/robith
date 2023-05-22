@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthC;
 use App\Http\Controllers\ConvertionValueC;
 use App\Http\Controllers\DashboardC;
 use App\Http\Controllers\LampiranC;
+use App\Http\Controllers\LaporanPenilaianC;
+use App\Http\Controllers\LaporanPenilaianUserC;
 use App\Http\Controllers\MsDimensiC;
 use App\Http\Controllers\MsGroupsC;
 use App\Http\Controllers\MsKategoriUsahaC;
@@ -105,6 +107,21 @@ Route::group(["middleware" => "has_auth"], function () {
         Route::delete('{id}', [MsKategoriUsahaC::class, 'delete'])->name('ms-kategori-usaha.delete');
         Route::get('', [MsKategoriUsahaC::class, 'index'])->name('ms-kategori-usaha.index');
         Route::post('', [MsKategoriUsahaC::class, 'save'])->name('ms-kategori-usaha.save');
+    });
+
+    Route::group(['prefix' => 'laporan-penilaian'], function () {
+        Route::get('get-data', [LaporanPenilaianC::class, 'getData'])->name('laporan-penilaian.get-data');
+        Route::get('{id}', [LaporanPenilaianC::class, 'getById'])->name('laporan-penilaian.get');
+        Route::get('', [LaporanPenilaianC::class, 'index'])->name('laporan-penilaian.index');
+    });
+
+    Route::group(['prefix' => 'laporan-penilaian-user'], function () {
+        Route::get('check-duplicate', [LaporanPenilaianUserC::class, 'checkDuplicate'])->name('laporan-penilaian-user.check-duplicate');
+        Route::get('get-data', [LaporanPenilaianUserC::class, 'getData'])->name('laporan-penilaian-user.get-data');
+        Route::get('{id}', [LaporanPenilaianUserC::class, 'getById'])->name('laporan-penilaian-user.get');
+        Route::delete('{id}', [LaporanPenilaianUserC::class, 'delete'])->name('laporan-penilaian-user.delete');
+        Route::get('', [LaporanPenilaianUserC::class, 'index'])->name('laporan-penilaian-user.index');
+        Route::post('', [LaporanPenilaianUserC::class, 'save'])->name('laporan-penilaian-user.save');
     });
 
     Route::group(['prefix' => 'ms-lampiran'], function () {

@@ -51,15 +51,15 @@
 
 -   [x] penambahan deskripsi di master kriteria
 -   [x] penambahan fitur konversi nilai bobot
--   [ ] penilaian dirubah memiliki proses pengisian
--   [ ] submission di dalam sub kriteria
--   [ ] penilaian diubah menjadi radio button yang nilainya diambil dari prosentase tiap bobot
+-   [x] penilaian dirubah memiliki proses pengisian
+-   [x] submission di dalam sub kriteria
+-   [x] penilaian diubah menjadi radio button yang nilainya diambil dari prosentase tiap bobot
 -   [ ] nilai bobot disimpan dalam asesmen
 -   [ ] laporan akhir menampilkan rata2 nilai kriteria dan nilai sub kriteria
 -   [ ] dalam dashboard user tampilkan prosentase pengisian asesmen
--   [ ] kriteria dikasih deskripsi
+-   [x] kriteria dikasih deskripsi
 -   [ ] dalam form asesmen dikasih introduction sebelum proses asesmen
--   [ ] nilai non submission otomatis statusnya valid
--   [ ] nilai sub kriteria dengan asesmen, bisa berubah2 pada waktu divalidasi
+-   [x] nilai non submission otomatis statusnya valid
+-   [x] nilai sub kriteria dengan asesmen, bisa berubah2 pada waktu divalidasi
 
 ### Waiting
