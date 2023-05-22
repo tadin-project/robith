@@ -116,12 +116,8 @@ Route::group(["middleware" => "has_auth"], function () {
     });
 
     Route::group(['prefix' => 'laporan-penilaian-user'], function () {
-        Route::get('check-duplicate', [LaporanPenilaianUserC::class, 'checkDuplicate'])->name('laporan-penilaian-user.check-duplicate');
-        Route::get('get-data', [LaporanPenilaianUserC::class, 'getData'])->name('laporan-penilaian-user.get-data');
-        Route::get('{id}', [LaporanPenilaianUserC::class, 'getById'])->name('laporan-penilaian-user.get');
-        Route::delete('{id}', [LaporanPenilaianUserC::class, 'delete'])->name('laporan-penilaian-user.delete');
+        Route::get('cetak', [LaporanPenilaianUserC::class, 'cetak'])->name('laporan-penilaian-user.cetak');
         Route::get('', [LaporanPenilaianUserC::class, 'index'])->name('laporan-penilaian-user.index');
-        Route::post('', [LaporanPenilaianUserC::class, 'save'])->name('laporan-penilaian-user.save');
     });
 
     Route::group(['prefix' => 'ms-lampiran'], function () {

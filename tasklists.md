@@ -55,7 +55,7 @@
 -   [x] submission di dalam sub kriteria
 -   [x] penilaian diubah menjadi radio button yang nilainya diambil dari prosentase tiap bobot
 -   [ ] nilai bobot disimpan dalam asesmen
--   [ ] laporan akhir menampilkan rata2 nilai kriteria dan nilai sub kriteria
+-   [x] laporan akhir menampilkan rata2 nilai kriteria dan nilai sub kriteria
 -   [ ] dalam dashboard user tampilkan prosentase pengisian asesmen
 -   [x] kriteria dikasih deskripsi
 -   [ ] dalam form asesmen dikasih introduction sebelum proses asesmen

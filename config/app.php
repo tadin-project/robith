@@ -167,6 +167,7 @@ return [
          * Package Service Providers...
          */
         Mavinoo\Batch\BatchServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -254,6 +255,7 @@ return [
 
         // package
         'Batch' => Mavinoo\Batch\BatchFacade::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
     ],
 
 ];

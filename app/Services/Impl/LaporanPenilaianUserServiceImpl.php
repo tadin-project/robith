@@ -2,316 +2,207 @@
 
 namespace App\Services\Impl;
 
-use App\Models\LaporanPenilaianUser;
+use App\Models\ConvertionValue;
 use App\Services\LaporanPenilaianUserService;
 use Illuminate\Support\Facades\DB;
 
 class LaporanPenilaianUserServiceImpl implements LaporanPenilaianUserService
 {
-    /**
-     * @param $id
-     * @return array
-     */
-    private function __cekData($id): array
+    public function getKriteriaData(string $user_id): array
     {
         $res = [
-            'status' => true,
-            'msg' => '',
+            "status" => true,
+            "msg" => "",
         ];
 
         try {
-            $dt = LaporanPenilaianUser::find($id);
-            if (!$dt) {
-                $res = [
-                    'status' => false,
-                    'msg' => 'Data tidak ditemukan!',
-                ];
-            }
-            $res['data'] = $dt;
-        } catch (\Throwable $th) {
-            $res = [
-                'status' => false,
-                'msg' => $th->getMessage(),
-            ];
-        }
 
-        return $res;
-    }
-
-    /**
-     * @param string $where
-     * @return array
-     */
-    public function getTotal(string $where): array
-    {
-        $res = [
-            'status' => true,
-            'msg' => '',
-        ];
-
-        try {
-            $qtotal = "SELECT
-                            count(cv.cval_id) as total
-                        from
-                            convertion_value cv
-                        where
-                            0 = 0 $where";
-            $total = DB::select($qtotal);
-            $res['total'] = $total[0]->total;
-        } catch (\Throwable $th) {
-            $res = [
-                'status' => false,
-                'msg' => $th->getMessage(),
-            ];
-        }
-
-        return $res;
-    }
-
-    /**
-     * @param string $where
-     * @param string $order
-     * @param string $limit
-     * @param array $cols
-     * @return array
-     */
-    public function getData(string $where = "", string $order = "", string $limit = "", array $cols = []): array
-    {
-        $res = [
-            'status' => true,
-            'msg' => '',
-        ];
-
-        try {
-            if (count($cols) == 0) {
-                $cols = [
-                    "cv.cval_id",
-                    "cv.cval_kode",
-                    "cv.cval_nama",
-                    "cv.cval_nilai",
-                    "cv.cval_status",
-                ];
+            $nilaiMin = 0;
+            $dataNilai = ConvertionValue::where("cval_status", true)->orderBy("cval_kode", "asc")->get();
+            if ($dataNilai->count() > 0) {
+                $nilaiMin = floatval($dataNilai[0]->cval_nilai);
             }
 
-            $slc = implode(',', $cols);
-            $qdata = "SELECT
-                            $slc
-                        from
-                            convertion_value cv
-                        where
-                            0 = 0 $where
-                        $order $limit";
-            $data = DB::select($qdata);
-            $res['data'] = $data;
-        } catch (\Throwable $th) {
-            $res = [
-                'status' => false,
-                'msg' => $th->getMessage(),
-            ];
-        }
+            $sqlKriteria = "SELECT
+                                msk.msk_id ,
+                                mk.mk_id ,
+                                mk.mk_nama ,
+                                ad.asd_status ,
+                                ad.asd_value ,
+                                msk.msk_bobot 
+                            from
+                                tenant t
+                            inner join asesmen a on
+                                a.tenant_id = t.tenant_id
+                                and t.user_id = $user_id
+                                and a.as_status = 2
+                            inner join asesmen_detail ad on
+                                ad.as_id = a.as_id
+                            inner join ms_sub_kriteria msk on
+                                msk.msk_id = ad.msk_id
+                            inner join ms_kriteria mk on
+                                mk.mk_id = msk.mk_id
+                                and mk.mk_status = true
+                            inner join ms_dimensi md on
+                                md.md_id = mk.md_id
+                            order by
+                                md.md_kode ,
+                                mk.mk_kode ,
+                                msk.msk_id";
+            $rawKriteria = DB::select($sqlKriteria);
+            $data = [];
+            if (count($rawKriteria) > 0) {
+                $mk_id = 0;
+                $subRata2 = 0;
+                $banyakSubKriteria = 0;
+                // $subTotal = 0;
+                $subNilai = 0;
+                $subBobot = 0;
+                foreach ($rawKriteria as $k => $v) {
+                    $subNilai = $v->asd_status == 2 ? $nilaiMin : $v->asd_value;
 
-        return $res;
-    }
+                    if (!array_key_exists($v->mk_id, $data)) {
+                        $banyakSubKriteria++;
+                        if ($mk_id != 0) {
+                            $subRata2 = $banyakSubKriteria == 0 ? 0 : $subBobot / $banyakSubKriteria;
+                            $data[$mk_id]["bobot"] = $subBobot;
+                            $data[$mk_id]["rata2"] = $subRata2;
+                        }
 
-    /**
-     * @param $req
-     * @return array
-     */
-    public function validateData($req): array
-    {
-        $res = [
-            'status' => true,
-            'msg' => '',
-        ];
+                        $banyakSubKriteria = 0;
+                        // $subTotal = 0;
+                        $subBobot = 0;
+                        $data[$v->mk_id] = [
+                            "mk_nama" => $v->mk_nama,
+                        ];
+                        $subBobot += (floatval($subNilai) * floatval($v->msk_bobot) / 100);
+                        // $subTotal += $v->msk_bobot;
+                        $mk_id = $v->mk_id;
+                    } else {
+                        $banyakSubKriteria++;
+                        $subBobot += (floatval($subNilai) * floatval($v->msk_bobot) / 100);
+                    }
 
-        try {
-            if (gettype($req) == "array") {
-                if ($req['act'] != 'add' && $req['act'] != 'edit') {
-                    $res = [
-                        'status' => false,
-                        'msg' => 'Request tidak dikenal!',
-                    ];
-                    return $res;
-                }
-
-                if (empty($req['cval_kode']) || empty($req['cval_nama'])) {
-                    $res = [
-                        'status' => false,
-                        'msg' => 'Kode dan nama tidak boleh kosong!',
-                    ];
-                    return $res;
-                }
-            } else {
-                if ($req->act != 'add' && $req->act != 'edit') {
-                    $res = [
-                        'status' => false,
-                        'msg' => 'Request tidak dikenal!',
-                    ];
-                    return $res;
-                }
-
-                if (empty($req->cval_kode) || empty($req->cval_nama)) {
-                    $res = [
-                        'status' => false,
-                        'msg' => 'Kode dan nama tidak boleh kosong!',
-                    ];
-                    return $res;
+                    if ($k == count($rawKriteria) - 1) {
+                        $subRata2 = $banyakSubKriteria == 0 ? 0 : $subBobot / $banyakSubKriteria;
+                        $data[$mk_id]["bobot"] = $subBobot;
+                        $data[$mk_id]["rata2"] = $subRata2;
+                    }
                 }
             }
+            $res["data"] = $data;
         } catch (\Throwable $th) {
             $res = [
-                'status' => false,
-                'msg' => $th->getMessage(),
+                "status" => true,
+                "msg" => $th->getMessage(),
+                "stack" => env("DEV_MODE", "production") == "production" ? null : $th->getTrace(),
             ];
         }
 
         return $res;
     }
 
-    /**
-     * @param array $data
-     * @return array
-     */
-    public function add(array $data): array
+    public function cetak(string $user_id): array
     {
         $res = [
-            'status' => true,
-            'msg' => '',
+            "status" => true,
+            "msg" => "",
         ];
 
         try {
-            $dt = LaporanPenilaianUser::create($data);
-            if (!isset($dt->cval_id)) {
-                $res = [
-                    'status' => false,
-                    'msg' => 'Data gagal ditambahkan. Silahkan hubungi Admin!',
-                ];
+
+            $nilaiMin = 0;
+            $dataNilai = ConvertionValue::where("cval_status", true)->orderBy("cval_kode", "asc")->get();
+            if ($dataNilai->count() > 0) {
+                $nilaiMin = floatval($dataNilai[0]->cval_nilai);
             }
+
+            $sqlKriteria = "SELECT
+                                msk.msk_id ,
+                                mk.mk_id ,
+                                mk.mk_nama ,
+                                ad.asd_status ,
+                                ad.asd_value ,
+                                msk.msk_bobot ,
+                                msk.msk_nama 
+                            from
+                                tenant t
+                            inner join asesmen a on
+                                a.tenant_id = t.tenant_id
+                                and t.user_id = $user_id
+                                and a.as_status = 2
+                            inner join asesmen_detail ad on
+                                ad.as_id = a.as_id
+                            inner join ms_sub_kriteria msk on
+                                msk.msk_id = ad.msk_id
+                            inner join ms_kriteria mk on
+                                mk.mk_id = msk.mk_id
+                                and mk.mk_status = true
+                            inner join ms_dimensi md on
+                                md.md_id = mk.md_id
+                            order by
+                                md.md_kode ,
+                                mk.mk_kode ,
+                                msk.msk_kode";
+            $rawKriteria = DB::select($sqlKriteria);
+            $data = [];
+            if (count($rawKriteria) > 0) {
+                $mk_id = 0;
+                $subRata2 = 0;
+                $banyakSubKriteria = 0;
+                // $subTotal = 0;
+                $subNilai = 0;
+                $subBobot = 0;
+                $subTotBobot = 0;
+                foreach ($rawKriteria as $k => $v) {
+                    $subNilai = $v->asd_status == 2 ? $nilaiMin : $v->asd_value;
+
+                    if (!array_key_exists($v->mk_id, $data)) {
+                        $banyakSubKriteria++;
+                        if ($mk_id != 0) {
+                            $subRata2 = $banyakSubKriteria == 0 ? 0 : $subTotBobot / $banyakSubKriteria;
+                            $data[$mk_id]["bobot"] = $subTotBobot;
+                            $data[$mk_id]["rata2"] = $subRata2;
+                        }
+
+                        $banyakSubKriteria = 0;
+                        // $subTotal = 0;
+                        $subTotBobot = 0;
+                        $data[$v->mk_id] = [
+                            "mk_nama" => $v->mk_nama,
+                            "children" => [],
+                        ];
+                        $subBobot = (floatval($subNilai) * floatval($v->msk_bobot) / 100);
+                        $subTotBobot += $subBobot;
+                        $data[$v->mk_id]["children"][] = [
+                            "msk_nama" => $v->msk_nama,
+                            "bobot" => $subBobot,
+                        ];
+                        // $subTotal += $v->msk_bobot;
+                        $mk_id = $v->mk_id;
+                    } else {
+                        $banyakSubKriteria++;
+                        $subBobot = (floatval($subNilai) * floatval($v->msk_bobot) / 100);
+                        $subTotBobot += $subBobot;
+                        $data[$v->mk_id]["children"][] = [
+                            "msk_nama" => $v->msk_nama,
+                            "bobot" => $subBobot,
+                        ];
+                    }
+
+                    if ($k == count($rawKriteria) - 1) {
+                        $subRata2 = $banyakSubKriteria == 0 ? 0 : $subTotBobot / $banyakSubKriteria;
+                        $data[$mk_id]["bobot"] = $subTotBobot;
+                        $data[$mk_id]["rata2"] = $subRata2;
+                    }
+                }
+            }
+            $res["data"] = $data;
         } catch (\Throwable $th) {
             $res = [
-                'status' => false,
-                'msg' => $th->getMessage(),
-            ];
-        }
-
-        return $res;
-    }
-
-    /**
-     * @param $id
-     * @param array $data
-     * @return array
-     */
-    public function edit($id, array $data): array
-    {
-        $res = [
-            'status' => true,
-            'msg' => '',
-        ];
-
-        try {
-            $cekData = $this->__cekData($id);
-            if (!$cekData['status']) {
-                return $cekData;
-            }
-
-            $dt = $cekData['data'];
-            $d = $dt->update($data);
-
-            if ($d <= 0) {
-                $res = [
-                    'status' => false,
-                    'msg' => 'Gagal update data. Silahkan hubungi Admin!',
-                ];
-            }
-        } catch (\Throwable $th) {
-            $res = [
-                'status' => false,
-                'msg' => $th->getMessage(),
-            ];
-        }
-
-        return $res;
-    }
-
-    /**
-     * @param $id
-     * @return array
-     */
-    public function del($id): array
-    {
-        $res = [
-            'status' => true,
-            'msg' => '',
-        ];
-
-        try {
-            $cekData = $this->__cekData($id);
-            if (!$cekData['status']) {
-                return $cekData;
-            }
-
-            $d = $cekData['data']->delete();
-            if ($d < 0) {
-                $res = [
-                    'status' => false,
-                    'msg' => 'Gagal hapus data. Silahkan hubungi Admin!',
-                ];
-            }
-        } catch (\Throwable $th) {
-            $res = [
-                'status' => false,
-                'msg' => $th->getMessage(),
-            ];
-        }
-
-        return $res;
-    }
-
-    /**
-     * @param string $act
-     * @param string $key
-     * @param string $val
-     * @param string $old
-     * @return array
-     */
-    public function checkDuplicate(string $act, string $key, string $val, string $old = ""): string
-    {
-        $res = "true";
-
-        try {
-            $dt = LaporanPenilaianUser::where($key, $val);
-            if ($act == 'edit') {
-                $dt = $dt->where($key, "!=", $old);
-            }
-
-            if ($dt->count() > 0) {
-                $res = "false";
-            }
-        } catch (\Throwable $th) {
-            $res = "false";
-        }
-
-        return $res;
-    }
-
-    /**
-     * @param $id
-     * @return array
-     */
-    public function getById($id): array
-    {
-        $res = [
-            'status' => true,
-            'msg' => "",
-        ];
-
-        try {
-            $res = $this->__cekData($id);
-        } catch (\Throwable $th) {
-            $res = [
-                'status' => false,
-                'msg' => $th->getMessage(),
+                "status" => true,
+                "msg" => $th->getMessage(),
+                "stack" => env("DEV_MODE", "production") == "production" ? null : $th->getTrace(),
             ];
         }
 
