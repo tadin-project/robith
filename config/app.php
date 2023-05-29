@@ -193,6 +193,7 @@ return [
         App\Providers\My\MsKriteriaServiceProvider::class,
         App\Providers\My\MsLampiranServiceProvider::class,
         App\Providers\My\MsMenusServiceProvider::class,
+        App\Providers\My\MsRadarServiceProvider::class,
         App\Providers\My\MsSubKriteriaServiceProvider::class,
         App\Providers\My\MsUsersServiceProvider::class,
         App\Providers\My\ProfilServiceProvider::class,

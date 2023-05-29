@@ -14,6 +14,7 @@ use App\Http\Controllers\MsKategoriUsahaC;
 use App\Http\Controllers\MsKriteriaC;
 use App\Http\Controllers\MsLampiranC;
 use App\Http\Controllers\MsMenusC;
+use App\Http\Controllers\MsRadarC;
 use App\Http\Controllers\MsSubKriteriaC;
 use App\Http\Controllers\MsUsersC;
 use App\Http\Controllers\ProfilC;
@@ -127,6 +128,15 @@ Route::group(["middleware" => "has_auth"], function () {
         Route::delete('{id}', [MsLampiranC::class, 'delete'])->name('ms-lampiran.delete');
         Route::get('', [MsLampiranC::class, 'index'])->name('ms-lampiran.index');
         Route::post('', [MsLampiranC::class, 'save'])->name('ms-lampiran.save');
+    });
+
+    Route::group(['prefix' => 'ms-radar'], function () {
+        Route::get('check-duplicate', [MsRadarC::class, 'checkDuplicate'])->name('ms-radar.check-duplicate');
+        Route::get('get-data', [MsRadarC::class, 'getData'])->name('ms-radar.get-data');
+        Route::get('{id}', [MsRadarC::class, 'getById'])->name('ms-radar.get');
+        Route::delete('{id}', [MsRadarC::class, 'delete'])->name('ms-radar.delete');
+        Route::get('', [MsRadarC::class, 'index'])->name('ms-radar.index');
+        Route::post('', [MsRadarC::class, 'save'])->name('ms-radar.save');
     });
 
     Route::group(['prefix' => 'tenant'], function () {
