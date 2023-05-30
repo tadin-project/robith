@@ -18,6 +18,7 @@ use App\Http\Controllers\MsRadarC;
 use App\Http\Controllers\MsSubKriteriaC;
 use App\Http\Controllers\MsUsersC;
 use App\Http\Controllers\ProfilC;
+use App\Http\Controllers\SettingSubKriteriaRadarC;
 use App\Http\Controllers\TenantC;
 use App\Http\Controllers\ValidasiAsesmenC;
 use Illuminate\Support\Facades\Route;
@@ -137,6 +138,15 @@ Route::group(["middleware" => "has_auth"], function () {
         Route::delete('{id}', [MsRadarC::class, 'delete'])->name('ms-radar.delete');
         Route::get('', [MsRadarC::class, 'index'])->name('ms-radar.index');
         Route::post('', [MsRadarC::class, 'save'])->name('ms-radar.save');
+    });
+
+    Route::group(['prefix' => 'setting-sub-kriteria-radar'], function () {
+        Route::get('check-duplicate', [SettingSubKriteriaRadarC::class, 'checkDuplicate'])->name('setting-sub-kriteria-radar.check-duplicate');
+        Route::get('get-data', [SettingSubKriteriaRadarC::class, 'getData'])->name('setting-sub-kriteria-radar.get-data');
+        Route::get('{id}', [SettingSubKriteriaRadarC::class, 'getById'])->name('setting-sub-kriteria-radar.get');
+        Route::delete('{id}', [SettingSubKriteriaRadarC::class, 'delete'])->name('setting-sub-kriteria-radar.delete');
+        Route::get('', [SettingSubKriteriaRadarC::class, 'index'])->name('setting-sub-kriteria-radar.index');
+        Route::post('', [SettingSubKriteriaRadarC::class, 'save'])->name('setting-sub-kriteria-radar.save');
     });
 
     Route::group(['prefix' => 'tenant'], function () {
