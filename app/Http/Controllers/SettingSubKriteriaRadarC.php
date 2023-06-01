@@ -19,40 +19,55 @@ class SettingSubKriteriaRadarC extends MyC
 
     public function index(): View
     {
+        $optDimensi = [];
+        $cekDimensi = $this->settingSubKriteriaRadarService->getDimensi();
+        if ($cekDimensi['status']) {
+            $optDimensi = $cekDimensi['data'];
+        }
+
         $data = [
             "__title" => "Setting Sub Kriteria - Radar",
+            "dimensi" => $optDimensi,
         ];
 
         return $this->my_view("v_setting_sub_kriteria_radar", $data);
     }
 
-    public function getData(Request $request): JsonResponse
+    public function getData(string $jenis, Request $request): JsonResponse
     {
         $cols = [
-            "md.md_id",
-            "md.md_kode",
-            "md.md_nama",
-            "md.md_status",
+            "mr.mr_id",
+            "mr.mr_id",
+            "mr.mr_kode",
+            "mr.mr_nama",
         ];
 
-        $colsSearch = [
-            "md.md_kode",
-            "md.md_nama",
-        ];
+        $msk_id         = $request->msk_id;
+        $inputSearch    = $request->search;
+        $inputOrder     = $request->order;
+        $inputStart     = $request->start;
+        $inputLength    = $request->length;
+        if (empty($msk_id)) {
+            $msk_id = 0;
+        }
 
-        $inputSearch = $request->search;
-        $inputOrder = $request->order;
-        $inputStart = $request->start;
-        $inputLength = $request->length;
+        $subWhere = " AND mr.mr_id " . ($jenis == "before" ? "not" : "") . " in (
+        select
+            sskr.mr_id
+        from
+            setting_sub_kriteria_radar sskr
+        where
+            sskr.msk_id = $msk_id ) ";
 
         $sWhere = "";
+        $sWhere .= $subWhere;
 
         if (!empty($inputSearch) && array_key_exists("value", $inputSearch)) {
             if (!empty($inputSearch['value'])) {
                 $search = $inputSearch['value'];
                 $sWhere .= " AND (";
-                for ($i = 0; $i < count($colsSearch); $i++) {
-                    $sWhere .= " lower(cast(" . $colsSearch[$i] . " as char)) like lower('%$search%') or ";
+                for ($i = 0; $i < count($cols); $i++) {
+                    $sWhere .= " lower(cast(" . $cols[$i] . " as char)) like lower('%$search%') or ";
                 }
                 $sWhere = substr($sWhere, 0, -3);
 
@@ -104,37 +119,51 @@ class SettingSubKriteriaRadarC extends MyC
         $i = 1;
         $no = $i + $inputStart;
 
-        $status = "";
-        $aksi = "";
-
         foreach ($detailData as $v) {
+            $id = $v->mr_id;
 
-            if ($v->md_status == 1) {
-                $status = "<span class='badge badge-success'>Aktif</span>";
-            } else {
-                $status = "<span class='badge badge-danger'>Non Aktif</span>";
-            }
-
-            $id = $v->md_id;
-
-            $aksiEdit = '<a href="javascript:void(0)" class="btn btn-sm btn-primary mb-1 mx-1" title="Edit" onclick="fnEdit(\'' . $id . '\')"><i class="fas fa-pencil-alt"></i></a>';
-            $aksiHapus = '<a href="javascript:void(0)" class="btn btn-sm btn-danger mb-1 mx-1" title="Hapus" onclick="fnDel(\'' . $id . '\',\'' . $v->md_nama . '\')"><i class="fas fa-trash"></i></a>';
-
-            $aksi = "";
-            $aksi .= $aksiEdit . $aksiHapus;
+            $inputCheck = '<input type="checkbox" value="' . $id . '">';
 
             $data['data'][] = [
                 $no,
-                $v->md_kode,
-                $v->md_nama,
-                $status,
-                $aksi,
+                $inputCheck,
+                $v->mr_kode,
+                $v->mr_nama,
             ];
 
             $no++;
         }
 
         return response()->json($data);
+    }
+
+    public function getParent(Request $request): JsonResponse
+    {
+        $res = [
+            "status" => true,
+            "message" => "",
+        ];
+
+        $jenis = $request->jenis;
+        $parent = $request->parent;
+        if (empty($jenis)) {
+            return response()->json([
+                "status" => false,
+                "message" => "Parameter jenis tidak diketahui",
+            ]);
+        }
+
+        if (empty($parent)) {
+            $parent = 0;
+        }
+
+        if ($jenis == "kriteria") {
+            $res = $this->settingSubKriteriaRadarService->getKriteria($parent);
+        } else {
+            $res = $this->settingSubKriteriaRadarService->getSubKriteria($parent);
+        }
+
+        return response()->json($res);
     }
 
     public function save(Request $request): JsonResponse
@@ -144,20 +173,29 @@ class SettingSubKriteriaRadarC extends MyC
             'msg' => '',
         ];
 
-        $data = [
-            'md_nama' => $request->md_nama,
-            'md_kode' => $request->md_kode,
-            'md_status' => $request->md_status,
-        ];
+        $jenis = $request->jenis;
+        $msk_id = $request->msk_id;
+        $mr_id = $request->mr_id;
 
-        $res = $this->settingSubKriteriaRadarService->add($data);
+        if (empty($jenis) || empty($msk_id) || empty($mr_id)) {
+            return response()->json([
+                "status" => false,
+                "message" => "Data tidak lengkap",
+            ]);
+        }
 
-        return response()->json($res);
-    }
-
-    public function delete(int $id): JsonResponse
-    {
-        $res = $this->settingSubKriteriaRadarService->del($id);
+        if ($jenis == "kiri") {
+            $res = $this->settingSubKriteriaRadarService->del($msk_id, $mr_id);
+        } else {
+            $data = [];
+            foreach ($mr_id as $v) {
+                $data[] = [
+                    'mr_id' => $v,
+                    'msk_id' => $msk_id,
+                ];
+            }
+            $res = $this->settingSubKriteriaRadarService->add($data);
+        }
 
         return response()->json($res);
     }

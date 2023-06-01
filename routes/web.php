@@ -141,8 +141,8 @@ Route::group(["middleware" => "has_auth"], function () {
     });
 
     Route::group(['prefix' => 'setting-sub-kriteria-radar'], function () {
-        Route::get('get-data-before', [SettingSubKriteriaRadarC::class, 'getDataBefore'])->name('setting-sub-kriteria-radar.get-data-before');
-        Route::get('get-data-after', [SettingSubKriteriaRadarC::class, 'getDataAfter'])->name('setting-sub-kriteria-radar.get-data-after');
+        Route::get('get-data/{jenis}', [SettingSubKriteriaRadarC::class, 'getData'])->name('setting-sub-kriteria-radar.get-data');
+        Route::get('get-parent', [SettingSubKriteriaRadarC::class, 'getParent'])->name('setting-sub-kriteria-radar.get-parent');
         Route::get('', [SettingSubKriteriaRadarC::class, 'index'])->name('setting-sub-kriteria-radar.index');
         Route::post('', [SettingSubKriteriaRadarC::class, 'save'])->name('setting-sub-kriteria-radar.save');
     });

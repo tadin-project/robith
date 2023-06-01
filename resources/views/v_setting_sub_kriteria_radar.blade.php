@@ -18,24 +18,65 @@
         <h3 class="card-title">
           <i class="ion ion-clipboard mr-1"></i> {{ $__title }}
         </h3>
-        <div class="card-tools">
-          <button class="btn btn-sm btn-danger" title="Batal Tambah Data" id="btnBatal" style="display: none"><i
-              class="fas fa-times"></i></button>
-          <button class="btn btn-sm btn-primary" title="Tambah Data" id="btnTambah"><i class="fas fa-plus"></i>
-            Data</button>
-        </div>
       </div>
       <div class="card-body">
-        <div class="row" id="rowData">
-          <div class="col-12">
-            <table class="table table-sm table-striped table-bordered table-hover" id="tableVendor" style="width: 100%">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="control-label">Dimensi</label>
+              <select id="md_id" class="form-control">
+                @foreach ($dimensi as $item)
+                  <option value="{{ $item->md_id }}">{{ $item->md_kode }} - {{ $item->md_nama }}</option>
+                @endforeach
+              </select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="control-label">Kriteria</label>
+              <select id="mk_id" class="form-control"></select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="control-label">Sub Kriteria</label>
+              <select id="msk_id" class="form-control"></select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-5">
+            <table class="table table-sm table-striped table-bordered table-hover" id="tableKiri" style="width: 100%">
               <thead>
                 <tr>
                   <th class="text-center">No</th>
+                  <th class="text-center"><input type="checkbox" id="allKiri"></th>
                   <th class="text-center">Kode</th>
                   <th class="text-center">Nama</th>
-                  <th class="text-center">Status</th>
-                  <th class="text-center">Aksi</th>
+                </tr>
+              </thead>
+            </table>
+          </div>
+          <div class="col-md-2 d-flex flex-column align-items-center justify-content-center">
+            <div class="row m-1">
+              <div class="col-md-12">
+                <button class="btn btn-primary" id="btnKanan"><i class="fa fa-arrow-right"></i></button>
+              </div>
+            </div>
+            <div class="row m-1">
+              <div class="col-md-12">
+                <button class="btn btn-primary" id="btnKiri"><i class="fa fa-arrow-left"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <table class="table table-sm table-striped table-bordered table-hover" id="tableKanan" style="width: 100%">
+              <thead>
+                <tr>
+                  <th class="text-center">No</th>
+                  <th class="text-center"><input type="checkbox" id="allKanan"></th>
+                  <th class="text-center">Kode</th>
+                  <th class="text-center">Nama</th>
                 </tr>
               </thead>
             </table>
@@ -50,145 +91,83 @@
 <script>
   // init component
   // global
-  const baseDir = baseUrl + '/ms-dimensi',
-    rowForm = $("#rowForm"),
-    rowData = $("#rowData");
-
-  // form
-  const formVendor = $("#formVendor"),
-    act = $("#act"),
-    mdId = $("#md_id"),
-    mdNama = $("#md_nama"),
-    mdKode = $("#md_kode"),
-    oldMdKode = $("#old_md_kode"),
-    mdStatus = $("#md_status"),
-    btnBatal = $("#btnBatal"),
-    btnSimpan = $("#btnSimpan");
+  const baseDir = baseUrl + '/setting-sub-kriteria-radar';
 
   // datatable
-  const tableVendor = $("#tableVendor"),
-    btnTambah = $("#btnTambah");
+  const tableKiri = $("#tableKiri"),
+    allKiri = $("#allKiri"),
+    btnKiri = $("#btnKiri"),
+    tableKanan = $("#tableKanan"),
+    allKanan = $("#allKanan"),
+    btnKanan = $("#btnKanan");
 
   // Class definition
   var PageAdvanced = function() {
-    // Shared variables
-    var table;
-    var dt;
-
     // Private functions
     var initDatatable = function() {
-      dt = tableVendor.DataTable({
+      tableKiri.DataTable({
         responsive: true,
         searchDelay: 500,
         processing: true,
         serverSide: true,
         order: [
-          [1, 'asc']
+          [2, 'asc']
         ],
         ajax: {
-          url: baseDir + "/get-data",
+          url: baseDir + "/get-data/before",
+          data: function(d) {
+            d.msk_id = $("#msk_id").val();
+          }
         },
         columnDefs: [{
-          targets: [0, -1],
+          targets: [0, 1],
           orderable: false,
-        }, {
-          targets: [0, -2, -1],
-          className: "text-center"
+          className: "text-center",
         }, {
           targets: [0],
           width: "5%"
         }, {
-          targets: [-1],
-          width: "12%"
-        }, {
-          targets: [-2],
-          width: "8%"
+          targets: [1],
+          width: "10%"
         }, ],
         language: {
           lengthMenu: "Show _MENU_",
         },
+        drawCallback: function(setting) {
+          allKiri.prop("checked", false);
+        }
       });
 
-      table = dt.$;
-    }
-
-    var initForm = function() {
-      formVendor.validate({
-        errorClass: 'help-block',
-        errorElement: 'span',
-        ignore: 'input[type=hidden]',
-        rules: {
-          md_nama: {
-            required: true,
-          },
-          md_kode: {
-            required: true,
-            remote: {
-              url: baseDir + '/check-duplicate',
-              cache: false,
-              data: {
-                act: function() {
-                  return act.val();
-                },
-                key: "md_kode",
-                val: function() {
-                  return mdKode.val();
-                },
-                old: function() {
-                  return act.val() == 'edit' ? oldMdKode.val() : "";
-                }
-              }
-            },
-          },
+      tableKanan.DataTable({
+        responsive: true,
+        searchDelay: 500,
+        processing: true,
+        serverSide: true,
+        order: [
+          [2, 'asc']
+        ],
+        ajax: {
+          url: baseDir + "/get-data/after",
+          data: function(d) {
+            d.msk_id = $("#msk_id").val();
+          }
         },
-        messages: {
-          md_kode: {
-            remote: "Kode sudah digunakan. Gunakan yang lain",
-          },
+        columnDefs: [{
+          targets: [0, 1],
+          orderable: false,
+          className: "text-center",
+        }, {
+          targets: [0],
+          width: "5%"
+        }, {
+          targets: [1],
+          width: "10%"
+        }, ],
+        language: {
+          lengthMenu: "Show _MENU_",
         },
-        highlight: function(el, errorClass) {
-          $(el).parents('.form-group').first().addClass('has-error');
-        },
-        unhighlight: function(el, errorClass) {
-          var $parent = $(el).parents('.form-group').first();
-          $parent.removeClass('has-error');
-          $parent.find('.help-block').hide();
-        },
-        errorPlacement: function(error, el) {
-          error.appendTo(el.parents('.form-group').find('div:first'));
-        },
-        submitHandler: function(form) {
-          btnSimpan.attr('disabled', 'disabled').text('Loading...')
-          var $data = $(form).serialize();
-          $.ajax({
-            type: 'POST',
-            url: baseDir,
-            data: $data,
-            error: function() {
-              btnSimpan.removeAttr('disabled', 'disabled').text('Simpan');
-            },
-            complete: function() {
-              btnSimpan.removeAttr('disabled', 'disabled').text('Simpan');
-            },
-            success: function(res) {
-              if (res.status) {
-                Swal.fire({
-                  icon: 'success',
-                  title: 'Data berhasil disimpan!',
-                  showConfirmButton: false,
-                  timer: 1500
-                });
-
-                btnBatal.click();
-              } else {
-                if (typeof res.msg == 'object') {
-                  res.msg = JSON.stringify(res.msg);
-                }
-                Swal.fire('Error', res.msg, 'error');
-              }
-            }
-          });
-          return false;
+        drawCallback: function(setting) {
+          allKanan.prop("checked", false);
         }
       });
     }
@@ -197,116 +176,177 @@
     return {
       init: function() {
         initDatatable();
-        initForm();
       }
     }
   }();
 
-  function fnShowForm(isShow = true) {
-    fnResetForm();
-    if (isShow) {
-      rowForm.slideDown(500);
-      rowData.slideUp(500);
-      btnBatal.show();
-      btnTambah.hide();
-    } else {
-      rowForm.slideUp(500);
-      rowData.slideDown(500);
-      btnBatal.hide();
-      btnTambah.show();
-    }
-  }
-
-  function fnResetForm() {
-    formVendor[0].reset();
-    formVendor.validate().resetForm();
-    $('.has-error').removeClass('has-error');
-    act.val('add');
-    mdId.val('');
-    oldMdKode.val('');
-  }
+  function fnResetForm() {}
 
   function fnLoadTbl() {
-    tableVendor.DataTable().draw()
+    tableKiri.DataTable().draw();
+    tableKanan.DataTable().draw();
   }
 
-  function fnEdit(id) {
+  function fnSetData(data = [], ) {
     $.ajax({
-      url: baseDir + '/' + id,
-      dataType: 'json',
-      cache: false,
+      url: baseDir,
+      dataType: "json",
+      type: "post",
+      data: data,
+      error: function(xhr) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: xhr.statusText,
+        });
+      },
       success: function(res) {
-        if (res.status) {
-          var dt = res.data;
+        if (!res.status) {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: res.message,
+          });
+          return;
+        }
 
-          act.val('edit');
-          mdId.val(id);
-          mdKode.val(dt.md_kode);
-          oldMdKode.val(dt.md_kode);
-          mdNama.val(dt.md_nama);
-          mdStatus.val(dt.md_status);
+        Swal.fire({
+          icon: 'success',
+          title: 'Data berhasil dirubah!',
+          showConfirmButton: false,
+          timer: 1500
+        });
+        fnLoadTbl();
+      },
+    });
+  }
 
-          rowForm.slideDown(500);
-          rowData.slideUp(500);
-          btnBatal.show();
-          btnTambah.hide();
-        } else {
-          Swal.fire('Error', res.msg, 'error');
+  function fnGetOpt(jenisParent = "kriteria", parent = "", selectedId = "") {
+    let url = baseDir + "/get-parent";
+
+    $.ajax({
+      url: url,
+      dataType: "json",
+      data: {
+        jenis: jenisParent,
+        parent: parent,
+      },
+      error: function(xhr) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: xhr.statusText,
+        });
+      },
+      success: function(res) {
+        if (!res.status) {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: res.message,
+          });
+          return;
+        }
+
+        let opt = "";
+        $.each(res.data, function(i, v) {
+          opt +=
+            `<option value="${v.id}" ${selectedId == v.id ? "selected" : ""}>${v.kode} - ${v.nama}</option>`;
+        });
+
+        if (jenisParent == "kriteria") {
+          $("#mk_id").html(opt);
+          fnGetOpt("sub-kriteria", $("#mk_id").val(), selectedId);
+        } else if (jenisParent == "sub-kriteria") {
+          $("#msk_id").html(opt);
+          fnLoadTbl();
         }
       },
     });
   }
 
-  function fnDel(id, nama) {
-    Swal.fire({
-      title: `Apakah Anda yakin menghapus ${nama}?`,
-      text: "Data yang dihapus tidak dapat dikembalikan!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Iya',
-      cancelButtonText: 'Tidak',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        $.ajax({
-          url: baseDir + '/' + id,
-          method: 'delete',
-          dataType: 'json',
-          cache: false,
-          success: function(res) {
-            if (res.status) {
-              Swal.fire({
-                icon: 'success',
-                title: 'Data berhasil dihapus!',
-                showConfirmButton: false,
-                timer: 1500
-              });
-              fnLoadTbl();
-            } else {
-              Swal.fire('Error', res.msg, 'error');
-            }
-          },
-        });
-      }
-    })
-  }
-
   $(document).ready(function() {
     PageAdvanced.init();
+    fnGetOpt("kriteria", $("#md_id").val());
 
-    btnTambah.click(function() {
-      fnShowForm();
+    btnKanan.click(async function() {
+      let data = [];
+      let rows = tableKiri.find('tbody input:checkbox:checked');
+
+      $.each(rows, function(i, v) {
+        data.push(v.value);
+      });
+
+      if (data.length == 0) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Pilih data yang akan dipindahkan",
+        });
+        return;
+      }
+
+      fnSetData({
+        mr_id: data,
+        msk_id: $("#msk_id").val(),
+        jenis: "kanan",
+      });
     });
 
-    btnBatal.click(function() {
-      fnShowForm(false);
+    btnKiri.click(async function() {
+      let data = [];
+      let rows = tableKanan.find('tbody input:checkbox:checked');
+
+      $.each(rows, function(i, v) {
+        data.push(v.value);
+      });
+
+      if (data.length == 0) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Pilih data yang akan dipindahkan",
+        });
+        return;
+      }
+
+      fnSetData({
+        mr_id: data,
+        msk_id: $("#msk_id").val(),
+        jenis: "kiri",
+      });
+    });
+
+    allKanan.click(function() {
+      const isChecked = $(this).prop("checked");
+
+      if (isChecked) {
+        tableKanan.find('tbody input:checkbox').prop("checked", true);
+      } else {
+        tableKanan.find('tbody input:checkbox').prop("checked", false);
+      }
+    });
+
+    allKiri.click(function() {
+      const isChecked = $(this).prop("checked");
+
+      if (isChecked) {
+        tableKiri.find('tbody input:checkbox').prop("checked", true);
+      } else {
+        tableKiri.find('tbody input:checkbox').prop("checked", false);
+      }
+    });
+
+    $("#md_id").change(function() {
+      fnGetOpt("kriteria", $(this).val());
+    });
+
+    $("#mk_id").change(function() {
+      fnGetOpt("sub-kriteria", $(this).val());
+    });
+
+    $("#msk_id").change(function() {
       fnLoadTbl();
     });
-
-    btnSimpan.click(function() {
-      formVendor.submit();
-    });
-
   });
 </script>
