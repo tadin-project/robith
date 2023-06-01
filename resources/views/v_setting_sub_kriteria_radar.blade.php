@@ -26,42 +26,6 @@
         </div>
       </div>
       <div class="card-body">
-        <div class="row" id="rowForm" style="display:none;">
-          <div class="col-12">
-            <form id="formVendor">
-              <input type="hidden" id="act" name="act" value="add">
-              <input type="hidden" id="md_id" name="md_id">
-              <div class="row form-group">
-                <label class="col-md-3 control-label">Kode</label>
-                <div class="col-md-2">
-                  <input type="text" class="form-control" id="md_kode" name="md_kode" maxlength="2">
-                </div>
-                <input type="hidden" id="old_md_kode">
-              </div>
-              <div class="row form-group">
-                <label class="col-md-3 control-label">Nama</label>
-                <div class="col-md-5">
-                  <input type="text" class="form-control" id="md_nama" name="md_nama">
-                </div>
-              </div>
-              <div class="row form-group">
-                <label class="col-md-3 control-label">Status</label>
-                <div class="col-md-2">
-                  <select name="md_status" id="md_status" class="form-control">
-                    <option value="1">Aktif</option>
-                    <option value="0">Non Aktif</option>
-                  </select>
-                </div>
-              </div>
-              <div class="row text-center">
-                <div class="col-md-12">
-                  <button type="button" class="btn btn-sm btn-secondary" onclick="btnBatal.click();">Batal</button>
-                  <button type="button" class="btn btn-sm btn-primary" id="btnSimpan">Simpan</button>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
         <div class="row" id="rowData">
           <div class="col-12">
             <table class="table table-sm table-striped table-bordered table-hover" id="tableVendor" style="width: 100%">

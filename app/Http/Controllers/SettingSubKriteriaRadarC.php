@@ -20,10 +20,10 @@ class SettingSubKriteriaRadarC extends MyC
     public function index(): View
     {
         $data = [
-            "__title" => "Master Dimensi",
+            "__title" => "Setting Sub Kriteria - Radar",
         ];
 
-        return $this->my_view("v_ms_dimensi", $data);
+        return $this->my_view("v_setting_sub_kriteria_radar", $data);
     }
 
     public function getData(Request $request): JsonResponse
@@ -144,22 +144,13 @@ class SettingSubKriteriaRadarC extends MyC
             'msg' => '',
         ];
 
-        $cekValidasi = $this->settingSubKriteriaRadarService->validateData($request);
-        if (!$cekValidasi['status']) {
-            return response()->json($cekValidasi);
-        }
-
         $data = [
             'md_nama' => $request->md_nama,
             'md_kode' => $request->md_kode,
             'md_status' => $request->md_status,
         ];
 
-        if ($request->act == 'edit') {
-            $res = $this->settingSubKriteriaRadarService->edit($request->md_id, $data);
-        } else {
-            $res = $this->settingSubKriteriaRadarService->add($data);
-        }
+        $res = $this->settingSubKriteriaRadarService->add($data);
 
         return response()->json($res);
     }
@@ -168,28 +159,6 @@ class SettingSubKriteriaRadarC extends MyC
     {
         $res = $this->settingSubKriteriaRadarService->del($id);
 
-        return response()->json($res);
-    }
-
-    public function checkDuplicate(Request $request): string
-    {
-        $res = $this->settingSubKriteriaRadarService->checkDuplicate($request->act, $request->key, $request->val, (!empty($request->old) ? $request->old : ""));
-        return $res;
-    }
-
-    public function getById($id): JsonResponse
-    {
-        $res = $this->settingSubKriteriaRadarService->getById($id);
-        if ($res['status']) {
-            $dt = $res["data"];
-            $data = [
-                "md_id" => $dt->md_id,
-                "md_nama" => $dt->md_nama,
-                "md_kode" => $dt->md_kode,
-                "md_status" => $dt->md_status,
-            ];
-            $res["data"] = $data;
-        }
         return response()->json($res);
     }
 }
