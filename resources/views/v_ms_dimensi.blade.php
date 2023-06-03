@@ -45,6 +45,20 @@
                 </div>
               </div>
               <div class="row form-group">
+                <label class="col-md-3 control-label">Warna</label>
+                <div class="col-md-5">
+                  <div class="input-group md_color-picker colorpicker-element" data-colorpicker-id="2">
+                    <input type="text" class="form-control" data-original-title="" title="" id="md_color"
+                      name="md_color">
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <i class="fas fa-square" style="color: #000;"></i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row form-group">
                 <label class="col-md-3 control-label">Status</label>
                 <div class="col-md-2">
                   <select name="md_status" id="md_status" class="form-control">
@@ -70,6 +84,7 @@
                   <th class="text-center">No</th>
                   <th class="text-center">Kode</th>
                   <th class="text-center">Nama</th>
+                  <th class="text-center">Warna</th>
                   <th class="text-center">Status</th>
                   <th class="text-center">Aksi</th>
                 </tr>
@@ -95,6 +110,7 @@
     act = $("#act"),
     mdId = $("#md_id"),
     mdNama = $("#md_nama"),
+    mdColor = $("#md_color"),
     mdKode = $("#md_kode"),
     oldMdKode = $("#old_md_kode"),
     mdStatus = $("#md_status"),
@@ -259,6 +275,8 @@
     $('.has-error').removeClass('has-error');
     act.val('add');
     mdId.val('');
+    mdColor.val('#000');
+    mdColor.trigger('change');
     oldMdKode.val('');
   }
 
@@ -280,6 +298,8 @@
           mdKode.val(dt.md_kode);
           oldMdKode.val(dt.md_kode);
           mdNama.val(dt.md_nama);
+          mdColor.val(dt.md_color);
+          mdColor.trigger("change");
           mdStatus.val(dt.md_status);
 
           rowForm.slideDown(500);
@@ -344,5 +364,9 @@
       formVendor.submit();
     });
 
+    $(".md_color-picker").colorpicker();
+    $(".md_color-picker").on("colorpickerChange", function(event) {
+      $(".md_color-picker .fa-square").css("color", event.color.toString());
+    });
   });
 </script>

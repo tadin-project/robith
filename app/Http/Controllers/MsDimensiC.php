@@ -32,6 +32,7 @@ class MsDimensiC extends MyC
             "md.md_id",
             "md.md_kode",
             "md.md_nama",
+            "md.md_color",
             "md.md_status",
         ];
 
@@ -127,6 +128,7 @@ class MsDimensiC extends MyC
                 $no,
                 $v->md_kode,
                 $v->md_nama,
+                $v->md_color . '&nbsp;<i class="fas fa-square" style="color: ' . $v->md_color . ';"></i>',
                 $status,
                 $aksi,
             ];
@@ -152,6 +154,7 @@ class MsDimensiC extends MyC
         $data = [
             'md_nama' => $request->md_nama,
             'md_kode' => $request->md_kode,
+            'md_color' => $request->md_color,
             'md_status' => $request->md_status,
         ];
 
@@ -186,6 +189,7 @@ class MsDimensiC extends MyC
                 "md_id" => $dt->md_id,
                 "md_nama" => $dt->md_nama,
                 "md_kode" => $dt->md_kode,
+                "md_color" => $dt->md_color,
                 "md_status" => $dt->md_status,
             ];
             $res["data"] = $data;

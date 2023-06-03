@@ -88,6 +88,7 @@ class MsDimensiServiceImpl implements MsDimensiService
                     "md.md_id",
                     "md.md_kode",
                     "md.md_nama",
+                    "md.md_color",
                     "md.md_status",
                 ];
             }
@@ -217,6 +218,7 @@ class MsDimensiServiceImpl implements MsDimensiService
             $dt = $cekData['data'];
 
             $dt->md_kode = $data["md_kode"];
+            $dt->md_color = $data["md_color"];
             $dt->md_nama = $data["md_nama"];
             if (!is_null($data["md_status"])) {
                 $dt->md_status = $data["md_status"];

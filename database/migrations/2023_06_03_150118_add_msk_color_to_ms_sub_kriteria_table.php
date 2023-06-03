@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddMdColorToMsDimensiTable extends Migration
+class AddMskColorToMsSubKriteriaTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddMdColorToMsDimensiTable extends Migration
      */
     public function up()
     {
-        Schema::table('ms_dimensi', function (Blueprint $table) {
-            $table->char('md_color', 255)->nullable()->default("#4C6108");
+        Schema::table('ms_sub_kriteria', function (Blueprint $table) {
+            $table->char('msk_color', 255)->nullable()->default("#1D7D5D");
         });
     }
 
@@ -25,8 +25,8 @@ class AddMdColorToMsDimensiTable extends Migration
      */
     public function down()
     {
-        Schema::table('ms_dimensi', function (Blueprint $table) {
-            $table->dropColumn('md_color');
+        Schema::table('ms_sub_kriteria', function (Blueprint $table) {
+            $table->dropColumn('msk_color');
         });
     }
 }

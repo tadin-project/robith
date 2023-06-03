@@ -100,6 +100,7 @@ class MsKriteriaServiceImpl implements MsKriteriaService
                     "mk.mk_id",
                     "mk.mk_kode",
                     "mk.mk_nama",
+                    "mk.mk_color",
                     "mk.mk_status",
                     "coalesce(msk.tot_bobot, 0) as tot_bobot",
                 ];
@@ -242,6 +243,7 @@ class MsKriteriaServiceImpl implements MsKriteriaService
 
             $dt->mk_kode = $data["mk_kode"];
             $dt->mk_nama = $data["mk_nama"];
+            $dt->mk_color = $data["mk_color"];
             $dt->mk_desc = $data["mk_desc"];
             if (!is_null($data["mk_status"])) {
                 $dt->mk_status = $data["mk_status"];

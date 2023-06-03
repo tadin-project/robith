@@ -39,6 +39,7 @@ class MsKriteriaC extends MyC
             "mk.mk_id",
             "mk.mk_kode",
             "mk.mk_nama",
+            "mk.mk_color",
             "coalesce(msk.tot_bobot, 0) as tot_bobot",
             "mk.mk_status",
         ];
@@ -139,6 +140,7 @@ class MsKriteriaC extends MyC
                 $no,
                 $v->mk_kode,
                 $v->mk_nama,
+                $v->mk_color . '&nbsp;<i class="fas fa-square" style="color: ' . $v->mk_color . ';"></i>',
                 $v->tot_bobot,
                 $status,
                 $aksi,
@@ -165,6 +167,7 @@ class MsKriteriaC extends MyC
         $data = [
             'mk_nama' => $request->mk_nama,
             'mk_kode' => $request->mk_kode,
+            'mk_color' => $request->mk_color,
             'mk_desc' => $request->mk_desc,
             'mk_status' => $request->mk_status,
             'md_id' => $request->md_id,
@@ -201,6 +204,7 @@ class MsKriteriaC extends MyC
                 "mk_id" => $dt->mk_id,
                 "mk_nama" => $dt->mk_nama,
                 "mk_kode" => $dt->mk_kode,
+                "mk_color" => $dt->mk_color,
                 "mk_desc" => $dt->mk_desc,
                 "mk_status" => $dt->mk_status,
                 "md_id" => $dt->md_id,

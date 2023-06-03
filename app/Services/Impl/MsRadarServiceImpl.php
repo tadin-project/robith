@@ -88,6 +88,7 @@ class MsRadarServiceImpl implements MsRadarService
                     "mr.mr_id",
                     "mr.mr_kode",
                     "mr.mr_nama",
+                    "mr.mr_color",
                     "mr.mr_status",
                     "mr.mr_bobot",
                 ];

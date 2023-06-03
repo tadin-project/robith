@@ -36,6 +36,9 @@
   <link rel="stylesheet" href="{{ asset('') }}assets/plugins/select2/css/select2.min.css">
   <!-- Select2 Plugin Bootstrap 4-->
   <link rel="stylesheet" href="{{ asset('') }}assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+  <!-- Color Picker Bootstrap 4-->
+  <link rel="stylesheet"
+    href="{{ asset('') }}assets/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css">
   <style>
     .has-error .help-block {
       color: red;
@@ -131,6 +134,8 @@
   <script src="{{ asset('') }}assets/plugins/select2/js/i18n/id.js"></script>
   <!-- Chart Js -->
   <script src="{{ asset('') }}assets/plugins/chart.js/dist/chart.umd.js"></script>
+  <!-- Color picker Bootstrap 4 -->
+  <script src="{{ asset('') }}assets/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">

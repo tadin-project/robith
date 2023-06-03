@@ -45,6 +45,20 @@
                 </div>
               </div>
               <div class="row form-group">
+                <label class="col-md-3 control-label">Warna</label>
+                <div class="col-md-5">
+                  <div class="input-group mr_color-picker colorpicker-element" data-colorpicker-id="2">
+                    <input type="text" class="form-control" data-original-title="" title="" id="mr_color"
+                      name="mr_color">
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <i class="fas fa-square" style="color: #000;"></i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row form-group">
                 <label class="col-md-3 control-label">Bobot</label>
                 <div class="col-md-5">
                   <input type="text" class="form-control" id="mr_bobot" name="mr_bobot">
@@ -76,6 +90,7 @@
                   <th class="text-center">No</th>
                   <th class="text-center">Kode</th>
                   <th class="text-center">Nama</th>
+                  <th class="text-center">Warna</th>
                   <th class="text-center">Bobot</th>
                   <th class="text-center">Status</th>
                   <th class="text-center">Aksi</th>
@@ -102,6 +117,7 @@
     act = $("#act"),
     mrId = $("#mr_id"),
     mrNama = $("#mr_nama"),
+    mrColor = $("#mr_color"),
     mrKode = $("#mr_kode"),
     oldMrKode = $("#old_mr_kode"),
     mrStatus = $("#mr_status"),
@@ -268,6 +284,8 @@
     act.val('add');
     mrId.val('');
     oldMrKode.val('');
+    mrColor.val('#000');
+    mrColor.trigger('change');
   }
 
   function fnLoadTbl() {
@@ -290,6 +308,8 @@
           mrNama.val(dt.mr_nama);
           mrStatus.val(dt.mr_status);
           mrBobot.val(dt.mr_bobot);
+          mrColor.val(dt.mr_color);
+          mrColor.trigger("change");
 
           rowForm.slideDown(500);
           rowData.slideUp(500);
@@ -351,6 +371,11 @@
 
     btnSimpan.click(function() {
       formVendor.submit();
+    });
+
+    $(".mr_color-picker").colorpicker();
+    $(".mr_color-picker").on("colorpickerChange", function(event) {
+      $(".mr_color-picker .fa-square").css("color", event.color.toString());
     });
 
   });

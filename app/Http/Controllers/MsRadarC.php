@@ -32,6 +32,7 @@ class MsRadarC extends MyC
             "mr.mr_id",
             "mr.mr_kode",
             "mr.mr_nama",
+            "mr.mr_color",
             "mr.mr_status",
             "mr.mr_bobot",
         ];
@@ -128,6 +129,7 @@ class MsRadarC extends MyC
                 $no,
                 $v->mr_kode,
                 $v->mr_nama,
+                $v->mr_color . '&nbsp;<i class="fas fa-square" style="color: ' . $v->mr_color . ';"></i>',
                 $v->mr_bobot,
                 $status,
                 $aksi,
@@ -159,6 +161,7 @@ class MsRadarC extends MyC
         $data = [
             'mr_nama' => $request->mr_nama,
             'mr_kode' => $request->mr_kode,
+            'mr_color' => $request->mr_color,
             'mr_status' => $request->mr_status,
             'mr_bobot' => $mr_bobot,
         ];
@@ -194,6 +197,7 @@ class MsRadarC extends MyC
                 "mr_id" => $dt->mr_id,
                 "mr_nama" => $dt->mr_nama,
                 "mr_kode" => $dt->mr_kode,
+                "mr_color" => $dt->mr_color,
                 "mr_status" => $dt->mr_status,
                 "mr_bobot" => $dt->mr_bobot,
             ];

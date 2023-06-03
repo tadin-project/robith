@@ -62,4 +62,12 @@
 -   [x] nilai non submission otomatis statusnya valid
 -   [x] nilai sub kriteria dengan asesmen, bisa berubah2 pada waktu divalidasi
 
-### Waiting
+### Revisi 3
+- [x] master radar
+- [x] setting radar - sub kriteria
+- [x] penambahan color picker di master dimensi, kriteria, sub kriteria dan radar
+- [ ] di bawah sub kriteria terdapat pilihan radar
+- [ ] nama nilai di sesuaikan dengan di template excel robith
+- [ ] laporan penilaian user ada detail sampai radar
+- [ ] master data pesan pendahuluan sebelum mengisi radar
+- [ ] penambahan data pendahuluan di form asesmen user

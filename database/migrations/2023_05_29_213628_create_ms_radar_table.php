@@ -17,6 +17,7 @@ class CreateMsRadarTable extends Migration
             $table->unsignedSmallInteger('mr_id', true);
             $table->char('mr_kode', 20);
             $table->char('mr_nama', 255);
+            $table->char('mr_color', 255)->nullable()->default("#076AB4");
             $table->mediumInteger('mr_bobot')->nullable()->default(0);
             $table->boolean('mr_status')->nullable()->default(true);
         });
@@ -29,6 +30,6 @@ class CreateMsRadarTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('master_radar');
+        Schema::dropIfExists('ms_radar');
     }
 }

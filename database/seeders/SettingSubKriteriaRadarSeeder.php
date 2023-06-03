@@ -14,24 +14,28 @@ class SettingSubKriteriaRadarSeeder extends Seeder
      */
     public function run()
     {
-        SettingSubKriteriaRadar::insert([[
-            'md_id' => 1,
-            'md_kode' => '01',
-            'md_nama' => 'Direction',
-            'md_status' => true,
-            'md_color' => "rgba(255, 99, 132)",
-        ], [
-            'md_id' => 2,
-            'md_kode' => '02',
-            'md_nama' => 'Execution',
-            'md_status' => true,
-            'md_color' => "rgba(255, 159, 64)",
-        ], [
-            'md_id' => 3,
-            'md_kode' => '03',
-            'md_nama' => 'Result',
-            'md_status' => true,
-            'md_color' => "rgba(255, 205, 86)",
-        ],]);
+        $sub1 = [];
+        $sub2 = [];
+
+        for ($i = 1; $i <= 23; $i++) {
+            for ($j = 1; $j <= 3; $j++) {
+                $sub1[] = [
+                    'mr_id' => $j,
+                    'msk_id' => $i,
+                ];
+            }
+        }
+
+        for ($i = 24; $i <= 32; $i++) {
+            for ($j = 4; $j <= 5; $j++) {
+                $sub2[] = [
+                    'mr_id' => $j,
+                    'msk_id' => $i,
+                ];
+            }
+        }
+
+        SettingSubKriteriaRadar::insert($sub1);
+        SettingSubKriteriaRadar::insert($sub2);
     }
 }
