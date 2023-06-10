@@ -248,6 +248,15 @@ class MsMenusSeeder extends Seeder
             'menu_link' => "setting-sub-kriteria-radar",
             'menu_ikon' => "",
             'parent_menu_id' => 8,
+        ], [
+            'menu_id' => 27,
+            'menu_kode' => '01.02.09',
+            'menu_nama' => 'Master Pengenalan',
+            'menu_status' => true,
+            'menu_type' => 1,
+            'menu_link' => "ms-pengenalan",
+            'menu_ikon' => "",
+            'parent_menu_id' => 8,
         ],]);
     }
 }

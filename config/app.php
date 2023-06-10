@@ -189,6 +189,7 @@ return [
         App\Providers\My\LaporanPenilaianUserServiceProvider::class,
         App\Providers\My\MsDimensiServiceProvider::class,
         App\Providers\My\MsGroupsServiceProvider::class,
+        App\Providers\My\MsIntroductionServiceProvider::class,
         App\Providers\My\MsKategoriUsahaServiceProvider::class,
         App\Providers\My\MsKriteriaServiceProvider::class,
         App\Providers\My\MsLampiranServiceProvider::class,

@@ -10,6 +10,7 @@ use App\Http\Controllers\LaporanPenilaianC;
 use App\Http\Controllers\LaporanPenilaianUserC;
 use App\Http\Controllers\MsDimensiC;
 use App\Http\Controllers\MsGroupsC;
+use App\Http\Controllers\MsIntroductionC;
 use App\Http\Controllers\MsKategoriUsahaC;
 use App\Http\Controllers\MsKriteriaC;
 use App\Http\Controllers\MsLampiranC;
@@ -145,6 +146,15 @@ Route::group(["middleware" => "has_auth"], function () {
         Route::get('get-parent', [SettingSubKriteriaRadarC::class, 'getParent'])->name('setting-sub-kriteria-radar.get-parent');
         Route::get('', [SettingSubKriteriaRadarC::class, 'index'])->name('setting-sub-kriteria-radar.index');
         Route::post('', [SettingSubKriteriaRadarC::class, 'save'])->name('setting-sub-kriteria-radar.save');
+    });
+
+    Route::group(['prefix' => 'ms-pengenalan'], function () {
+        Route::get('check-duplicate', [MsIntroductionC::class, 'checkDuplicate'])->name('ms-pengenalan.check-duplicate');
+        Route::get('get-data', [MsIntroductionC::class, 'getData'])->name('ms-pengenalan.get-data');
+        Route::get('{id}', [MsIntroductionC::class, 'getById'])->name('ms-pengenalan.get');
+        Route::delete('{id}', [MsIntroductionC::class, 'delete'])->name('ms-pengenalan.delete');
+        Route::get('', [MsIntroductionC::class, 'index'])->name('ms-pengenalan.index');
+        Route::post('', [MsIntroductionC::class, 'save'])->name('ms-pengenalan.save');
     });
 
     Route::group(['prefix' => 'tenant'], function () {
