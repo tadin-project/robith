@@ -27,5 +27,6 @@ class DatabaseSeeder extends Seeder
         $this->call(ConvertionValueSeeder::class);
         $this->call(MsRadarSeeder::class);
         $this->call(SettingSubKriteriaRadarSeeder::class);
+        $this->call(MsIntroductionSeeder::class);
     }
 }

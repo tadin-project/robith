@@ -65,23 +65,35 @@
                   @foreach ($v as $k1 => $v1)
                     <tr class="colTr colTr{{ $k }}" style="{!! $mkIdFirstIndex == $k ? '' : 'display:none' !!}">
                       <td>
-                        {{ $v1['msk_nama'] }}
+                        <span class="font-weight-bold">{{ $v1['msk_nama'] }}</span>
                         <input type="hidden" class="msk-id" id="msk_id{{ $v1['msk_id'] }}"
                           value="{{ $v1['msk_id'] }}">
-                        <input type="hidden" class="asd-id" id="asd_id{{ $v1['msk_id'] }}" value="">
                         @if ($v1['msk_is_submission'] == 1)
+                          <input type="hidden" class="asf-id" id="asf_id{{ $v1['msk_id'] }}" value="">
                           <span id="fileName{{ $v1['msk_id'] }}"></span>
-                          <br>
-                          <input type="file" class="asd-file" id="asd_file{{ $v1['msk_id'] }}">
                         @endif
                       </td>
-                      @foreach ($dtConvertionValue as $a)
-                        <td class="text-center align-middle">
-                          <input type="radio" class="asd-value" name="asd_value{{ $v1['msk_id'] }}"
-                            value="{{ $a->cval_nilai }}">
-                        </td>
-                      @endforeach
+                      <td colspan="{{ count($dtConvertionValue) }}">
+                        @if ($v1['msk_is_submission'] == 1)
+                          <input type="file" class="asf-file" id="asf_file{{ $v1['msk_id'] }}">
+                        @endif
+                      </td>
                     </tr>
+                    @foreach ($v1['radar'] as $k2 => $v2)
+                      <tr class="colTr colTr{{ $k }}" style="{!! $mkIdFirstIndex == $k ? '' : 'display:none' !!}">
+                        <td>&nbsp;&nbsp;{{ $v2['mr_nama'] }}
+                          <input type="hidden" class="asd-id" id="asd_id{{ $v2['sskr_id'] }}" value="">
+                          <input type="hidden" class="sskr-id" id="sskr_id{{ $v2['sskr_id'] }}"
+                            value="{{ $v2['sskr_id'] }}">
+                        </td>
+                        @foreach ($dtConvertionValue as $a)
+                          <td class="text-center align-middle">
+                            <input type="radio" class="asd-value" name="asd_value{{ $v2['sskr_id'] }}"
+                              value="{{ $a->cval_nilai }}">
+                          </td>
+                        @endforeach
+                      </tr>
+                    @endforeach
                   @endforeach
                 @endforeach
               </tbody>
@@ -104,11 +116,44 @@
         </div> <!-- ./row -->
       </div>
     </div>
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" id="modalIntro">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Introduction</h5>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <input type="hidden" id="defaultIsiIntro" value="0">
+              @foreach ($dtIntroduction as $k => $v)
+                <div class="col-md-12 isi-intro" id="isiIntro{{ $k }}" style="display: none;">
+                  {!! rawurldecode($v['mi_isi']) !!}
+                </div>
+              @endforeach
+            </div>
+            <div class="row text-center">
+              <div class="col-md-12">
+                <button class="btn btn-secondary" type="button" id="btnNextIntro"><i
+                    class="fas fa-arrow-right"></i></button>
+                <button class="btn btn-success" style="display: none;" type="button"
+                  id="btnDoneIntro">Mulai</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div><!-- /.container-fluid -->
 </section>
 <!-- /.content -->
 
 <script>
+  // modal intro
+  const modalIntro = $("#modalIntro"),
+    defaultIsiIntro = $("#defaultIsiIntro"),
+    btnNextIntro = $("#btnNextIntro"),
+    btnDoneIntro = $("#btnDoneIntro");
+
   // form
   const spinnerForm = $("#spinnerForm"),
     rowFormDetail = $("#rowFormDetail"),
@@ -120,6 +165,21 @@
     btnSimpanFinal = $("#btnSimpanFinal");
 
   let listHapusLampiran = [];
+
+  function fnIntro() {
+    modalIntro.modal("show");
+    btnDoneIntro.hide();
+    defaultIsiIntro.val(0);
+    $(".isi-intro").hide();
+    $("#isiIntro0").show();
+    if ($(".isi-intro").length <= 1) {
+      btnDoneIntro.show();
+      btnNextIntro.hide();
+    } else {
+      btnDoneIntro.hide();
+      btnNextIntro.show();
+    }
+  }
 
   function fnCek() {
     spinnerForm.show()
@@ -137,6 +197,7 @@
       success: function(res) {
         if (res.status) {
           if (res.data == 0) {
+            fnIntro();
             return;
           }
 
@@ -152,15 +213,20 @@
             rowFormDetail.find("input[type=radio]").removeAttr("disabled", "disabled");
           }
 
-          let btnHapus = "";
           $.each(dt.detail, function(index, i) {
-            $("[name=asd_value" + i.msk_id + "][value=" + i.asd_value + "]").prop("checked", true);
-            $("#asd_id" + i.msk_id).val(i.id_detail)
-            if (i.asd_file) {
+            $("[name=asd_value" + i.sskr_id + "][value=" + i.asd_value + "]").prop("checked", true);
+            $("#asd_id" + i.sskr_id).val(i.id_detail)
+          });
+
+          // set data file
+          let btnHapus = "";
+          $.each(dt.file, function(index, i) {
+            $("#asf_id" + i.msk_id).val(i.id_file)
+            if (i.asf_file) {
               btnHapus = dt.as_status > 0 ? "" :
-                ` <button class="btn btn-sm btn-danger" type="button" onclick="fnHapusLampiran(this,${i.id_detail})"><i class="fa fa-times"></i></button>`;
+                ` <button class="btn btn-sm btn-danger" type="button" onclick="fnHapusLampiran(this,${i.id_file})"><i class="fa fa-times"></i></button>`;
               $("#fileName" + i.msk_id).html(
-                ` (<a target="_blank" href="{{ url($dirUploads) }}/${i.asd_file}">${i.asd_file}</a>)${btnHapus}`
+                ` (<a target="_blank" href="{{ url($dirUploads) }}/${i.asf_file}">${i.asf_file}</a>)${btnHapus}`
               )
             }
           });
@@ -181,26 +247,36 @@
     fnSetBtnOnSubmit("tmp", "disabled");
     let formData = new FormData();
     let asdValue = [],
-      mskId = [],
       idDetail = [],
+      idFile = [],
       asdFile = [];
     $.each($('.asd-value:checked'), function(index, i) {
       const tr = $(i).closest('.colTr');
-      const mskIdVal = tr.find('.msk-id').val();
+      const sskrIdVal = tr.find('.sskr-id').val();
 
-      formData.append("msk_id[" + index + "]", mskIdVal);
+      formData.append("sskr_id[" + index + "]", sskrIdVal);
       formData.append("asd_value[" + index + "]", $(i).val());
 
-      if (!fnIsEmpty($("#asd_id" + mskIdVal).val())) {
-        formData.append("asd_id[" + index + "]", $("#asd_id" + mskIdVal).val());
+      if (!fnIsEmpty($("#asd_id" + sskrIdVal).val())) {
+        formData.append("asd_id[" + index + "]", $("#asd_id" + sskrIdVal).val());
       }
+    });
 
-      if ($("#asd_file" + mskIdVal).length > 0) {
-        if ($("#asd_file" + mskIdVal)[0].files.length > 0) {
-          formData.append("lampiran[" + index + "]", $("#asd_file" + mskIdVal)[0].files[0]);
+    $.each($('.asf-file'), function(index, i) {
+      let tr, mskIdVal;
+      if ($(i)[0].files.length > 0) {
+        tr = $(i).closest('.colTr');
+        mskIdVal = tr.find(".msk-id").val();
+
+        formData.append("msk_id[" + index + "]", mskIdVal);
+        formData.append("lampiran[" + index + "]", $(i)[0].files[0]);
+
+        if (!fnIsEmpty($("#asf_id" + mskIdVal).val())) {
+          formData.append("asf_id[" + index + "]", $("#asf_id" + mskIdVal).val());
         }
       }
     });
+
     formData.append("list_hapus_lampiran", listHapusLampiran);
 
     $.ajax({
@@ -284,26 +360,38 @@
         fnSetBtnOnSubmit("final", "disabled");
         let formData = new FormData();
         let asdValue = [],
-          mskId = [],
+          sskrId = [],
           idDetail = [],
-          asdFile = [];
+          mskId = [],
+          asfFile = [];
+        let sskrIdVal;
         $.each($('.asd-value:checked'), function(index, i) {
           const tr = $(i).closest('.colTr');
-          const mskIdVal = tr.find('.msk-id').val();
+          sskrIdVal = tr.find('.sskr-id').val();
 
-          formData.append("msk_id[" + index + "]", mskIdVal);
+          formData.append("sskr_id[" + index + "]", sskrIdVal);
           formData.append("asd_value[" + index + "]", $(i).val());
 
-          if (!fnIsEmpty($("#asd_id" + mskIdVal).val())) {
-            formData.append("asd_id[" + index + "]", $("#asd_id" + mskIdVal).val());
+          if (!fnIsEmpty($("#asd_id" + sskrIdVal).val())) {
+            formData.append("asd_id[" + index + "]", $("#asd_id" + sskrIdVal).val());
           }
+        });
 
-          if ($("#asd_file" + mskIdVal).length > 0) {
-            if ($("#asd_file" + mskIdVal)[0].files.length > 0) {
-              formData.append("lampiran[" + index + "]", $("#asd_file" + mskIdVal)[0].files[0]);
+        $.each($('.asf-file'), function(index, i) {
+          let tr, mskIdVal;
+          if ($(i)[0].files.length > 0) {
+            tr = $(i).closest('.colTr');
+            mskIdVal = tr.find(".msk-id").val();
+
+            formData.append("msk_id[" + index + "]", mskIdVal);
+            formData.append("lampiran[" + index + "]", $(i)[0].files[0]);
+
+            if (!fnIsEmpty($("#asf_id" + mskIdVal).val())) {
+              formData.append("asf_id[" + index + "]", $("#asf_id" + mskIdVal).val());
             }
           }
         });
+
         formData.append("list_hapus_lampiran", listHapusLampiran);
 
         $.ajax({
@@ -392,5 +480,29 @@
     btnSimpanFinal.click(function() {
       fnSimpanFinal();
     });
-  })
+
+    btnNextIntro.click(function() {
+      getDefaultIndexIntro = defaultIsiIntro.val();
+      // cek apakah intro selanjutnya ada
+      const nextNextIntro = $("#isiIntro" + (parseInt(getDefaultIndexIntro) + 2));
+      const nextIntro = $("#isiIntro" + (parseInt(getDefaultIndexIntro) + 1));
+      $(".isi-intro").hide();
+      nextIntro.show();
+      defaultIsiIntro.val(parseInt(getDefaultIndexIntro) + 1);
+
+      if (nextNextIntro.length <= 0) {
+        btnDoneIntro.show();
+        btnNextIntro.hide();
+      } else {
+        btnDoneIntro.hide();
+        btnNextIntro.show();
+      }
+
+
+    });
+
+    btnDoneIntro.click(function() {
+      modalIntro.modal("hide");
+    });
+  });
 </script>
