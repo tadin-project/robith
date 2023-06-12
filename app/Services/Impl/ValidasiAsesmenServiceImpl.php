@@ -131,11 +131,26 @@ class ValidasiAsesmenServiceImpl implements ValidasiAsesmenService
 
                     $msk = $v->subKriteria()->where("msk_status", true)->orderBy("msk_kode", "asc")->get();
                     if ($msk->count() > 0) {
+                        $dtMr = [];
                         foreach ($msk as $k1 => $v1) {
+                            $dtMr = [];
+                            $sqlMr = "SELECT mr.*, sskr.sskr_id from ms_radar mr inner join setting_sub_kriteria_radar sskr on sskr.mr_id = mr.mr_id where mr.mr_status = true and sskr.msk_id = $v1->msk_id order by mr.mr_kode";
+                            $rawMr = DB::select($sqlMr);
+                            if (count($rawMr) > 0) {
+                                foreach ($rawMr as $k2 => $v2) {
+                                    $dtMr[] = [
+                                        "sskr_id" => $v2->sskr_id,
+                                        "mr_id" => $v2->mr_id,
+                                        "mr_nama" => $v2->mr_nama,
+                                    ];
+                                }
+                            }
+
                             $dtMk[$k]["msk"][$k1] = [
                                 "msk_id" => $v1->msk_id,
                                 "msk_nama" => $v1->msk_nama,
                                 "msk_is_submission" => $v1->msk_is_submission,
+                                "radar" => $dtMr,
                             ];
                         }
                     }
@@ -185,12 +200,14 @@ class ValidasiAsesmenServiceImpl implements ValidasiAsesmenService
                     cv.cval_nama
                 from
                     asesmen_detail ad
+                inner join setting_sub_kriteria_radar sskr on
+                    sskr.sskr_id = ad.sskr_id
                 inner join ms_sub_kriteria msk on
-                    msk.msk_id = ad.msk_id
+                    msk.msk_id = sskr.msk_id
                 left join ms_users mu on
                     mu.user_id = ad.user_id
                 left join convertion_value cv on
-                    cv.cval_nilai = ad.asd_value
+                    cv.cval_nilai = ad.asd_final
                 where
                     ad.as_id = $dt->as_id";
             $rawDataAsesmenDetail = DB::select($sqlGetAsesmenDetail);
@@ -200,17 +217,38 @@ class ValidasiAsesmenServiceImpl implements ValidasiAsesmenService
                 foreach ($rawDataAsesmenDetail as $k => $v) {
                     $detail[$k] = [
                         "asd_id" => $v->asd_id,
-                        "msk_id" => $v->msk_id,
+                        "sskr_id" => $v->sskr_id,
                         "msk_is_submission" => $v->msk_is_submission,
-                        "asd_value" => $v->asd_status == 2 ? $nilaiMin : $v->asd_value,
-                        "asd_file" => $v->asd_file,
+                        "asd_value" => $v->asd_status > 0 ? $v->asd_final : $v->asd_value,
                         "asd_status" => $v->asd_status,
                         "user_fullname" => $v->asd_status != 0 ? $v->user_fullname : "",
                         "cval_nama" => $v->cval_nama,
                     ];
                 }
 
-                $res["data"]["asd"] = $detail;
+                $res["data"]["detail"] = $detail;
+            }
+
+            $sqlGetAsesmenFile =
+                "SELECT
+                    af.*
+                from
+                    asesmen_file af
+                where
+                    af.as_id = $dt->as_id";
+            $rawDataAsesmenFile = DB::select($sqlGetAsesmenFile);
+
+            if (count($rawDataAsesmenFile) > 0) {
+                $file = [];
+                foreach ($rawDataAsesmenFile as $k => $v) {
+                    $file[$k] = [
+                        "asf_id" => $v->asf_id,
+                        "msk_id" => $v->msk_id,
+                        "asf_file" => $v->asf_file,
+                    ];
+                }
+
+                $res["data"]["file"] = $file;
             }
         } catch (\Throwable $th) {
             $res = [
@@ -238,30 +276,78 @@ class ValidasiAsesmenServiceImpl implements ValidasiAsesmenService
                 return $res;
             }
 
-            $nilaiMin = 0;
-            $dataNilai = ConvertionValue::where("cval_status", true)->orderBy("cval_kode", "asc")->get();
-            if ($dataNilai->count() > 0) {
-                $nilaiMin = floatval($dataNilai[0]->cval_nilai);
-            }
+            // $sqlDetail = "SELECT
+            //                     ad.asd_final ,
+            //                     ad.sskr_id ,
+            //                     mr.mr_bobot ,
+            //                     msk.msk_bobot  
+            //                 from
+            //                     asesmen_detail ad
+            //                 inner join setting_sub_kriteria_radar sskr on
+            //                     sskr.sskr_id = ad.sskr_id
+            //                 inner join ms_radar mr on
+            //                     mr.mr_id = sskr.mr_id
+            //                 inner join ms_sub_kriteria msk on
+            //                     msk.msk_id = sskr.msk_id 
+            //                 where
+            //                     ad.as_id = $id";
 
-            $sqlDetail = "SELECT
-                            ad.asd_value ,
-                            ad.asd_status ,
-                            msk.msk_bobot 
-                        from
-                            asesmen_detail ad
-                        inner join ms_sub_kriteria msk on
-                            msk.msk_id = ad.msk_id
-                        where
-                            ad.as_id = $id";
-            $dataDetail = DB::select($sqlDetail);
+            // $dataDetail = DB::select($sqlDetail);
+            // $as_total = 0;
+            // $as_max = 0;
+            // if (count($dataDetail) > 0) {
+            //     foreach ($dataDetail as $k => $v) {
+            //         $subKomponen = $v->mr_bobot * $v->asd_final / 100;
+            //         $subTotal = floatval($subKomponen) * floatval($v->msk_bobot) / 100;
+            //         $as_total += $subTotal;
+            //         $as_max += floatval($v->msk_bobot);
+            //     }
+            // }
+
             $as_total = 0;
             $as_max = 0;
-            if (count($dataDetail) > 0) {
-                foreach ($dataDetail as $k => $v) {
-                    $persen = $v->asd_status == 2 ? $nilaiMin : $v->asd_value;
-                    $subTotal = floatval($persen) * floatval($v->msk_bobot) / 100;
-                    $as_total += $subTotal;
+
+            $sqlSubKriteria = "SELECT
+                                    msk_id,
+                                    msk_bobot 
+                                from
+                                    ms_sub_kriteria msk
+                                where
+                                    msk.msk_status = 1
+                                order by
+                                    msk.mk_id ,
+                                    msk.msk_kode";
+            $rawSubKriteria = DB::select($sqlSubKriteria);
+
+            if (count($rawSubKriteria) > 0) {
+                $sqlDetail = "";
+                foreach ($rawSubKriteria as $k => $v) {
+                    $sqlDetail = "SELECT
+                                    ad.asd_final ,
+                                    mr.mr_bobot ,
+                                    sskr.sskr_id ,
+                                    sskr.mr_id  ,
+                                    sskr.msk_id 
+                                from
+                                    asesmen_detail ad
+                                inner join setting_sub_kriteria_radar sskr on
+                                    sskr.sskr_id = ad.sskr_id
+                                inner join ms_radar mr on
+                                    mr.mr_id = sskr.mr_id
+                                where
+                                    ad.as_id = $id
+                                    and sskr.msk_id = $v->msk_id
+                                    and mr.mr_status = true";
+                    $rawSqlDetail = DB::select($sqlDetail);
+                    if (count($rawSqlDetail) > 0) {
+
+                        foreach ($rawSqlDetail as $k1 => $v1) {
+                            $subKomponen = $v1->mr_bobot * $v1->asd_final / 100;
+                            $subTotal = floatval($subKomponen) * floatval($v->msk_bobot) / 100;
+                            $as_total += $subTotal;
+                        }
+                    }
+
                     $as_max += floatval($v->msk_bobot);
                 }
             }

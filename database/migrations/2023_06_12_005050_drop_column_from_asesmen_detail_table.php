@@ -18,6 +18,8 @@ class DropColumnFromAsesmenDetailTable extends Migration
             $table->dropColumn('msk_id');
             $table->dropColumn('asd_file');
             $table->unsignedBigInteger("sskr_id");
+            $table->integer("asd_final")->nullable();
+
             $table->foreign("sskr_id", "asesmen_detail_sskr_id_fk")->references("sskr_id")->on("setting_sub_kriteria_radar")->onUpdate("cascade")->onDelete("cascade");
         });
     }
@@ -36,6 +38,7 @@ class DropColumnFromAsesmenDetailTable extends Migration
 
             $table->dropForeign('asesmen_detail_sskr_id_fk');
             $table->dropColumn('sskr_id');
+            $table->dropColumn('asd_final');
         });
     }
 }

@@ -506,7 +506,8 @@ class AsesmenServiceImpl implements AsesmenService
 
         try {
             $sql = "SELECT
-                        ad.asd_id 
+                        ad.asd_id ,
+                        ad.asd_value 
                     from
                         asesmen_detail ad
                     inner join setting_sub_kriteria_radar sskr on
@@ -523,12 +524,16 @@ class AsesmenServiceImpl implements AsesmenService
 
             $dataAsesmenDetail = [];
             foreach ($rawDataAsesmenDetail as $v) {
-                $dataAsesmenDetail[] = $v->asd_id;
+                $dataAsesmenDetail[] = [
+                    "asd_id" => $v->asd_id,
+                    "asd_final" => $v->asd_value,
+                    "asd_status" => 1,
+                ];
             }
 
-            DB::table("asesmen_detail")->whereIn("asd_id", $dataAsesmenDetail)->update([
-                "asd_status" => 1,
-            ]);
+            $asesmenDetailInstance = new AsesmenDetail();
+
+            BatchFacade::update($asesmenDetailInstance, $dataAsesmenDetail, "asd_id");
         } catch (\Throwable $th) {
             $res = [
                 "status" => false,
