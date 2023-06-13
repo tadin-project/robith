@@ -2,7 +2,7 @@
 
 namespace App\Services\Impl;
 
-use App\Models\ConvertionValue;
+use App\Models\MsSubKriteria;
 use App\Services\LaporanPenilaianUserService;
 use Illuminate\Support\Facades\DB;
 
@@ -16,80 +16,54 @@ class LaporanPenilaianUserServiceImpl implements LaporanPenilaianUserService
         ];
 
         try {
-
-            $nilaiMin = 0;
-            $dataNilai = ConvertionValue::where("cval_status", true)->orderBy("cval_kode", "asc")->get();
-            if ($dataNilai->count() > 0) {
-                $nilaiMin = floatval($dataNilai[0]->cval_nilai);
-            }
-
+            $data = [];
             $sqlKriteria = "SELECT
-                                msk.msk_id ,
-                                mk.mk_id ,
-                                mk.mk_nama ,
-                                ad.asd_status ,
-                                ad.asd_value ,
-                                msk.msk_bobot 
+                                mk.*
                             from
-                                tenant t
-                            inner join asesmen a on
-                                a.tenant_id = t.tenant_id
-                                and t.user_id = $user_id
-                                and a.as_status = 2
-                            inner join asesmen_detail ad on
-                                ad.as_id = a.as_id
-                            inner join ms_sub_kriteria msk on
-                                msk.msk_id = ad.msk_id
-                            inner join ms_kriteria mk on
-                                mk.mk_id = msk.mk_id
-                                and mk.mk_status = true
+                                ms_kriteria mk
                             inner join ms_dimensi md on
                                 md.md_id = mk.md_id
+                            where
+                                mk.mk_status
+                                and md.md_status = true
                             order by
                                 md.md_kode ,
-                                mk.mk_kode ,
-                                msk.msk_id";
+                                mk.mk_kode";
             $rawKriteria = DB::select($sqlKriteria);
-            $data = [];
             if (count($rawKriteria) > 0) {
-                $mk_id = 0;
-                $subRata2 = 0;
-                $banyakSubKriteria = 0;
-                // $subTotal = 0;
-                $subNilai = 0;
-                $subBobot = 0;
                 foreach ($rawKriteria as $k => $v) {
-                    $subNilai = $v->asd_status == 2 ? $nilaiMin : $v->asd_value;
+                    $sqlNilaiKriteria = "SELECT
+                        sum((coalesce(ad.asd_final,0) * coalesce(mr.mr_bobot,0) / 100) * coalesce(msk.msk_bobot,0) / 100 ) as total
+                    from
+                        asesmen_detail ad
+                    inner join asesmen a on
+                        a.as_id = ad.as_id
+                        and a.as_status = 2
+                    inner join tenant t on
+                        t.tenant_id = a.tenant_id
+                        and t.user_id = $user_id
+                    inner join setting_sub_kriteria_radar sskr on
+                        sskr.sskr_id = ad.sskr_id
+                    inner join ms_radar mr on
+                        mr.mr_id = sskr.mr_id
+                        and mr.mr_status = true
+                    inner join ms_sub_kriteria msk on
+                        msk.msk_id = sskr.msk_id
+                        and msk.mk_id = $v->mk_id
+                        and msk.msk_status = true";
+                    $rawNilaiKriteria = DB::select($sqlNilaiKriteria)[0]->total;
 
-                    if (!array_key_exists($v->mk_id, $data)) {
-                        $banyakSubKriteria++;
-                        if ($mk_id != 0) {
-                            $subRata2 = $banyakSubKriteria == 0 ? 0 : $subBobot / $banyakSubKriteria;
-                            $data[$mk_id]["bobot"] = $subBobot;
-                            $data[$mk_id]["rata2"] = $subRata2;
-                        }
+                    $banyakSubKriteria = MsSubKriteria::where("mk_id", $v->mk_id)->where("msk_status", true)->count();
 
-                        $banyakSubKriteria = 0;
-                        // $subTotal = 0;
-                        $subBobot = 0;
-                        $data[$v->mk_id] = [
-                            "mk_nama" => $v->mk_nama,
-                        ];
-                        $subBobot += (floatval($subNilai) * floatval($v->msk_bobot) / 100);
-                        // $subTotal += $v->msk_bobot;
-                        $mk_id = $v->mk_id;
-                    } else {
-                        $banyakSubKriteria++;
-                        $subBobot += (floatval($subNilai) * floatval($v->msk_bobot) / 100);
-                    }
+                    $rata2 = $rawNilaiKriteria / $banyakSubKriteria;
 
-                    if ($k == count($rawKriteria) - 1) {
-                        $subRata2 = $banyakSubKriteria == 0 ? 0 : $subBobot / $banyakSubKriteria;
-                        $data[$mk_id]["bobot"] = $subBobot;
-                        $data[$mk_id]["rata2"] = $subRata2;
-                    }
+                    $data[] = [
+                        "mk_nama" => $v->mk_nama,
+                        "rata2" => $rata2,
+                    ];
                 }
             }
+
             $res["data"] = $data;
         } catch (\Throwable $th) {
             $res = [
@@ -110,93 +84,102 @@ class LaporanPenilaianUserServiceImpl implements LaporanPenilaianUserService
         ];
 
         try {
-
-            $nilaiMin = 0;
-            $dataNilai = ConvertionValue::where("cval_status", true)->orderBy("cval_kode", "asc")->get();
-            if ($dataNilai->count() > 0) {
-                $nilaiMin = floatval($dataNilai[0]->cval_nilai);
-            }
-
+            $data = [];
             $sqlKriteria = "SELECT
-                                msk.msk_id ,
-                                mk.mk_id ,
-                                mk.mk_nama ,
-                                ad.asd_status ,
-                                ad.asd_value ,
-                                msk.msk_bobot ,
-                                msk.msk_nama 
+                                mk.*
                             from
-                                tenant t
-                            inner join asesmen a on
-                                a.tenant_id = t.tenant_id
-                                and t.user_id = $user_id
-                                and a.as_status = 2
-                            inner join asesmen_detail ad on
-                                ad.as_id = a.as_id
-                            inner join ms_sub_kriteria msk on
-                                msk.msk_id = ad.msk_id
-                            inner join ms_kriteria mk on
-                                mk.mk_id = msk.mk_id
-                                and mk.mk_status = true
+                                ms_kriteria mk
                             inner join ms_dimensi md on
                                 md.md_id = mk.md_id
+                            where
+                                mk.mk_status
+                                and md.md_status = true
                             order by
                                 md.md_kode ,
-                                mk.mk_kode ,
-                                msk.msk_kode";
+                                mk.mk_kode";
             $rawKriteria = DB::select($sqlKriteria);
-            $data = [];
             if (count($rawKriteria) > 0) {
-                $mk_id = 0;
-                $subRata2 = 0;
-                $banyakSubKriteria = 0;
-                // $subTotal = 0;
-                $subNilai = 0;
-                $subBobot = 0;
-                $subTotBobot = 0;
+                $kriteria = [];
                 foreach ($rawKriteria as $k => $v) {
-                    $subNilai = $v->asd_status == 2 ? $nilaiMin : $v->asd_value;
+                    $kriteria[$k] = [
+                        "nama" => $v->mk_nama,
+                        "total" => 0,
+                        "rata2" => 0,
+                        "subKriteria" => [],
+                    ];
 
-                    if (!array_key_exists($v->mk_id, $data)) {
-                        $banyakSubKriteria++;
-                        if ($mk_id != 0) {
-                            $subRata2 = $banyakSubKriteria == 0 ? 0 : $subTotBobot / $banyakSubKriteria;
-                            $data[$mk_id]["bobot"] = $subTotBobot;
-                            $data[$mk_id]["rata2"] = $subRata2;
+                    $rata2 = 0;
+                    $nilaiKriteria = 0;
+                    $subKriteria = [];
+                    $banyakSubKriteria = 0;
+
+                    $rawSubKriteria = MsSubKriteria::where("mk_id", $v->mk_id)->where("msk_status", true)->orderBy("msk_kode", "asc")->get();
+                    if ($rawSubKriteria->count() > 0) {
+                        $banyakSubKriteria = $rawSubKriteria->count();
+
+                        $nilaiSubKriteria = 0;
+                        foreach ($rawSubKriteria as $k2 => $v2) {
+                            $subKriteria[$k2] = [
+                                "nama" => $v2->msk_nama,
+                                "total" => 0,
+                                "radar" => [],
+                            ];
+
+                            $nilaiSubKriteria = 0;
+                            $radar = [];
+
+                            // mengambil data radar
+                            $sqlRadar = "SELECT
+                                            mr.mr_nama ,
+                                            mr.mr_bobot ,
+                                            ad.asd_final
+                                        from
+                                            asesmen_detail ad
+                                        inner join asesmen a on
+                                            a.as_id = ad.as_id
+                                        inner join tenant t on
+                                            t.tenant_id = a.tenant_id
+                                            and t.user_id = $user_id
+                                        inner join setting_sub_kriteria_radar sskr on
+                                            sskr.sskr_id = ad.sskr_id
+                                            and sskr.msk_id = $v2->msk_id
+                                        inner join ms_radar mr on
+                                            mr.mr_id = sskr.mr_id
+                                            and mr.mr_status = true
+                                        order by
+                                            mr.mr_kode 
+                                        ;";
+
+                            $rawRadar = DB::select($sqlRadar);
+                            if (count($rawRadar) > 0) {
+                                $nilaiRadar = 0;
+                                foreach ($rawRadar as $k3 => $v3) {
+                                    $nilaiRadar = floatval($v3->mr_bobot) * ($v3->asd_final) / 100;
+                                    $radar[$k3] = [
+                                        "nama" => $v3->mr_nama,
+                                        "total" => $nilaiRadar,
+                                    ];
+
+                                    $nilaiSubKriteria += $nilaiRadar * floatval($v2->msk_bobot) / 100;
+                                }
+                            }
+
+                            $subKriteria[$k2]["total"] = $nilaiSubKriteria;
+                            $subKriteria[$k2]["radar"] = $radar;
+
+                            $nilaiKriteria += $nilaiSubKriteria;
                         }
 
-                        $banyakSubKriteria = 0;
-                        // $subTotal = 0;
-                        $subTotBobot = 0;
-                        $data[$v->mk_id] = [
-                            "mk_nama" => $v->mk_nama,
-                            "children" => [],
-                        ];
-                        $subBobot = (floatval($subNilai) * floatval($v->msk_bobot) / 100);
-                        $subTotBobot += $subBobot;
-                        $data[$v->mk_id]["children"][] = [
-                            "msk_nama" => $v->msk_nama,
-                            "bobot" => $subBobot,
-                        ];
-                        // $subTotal += $v->msk_bobot;
-                        $mk_id = $v->mk_id;
-                    } else {
-                        $banyakSubKriteria++;
-                        $subBobot = (floatval($subNilai) * floatval($v->msk_bobot) / 100);
-                        $subTotBobot += $subBobot;
-                        $data[$v->mk_id]["children"][] = [
-                            "msk_nama" => $v->msk_nama,
-                            "bobot" => $subBobot,
-                        ];
+                        $rata2 = $nilaiKriteria / $banyakSubKriteria;
                     }
 
-                    if ($k == count($rawKriteria) - 1) {
-                        $subRata2 = $banyakSubKriteria == 0 ? 0 : $subTotBobot / $banyakSubKriteria;
-                        $data[$mk_id]["bobot"] = $subTotBobot;
-                        $data[$mk_id]["rata2"] = $subRata2;
-                    }
+                    $kriteria[$k]["total"] = $nilaiKriteria;
+                    $kriteria[$k]["rata2"] = $rata2;
+                    $kriteria[$k]["subKriteria"] = $subKriteria;
                 }
+                $data = $kriteria;
             }
+
             $res["data"] = $data;
         } catch (\Throwable $th) {
             $res = [

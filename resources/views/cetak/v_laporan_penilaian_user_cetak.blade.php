@@ -34,15 +34,23 @@
     <tbody>
       @foreach ($kriteria as $v)
         <tr>
-          <th>{{ $v['mk_nama'] }}</th>
-          <th class="text-right" style="width: 30%">Total : {{ $v['bobot'] }}<br>Rata-rata : {{ $v['rata2'] }}</th>
+          <th>{{ $v['nama'] }}</th>
+          <th class="text-right" style="width: 30%">Total : {{ $v['total'] }}<br>Rata-rata : {{ $v['rata2'] }}</th>
         </tr>
-        @if (count($v['children']) > 0)
-          @foreach ($v['children'] as $v2)
+        @if (count($v['subKriteria']) > 0)
+          @foreach ($v['subKriteria'] as $v2)
             <tr>
-              <td>&nbsp;&nbsp;{{ $v2['msk_nama'] }}</td>
-              <td class="text-right" style="width: 30%">{{ $v2['bobot'] }}</td>
+              <th>&nbsp;&nbsp;{{ $v2['nama'] }}</th>
+              <th class="text-right" style="width: 30%">{{ $v2['total'] }}</th>
             </tr>
+            @if (count($v2['radar']) > 0)
+              @foreach ($v2['radar'] as $v3)
+                <tr>
+                  <td>&nbsp;&nbsp;&nbsp;&nbsp;{{ $v3['nama'] }}</td>
+                  <td class="text-right" style="width: 30%">{{ $v3['total'] }}%</td>
+                </tr>
+              @endforeach
+            @endif
           @endforeach
         @endif
       @endforeach
