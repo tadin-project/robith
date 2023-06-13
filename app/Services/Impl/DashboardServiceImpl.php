@@ -2,7 +2,6 @@
 
 namespace App\Services\Impl;
 
-use App\Models\MsKriteria;
 use App\Services\DashboardService;
 use Illuminate\Support\Facades\DB;
 
@@ -52,7 +51,6 @@ class DashboardServiceImpl implements DashboardService
                 "backgroundColor" => $background,
             ];
         } catch (\Throwable $th) {
-            dd($th->getMessage());
             $res
                 = [
                     "status" => false,
@@ -74,7 +72,8 @@ class DashboardServiceImpl implements DashboardService
             $kriteria = DB::select(
                 "SELECT
                     mk.mk_id ,
-                    sum(coalesce(ad.asd_value,0) * msk.msk_bobot / 100) tot_nilai
+                    sum(coalesce(ad.mr_bobot,0) * coalesce(msk.msk_bobot,0) / 100) tot_nilai ,
+                    sum(coalesce(ad.max_bobot,0) * coalesce(msk.msk_bobot,0) / 100) max_nilai
                 from
                     ms_kriteria mk
                 inner join ms_dimensi md on
@@ -83,21 +82,23 @@ class DashboardServiceImpl implements DashboardService
                     msk.mk_id = mk.mk_id
                 left join (
                     select
-                        ad2.msk_id,
-                        case 
-                            when a.as_status = 2 then
-                                case
-                                    when ad2.asd_status = 2 then 0
-                                    else ad2.asd_value
-                                end 
-                            else 0 
-                        end as asd_value
+                        sum(coalesce(ad.asd_final, 0) * coalesce(mr.mr_bobot, 0) / 100) as mr_bobot,
+                        sskr.msk_id ,
+                        sum(coalesce(mr.mr_bobot, 0)) as max_bobot
                     from
-                        asesmen a
-                    inner join asesmen_detail ad2 on
-                        ad2.as_id = a.as_id
-                    where
-                        a.user_id = $user_id) ad on
+                        asesmen_detail ad
+                    inner join asesmen a on
+                        a.as_id = ad.as_id
+                    inner join tenant t on
+                        t.tenant_id = a.tenant_id
+                        and t.user_id = $user_id
+                    inner join setting_sub_kriteria_radar sskr on
+                        sskr.sskr_id = ad.sskr_id
+                    inner join ms_radar mr on
+                        mr.mr_id = sskr.mr_id
+                        and mr.mr_status = true
+                    group by
+                        sskr.msk_id ) ad on
                     ad.msk_id = msk.msk_id
                 where
                     mk.mk_status = true
@@ -108,10 +109,76 @@ class DashboardServiceImpl implements DashboardService
             $data = [];
 
             foreach ($kriteria as $k => $v) {
-                $data[$v->mk_id] = $v->tot_nilai;
+                $data[$v->mk_id] = $v->tot_nilai * 100 / $v->max_nilai;
             }
 
             $res["data"] = $data;
+        } catch (\Throwable $th) {
+            $res
+                = [
+                    "status" => false,
+                    "msg" => $th->getMessage(),
+                ];
+        }
+
+        return $res;
+    }
+
+    public function cekAsesmen(int $user_id): array
+    {
+
+        $res = [
+            "status" => true,
+            "msg" => "",
+        ];
+
+        try {
+            $sqlCekAsesmen = "SELECT
+                                    a.as_id
+                                from
+                                    asesmen a
+                                inner join tenant t on
+                                    t.tenant_id = a.tenant_id
+                                where
+                                    t.user_id = $user_id";
+            $rawCekAsesmen = DB::select($sqlCekAsesmen);
+            if (count($rawCekAsesmen) <= 0) {
+                $res["data"] = [
+                    "has_asesmen" => false,
+                ];
+
+                return $res;
+            }
+
+            $as_id = $rawCekAsesmen[0]->as_id;
+            $sqlPersenAsesmen = "SELECT
+                                    count(sskr2.sskr_id) total_task,
+                                    count(c.sskr_id) total_data
+                                from
+                                    setting_sub_kriteria_radar sskr2
+                                inner join ms_radar mr on
+                                    mr.mr_id = sskr2.mr_id
+                                    and mr.mr_status = true
+                                inner join ms_sub_kriteria msk on
+                                    msk.msk_id = sskr2.msk_id 
+                                    and msk.msk_status = true
+                                left join (
+                                    select
+                                        sskr.sskr_id
+                                    from
+                                        asesmen_detail ad
+                                    inner join setting_sub_kriteria_radar sskr on
+                                        sskr.sskr_id = ad.sskr_id
+                                    inner join asesmen a on
+                                        a.as_id = ad.as_id
+                                        and a.as_id = $as_id
+                                ) c on
+                                    c.sskr_id = sskr2.sskr_id ";
+            $rawPersenAsesmen = DB::select($sqlPersenAsesmen);
+            $res["data"] = [
+                "has_asesmen" => true,
+                "persen_asesmen" => number_format(floatval($rawPersenAsesmen[0]->total_data) * 100 / floatval($rawPersenAsesmen[0]->total_task), 0),
+            ];
         } catch (\Throwable $th) {
             $res
                 = [
