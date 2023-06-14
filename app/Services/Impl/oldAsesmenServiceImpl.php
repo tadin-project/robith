@@ -7,14 +7,14 @@ use App\Models\AsesmenDetail;
 use App\Models\MsKriteria;
 use App\Models\MsSubKriteria;
 use App\Models\Tenant;
-use App\Services\AsesmenService;
+use App\Services\oldAsesmenService;
 use Illuminate\Support\Facades\DB;
 use Mavinoo\Batch\BatchFacade;
 
 /**
- * Summary of AsesmenServiceImpl
+ * Summary of oldAsesmenServiceImpl
  */
-class AsesmenServiceImpl implements AsesmenService
+class oldAsesmenServiceImpl implements oldAsesmenService
 {
     /**
      * Summary of getKriteria

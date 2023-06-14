@@ -21,9 +21,15 @@ class AsesmenC extends MyC
 
     public function index(): View
     {
+        $dtIntroduction = [];
         $dtKriteria = [];
         $dtSubKriteria = [];
         $dtConvertionValue = [];
+
+        $cekIntroduction = $this->asesmenService->getIntroduction();
+        if ($cekIntroduction["status"]) {
+            $dtIntroduction = $cekIntroduction["data"];
+        }
 
         $cekKriteria = $this->asesmenService->getKriteria();
         if ($cekKriteria["status"]) {
@@ -45,6 +51,7 @@ class AsesmenC extends MyC
             "dtKriteria" => $dtKriteria,
             "dtSubKriteria" => $dtSubKriteria,
             "dtConvertionValue" => $dtConvertionValue,
+            "dtIntroduction" => $dtIntroduction,
             "dirUploads" => $this->dirUploads,
         ];
 
@@ -76,14 +83,20 @@ class AsesmenC extends MyC
             "msg" => "",
         ];
 
-        $msk_id = $request->msk_id;
+        $sskr_id = $request->sskr_id;
         $asd_value = $request->asd_value;
         $asd_id = $request->asd_id;
+
+        $msk_id = $request->msk_id;
+        $asf_id = $request->asf_id;
         $list_hapus_lampiran = $request->list_hapus_lampiran;
 
-        if (empty($msk_id)) $msk_id = [];
+        if (empty($sskr_id)) $sskr_id = [];
         if (empty($asd_value)) $asd_value = [];
         if (empty($asd_id)) $asd_id = [];
+
+        if (empty($asf_id)) $asf_id = [];
+        if (empty($msk_id)) $msk_id = [];
         if (empty($list_hapus_lampiran)) $list_hapus_lampiran = "";
         $list_hapus_lampiran = explode(",", $list_hapus_lampiran);
         if (count($list_hapus_lampiran) > 0) {
@@ -99,7 +112,7 @@ class AsesmenC extends MyC
             }
         }
 
-        if (count($msk_id) <= 0) {
+        if (count($sskr_id) <= 0) {
             $res = [
                 "status" => false,
                 "msg" => "Minimal kirimkan 1 data",
@@ -145,42 +158,26 @@ class AsesmenC extends MyC
 
         $detailAdd = [];
         $detailEdit = [];
+        $detailAddFile = [];
+        $detailEditFile = [];
         $iAdd = 0;
         $iEdit = 0;
-        foreach ($msk_id as $k => $v) {
+        $iAddFile = 0;
+        $iEditFile = 0;
+        foreach ($sskr_id as $k => $v) {
             if (array_key_exists($k, $asd_id)) {
                 $detailEdit[$iEdit] = [
-                    "msk_id" => $v,
                     "asd_value" => $asd_value[$k],
-                    "as_id" => $as_id,
                     "asd_id" => $asd_id[$k],
                 ];
-
-                $dt_detail = $this->asesmenService->getDetailById($asd_id[$k]);
-
-                if (count($dt_detail) > 0) {
-                    $detailEdit[$iEdit]["asd_file"] = $dt_detail["asd_file"];
-                } else {
-                    $detailEdit[$iEdit]["asd_file"] = null;
-                }
-
-
-                if (array_key_exists($k, $lampiran)) {
-                    if (!empty($dt_detail["asd_file"])) {
-                        $this->asesmenService->hapusFile("./" . $this->dirUploads . "/" . $dt_detail["asd_file"]);
-                    }
-                    $detailEdit[$iEdit]["asd_file"] = $lampiran[$k];
-                }
 
                 $iEdit++;
             } else {
                 $detailAdd[$iAdd] = [
-                    "msk_id" => $v,
+                    "sskr_id" => $v,
                     "asd_value" => $asd_value[$k],
                     "as_id" => $as_id,
                 ];
-                $detailAdd[$iAdd]["asd_file"] = null;
-                if (array_key_exists($k, $lampiran)) $detailAdd[$iAdd]["asd_file"] = $lampiran[$k];
                 $iAdd++;
             }
         }
@@ -194,6 +191,47 @@ class AsesmenC extends MyC
 
         if (count($detailEdit) > 0) {
             $res = $this->asesmenService->editDetail($detailEdit);
+            if (!$res["status"]) {
+                return response()->json($res);
+            }
+        }
+
+        foreach ($msk_id as $k => $v) {
+            if (array_key_exists($k, $asf_id)) {
+                if (array_key_exists($k, $lampiran)) {
+                    $dt_detail = $this->asesmenService->getFileById($asf_id[$k]);
+
+                    if (!empty($dt_detail["asf_file"])) {
+                        $this->asesmenService->hapusFile("./" . $this->dirUploads . "/" . $dt_detail["asf_file"]);
+                    }
+
+                    $detailEditFile[$iEditFile] = [
+                        "asf_id" => $asf_id[$k], "asf_file" => $lampiran[$k],
+                    ];
+
+                    $iEditFile++;
+                }
+            } else {
+                $detailAddFile[$iAddFile] = [
+                    "msk_id" => $v,
+                    "as_id" => $as_id,
+                    "asf_file" => null,
+                ];
+
+                if (array_key_exists($k, $lampiran)) $detailAddFile[$iAddFile]["asf_file"] = $lampiran[$k];
+                $iAddFile++;
+            }
+        }
+
+        if (count($detailAddFile) > 0) {
+            $res = $this->asesmenService->addFile($detailAddFile);
+            if (!$res["status"]) {
+                return response()->json($res);
+            }
+        }
+
+        if (count($detailEditFile) > 0) {
+            $res = $this->asesmenService->editFile($detailEditFile);
         }
 
         return response()->json($res);
@@ -207,15 +245,20 @@ class AsesmenC extends MyC
         ];
 
         DB::beginTransaction();
-
-        $msk_id = $request->msk_id;
+        $sskr_id = $request->sskr_id;
         $asd_value = $request->asd_value;
         $asd_id = $request->asd_id;
+
+        $msk_id = $request->msk_id;
+        $asf_id = $request->asf_id;
         $list_hapus_lampiran = $request->list_hapus_lampiran;
 
-        if (empty($msk_id)) $msk_id = [];
+        if (empty($sskr_id)) $sskr_id = [];
         if (empty($asd_value)) $asd_value = [];
         if (empty($asd_id)) $asd_id = [];
+
+        if (empty($asf_id)) $asf_id = [];
+        if (empty($msk_id)) $msk_id = [];
         if (empty($list_hapus_lampiran)) $list_hapus_lampiran = "";
         $list_hapus_lampiran = explode(",", $list_hapus_lampiran);
         if (count($list_hapus_lampiran) > 0) {
@@ -231,7 +274,7 @@ class AsesmenC extends MyC
             }
         }
 
-        if (count($msk_id) <= 0) {
+        if (count($sskr_id) <= 0) {
             $res = [
                 "status" => false,
                 "msg" => "Minimal kirimkan 1 data",
@@ -277,41 +320,27 @@ class AsesmenC extends MyC
 
         $detailAdd = [];
         $detailEdit = [];
+        $detailAddFile = [];
+        $detailEditFile = [];
         $iAdd = 0;
         $iEdit = 0;
-        foreach ($msk_id as $k => $v) {
+        $iAddFile = 0;
+        $iEditFile = 0;
+
+        foreach ($sskr_id as $k => $v) {
             if (array_key_exists($k, $asd_id)) {
                 $detailEdit[$iEdit] = [
-                    "msk_id" => $v,
                     "asd_value" => $asd_value[$k],
-                    "as_id" => $as_id,
                     "asd_id" => $asd_id[$k],
                 ];
-
-                $dt_detail = $this->asesmenService->getDetailById($asd_id[$k]);
-
-                if (count($dt_detail) > 0) {
-                    $detailEdit[$iEdit]["asd_file"] = $dt_detail["asd_file"];
-                } else {
-                    $detailEdit[$iEdit]["asd_file"] = null;
-                }
-
-                if (array_key_exists($k, $lampiran)) {
-                    if (!empty($dt_detail["asd_file"])) {
-                        $this->asesmenService->hapusFile("./" . $this->dirUploads . "/" . $dt_detail["asd_file"]);
-                    }
-                    $detailEdit[$iEdit]["asd_file"] = $lampiran[$k];
-                }
 
                 $iEdit++;
             } else {
                 $detailAdd[$iAdd] = [
-                    "msk_id" => $v,
+                    "sskr_id" => $v,
                     "asd_value" => $asd_value[$k],
                     "as_id" => $as_id,
                 ];
-                $detailAdd[$iAdd]["asd_file"] = null;
-                if (array_key_exists($k, $lampiran)) $detailAdd[$iAdd]["asd_file"] = $lampiran[$k];
                 $iAdd++;
             }
         }
@@ -325,6 +354,46 @@ class AsesmenC extends MyC
 
         if (count($detailEdit) > 0) {
             $res = $this->asesmenService->editDetail($detailEdit);
+            if (!$res["status"]) {
+                return response()->json($res);
+            }
+        }
+
+        foreach ($msk_id as $k => $v) {
+            if (array_key_exists($k, $asf_id)) {
+                if (array_key_exists($k, $lampiran)) {
+                    $dt_detail = $this->asesmenService->getFileById($asf_id[$k]);
+
+                    if (!empty($dt_detail["asf_file"])) {
+                        $this->asesmenService->hapusFile("./" . $this->dirUploads . "/" . $dt_detail["asf_file"]);
+                    }
+
+                    $detailEditFile[$iEditFile] = [
+                        "asf_id" => $asf_id[$k], "asf_file" => $lampiran[$k],
+                    ];
+                    $iEditFile++;
+                }
+            } else {
+                $detailAddFile[$iAddFile] = [
+                    "msk_id" => $v,
+                    "as_id" => $as_id,
+                    "asf_file" => null,
+                ];
+
+                if (array_key_exists($k, $lampiran)) $detailAddFile[$iAddFile]["asf_file"] = $lampiran[$k];
+                $iAddFile++;
+            }
+        }
+
+        if (count($detailAddFile) > 0) {
+            $res = $this->asesmenService->addFile($detailAddFile);
+            if (!$res["status"]) {
+                return response()->json($res);
+            }
+        }
+
+        if (count($detailEditFile) > 0) {
+            $res = $this->asesmenService->editFile($detailEditFile);
             if (!$res["status"]) {
                 return response()->json($res);
             }

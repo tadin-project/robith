@@ -19,19 +19,19 @@ class MsDimensiSeeder extends Seeder
             'md_kode' => '01',
             'md_nama' => 'Direction',
             'md_status' => true,
-            'md_color' => "rgba(255, 99, 132)",
+            'md_color' => "#FF6384",
         ], [
             'md_id' => 2,
             'md_kode' => '02',
             'md_nama' => 'Execution',
             'md_status' => true,
-            'md_color' => "rgba(255, 159, 64)",
+            'md_color' => "#FF9F40",
         ], [
             'md_id' => 3,
             'md_kode' => '03',
             'md_nama' => 'Result',
             'md_status' => true,
-            'md_color' => "rgba(255, 205, 86)",
+            'md_color' => "#FFCD56",
         ],]);
     }
 }

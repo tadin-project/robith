@@ -62,6 +62,20 @@
                 </div>
               </div>
               <div class="row form-group">
+                <label class="col-md-3 control-label">Warna</label>
+                <div class="col-md-5">
+                  <div class="input-group msk_color-picker colorpicker-element" data-colorpicker-id="2">
+                    <input type="text" class="form-control" data-original-title="" title="" id="msk_color"
+                      name="msk_color">
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <i class="fas fa-square" style="color: #000;"></i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row form-group">
                 <label class="col-md-3 control-label">Bobot</label>
                 <div class="col-md-2">
                   <input type="text" class="form-control" id="msk_bobot" name="msk_bobot">
@@ -126,6 +140,7 @@
                   <th class="text-center">No</th>
                   <th class="text-center">Kode</th>
                   <th class="text-center">Nama</th>
+                  <th class="text-center">Warna</th>
                   <th class="text-center">Bobot</th>
                   <th class="text-center">Butuh<br>Submission</th>
                   <th class="text-center">Status</th>
@@ -155,6 +170,7 @@
     mdId = $("#md_id"),
     mkId = $("#mk_id"),
     mskNama = $("#msk_nama"),
+    mskColor = $("#msk_color"),
     mskKode = $("#msk_kode"),
     oldMskKode = $("#old_msk_kode"),
     mskBobot = $("#msk_bobot"),
@@ -332,6 +348,8 @@
     act.val('add');
     mskId.val('');
     oldMskKode.val('');
+    mskColor.val('#000');
+    mskColor.trigger('change');
   }
 
   function fnLoadTbl() {
@@ -387,6 +405,8 @@
           mskBobot.val(dt.msk_bobot);
           mskStatus.val(dt.msk_status);
           mskIsSubmission.val(dt.msk_is_submission);
+          mskColor.val(dt.msk_color);
+          mskColor.trigger("change");
 
           rowForm.slideDown(500);
           rowData.slideUp(500);
@@ -460,6 +480,11 @@
 
     mdId.change(function() {
       fnGetKriteria("#" + mkId.attr("id"), $(this).val());
+    });
+
+    $(".msk_color-picker").colorpicker();
+    $(".msk_color-picker").on("colorpickerChange", function(event) {
+      $(".msk_color-picker .fa-square").css("color", event.color.toString());
     });
 
     fnGetKriteria("#" + filMkId.attr("id"), filMdId.val());

@@ -14,165 +14,35 @@ class GroupMenusSeeder extends Seeder
      */
     public function run()
     {
-        GroupMenus::insert([[
-            'group_id' => 1,
-            'menu_id' => 1,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 2,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 3,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 4,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 5,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 6,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 7,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 8,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 9,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 10,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 11,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 12,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 13,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 14,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 15,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 18,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 19,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 20,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 21,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 23,
-        ], [
-            'group_id' => 1,
-            'menu_id' => 24,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 1,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 2,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 3,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 4,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 6,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 7,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 8,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 9,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 10,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 11,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 12,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 13,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 14,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 15,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 18,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 19,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 20,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 21,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 23,
-        ], [
-            'group_id' => 2,
-            'menu_id' => 24,
-        ], [
-            'group_id' => 3,
-            'menu_id' => 7,
-        ], [
-            'group_id' => 3,
-            'menu_id' => 16,
-        ], [
-            'group_id' => 3,
-            'menu_id' => 17,
-        ], [
-            'group_id' => 3,
-            'menu_id' => 20,
-        ], [
-            'group_id' => 3,
-            'menu_id' => 22,
-        ], [
-            'group_id' => 3,
-            'menu_id' => 23,
-        ], [
-            'group_id' => 3,
-            'menu_id' => 24,
-        ], [
-            'group_id' => 4,
-            'menu_id' => 7,
-        ], [
-            'group_id' => 4,
-            'menu_id' => 18,
-        ], [
-            'group_id' => 4,
-            'menu_id' => 19,
-        ], [
-            'group_id' => 4,
-            'menu_id' => 23,
-        ], [
-            'group_id' => 4,
-            'menu_id' => 24,
-        ],]);
+        $data = [];
+
+        for ($i = 1; $i <= 4; $i++) {
+            for ($j = 1; $j <= 27; $j++) {
+                if ($i == 1) {
+                    if ($j == 16 || $j == 17 || $j == 22) {
+                        continue;
+                    }
+                } else if ($i == 2) {
+                    if ($j == 5 || $j == 16 || $j == 17 || $j == 22) {
+                        continue;
+                    }
+                } else if ($i == 3) {
+                    if (($j >= 1 && $j <= 6) || ($j >= 8 && $j <= 15) || $j == 18 || $j == 19 || $j == 21 || ($j >= 25 && $j <= 27)) {
+                        continue;
+                    }
+                } else if ($i == 4) {
+                    if (($j >= 1 && $j <= 6) || ($j >= 8 && $j <= 17) || ($j >= 20 && $j <= 22) || ($j >= 25 && $j <= 27)) {
+                        continue;
+                    }
+                }
+
+                $data[] = [
+                    "group_id" => $i,
+                    "menu_id" => $j,
+                ];
+            }
+        }
+
+        GroupMenus::insert($data);
     }
 }

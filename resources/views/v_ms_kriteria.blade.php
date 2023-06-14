@@ -55,6 +55,20 @@
                 </div>
               </div>
               <div class="row form-group">
+                <label class="col-md-3 control-label">Warna</label>
+                <div class="col-md-5">
+                  <div class="input-group mk_color-picker colorpicker-element" data-colorpicker-id="2">
+                    <input type="text" class="form-control" data-original-title="" title="" id="mk_color"
+                      name="mk_color">
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <i class="fas fa-square" style="color: #000;"></i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row form-group">
                 <label class="col-md-3 control-label">Deskripsi</label>
                 <div class="col-md-5">
                   <textarea class="form-control" id="mk_desc" name="mk_desc"></textarea>
@@ -94,12 +108,14 @@
                 </div>
               </div>
             </div>
-            <table class="table table-sm table-striped table-bordered table-hover" id="tableVendor" style="width: 100%">
+            <table class="table table-sm table-striped table-bordered table-hover" id="tableVendor"
+              style="width: 100%">
               <thead>
                 <tr>
                   <th class="text-center">No</th>
                   <th class="text-center">Kode</th>
                   <th class="text-center">Nama</th>
+                  <th class="text-center">Warna</th>
                   <th class="text-center">Bobot</th>
                   <th class="text-center">Status</th>
                   <th class="text-center">Aksi</th>
@@ -127,6 +143,7 @@
     mkId = $("#mk_id"),
     mdId = $("#md_id"),
     mkNama = $("#mk_nama"),
+    mkColor = $("#mk_color"),
     mkKode = $("#mk_kode"),
     oldMkKode = $("#old_mk_kode"),
     mkDesc = $("#mk_desc"),
@@ -301,6 +318,8 @@
     act.val('add');
     mkId.val('');
     oldMkKode.val('');
+    mkColor.val('#000');
+    mkColor.trigger('change');
   }
 
   function fnLoadTbl() {
@@ -324,6 +343,8 @@
           mkNama.val(dt.mk_nama);
           mkDesc.val(dt.mk_desc);
           mkStatus.val(dt.mk_status);
+          mkColor.val(dt.mk_color);
+          mkColor.trigger("change");
 
           rowForm.slideDown(500);
           rowData.slideUp(500);
@@ -389,6 +410,11 @@
 
     filMdId.change(function() {
       fnLoadTbl();
+    });
+
+    $(".mk_color-picker").colorpicker();
+    $(".mk_color-picker").on("colorpickerChange", function(event) {
+      $(".mk_color-picker .fa-square").css("color", event.color.toString());
     });
 
   });

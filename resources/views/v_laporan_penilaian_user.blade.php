@@ -37,7 +37,7 @@
               <tbody>
                 @foreach ($kriteria as $k => $v)
                   <tr>
-                    <td class="text-center">{{ $k }}</td>
+                    <td class="text-center">{{ $k + 1 }}</td>
                     <td>{{ $v['mk_nama'] }}</td>
                     <td class="text-right">{{ $v['rata2'] }}</td>
                   </tr>

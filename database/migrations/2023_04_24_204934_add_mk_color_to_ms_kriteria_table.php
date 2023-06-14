@@ -14,7 +14,7 @@ class AddMkColorToMsKriteriaTable extends Migration
     public function up()
     {
         Schema::table('ms_kriteria', function (Blueprint $table) {
-            $table->char('mk_color', 255)->nullable();
+            $table->char('mk_color', 255)->nullable()->default("#322BBA");
         });
     }
 

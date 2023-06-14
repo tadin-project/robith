@@ -39,6 +39,7 @@ class MsSubKriteriaC extends MyC
             "msk.msk_id",
             "msk.msk_kode",
             "msk.msk_nama",
+            "msk.msk_color",
             "msk.msk_bobot",
             "msk.msk_is_submission",
             "msk.msk_status",
@@ -148,6 +149,7 @@ class MsSubKriteriaC extends MyC
                 $no,
                 $v->msk_kode,
                 $v->msk_nama,
+                $v->msk_color . '&nbsp;<i class="fas fa-square" style="color: ' . $v->msk_color . ';"></i>',
                 $v->msk_bobot,
                 $isSubmission,
                 $status,
@@ -175,6 +177,7 @@ class MsSubKriteriaC extends MyC
         $data = [
             'msk_nama' => $request->msk_nama,
             'msk_kode' => $request->msk_kode,
+            'msk_color' => $request->msk_color,
             'msk_status' => $request->msk_status,
             'msk_bobot' => $request->msk_bobot,
             'msk_is_submission' => $request->msk_is_submission,
@@ -211,6 +214,7 @@ class MsSubKriteriaC extends MyC
             $data = [
                 "msk_id" => $dt->msk_id,
                 "msk_nama" => $dt->msk_nama,
+                "msk_color" => $dt->msk_color,
                 "msk_kode" => $dt->msk_kode,
                 "msk_bobot" => $dt->msk_bobot,
                 "msk_status" => $dt->msk_status,

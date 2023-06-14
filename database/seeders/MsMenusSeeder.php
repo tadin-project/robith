@@ -230,6 +230,33 @@ class MsMenusSeeder extends Seeder
             'menu_link' => "lampiran",
             'menu_ikon' => "",
             'parent_menu_id' => 23,
+        ], [
+            'menu_id' => 25,
+            'menu_kode' => '01.02.07',
+            'menu_nama' => 'Master Radar',
+            'menu_status' => true,
+            'menu_type' => 1,
+            'menu_link' => "ms-radar",
+            'menu_ikon' => "",
+            'parent_menu_id' => 8,
+        ], [
+            'menu_id' => 26,
+            'menu_kode' => '01.02.08',
+            'menu_nama' => 'Setting Sub Kriteria - Radar',
+            'menu_status' => true,
+            'menu_type' => 1,
+            'menu_link' => "setting-sub-kriteria-radar",
+            'menu_ikon' => "",
+            'parent_menu_id' => 8,
+        ], [
+            'menu_id' => 27,
+            'menu_kode' => '01.02.09',
+            'menu_nama' => 'Master Pengenalan',
+            'menu_status' => true,
+            'menu_type' => 1,
+            'menu_link' => "ms-pengenalan",
+            'menu_ikon' => "",
+            'parent_menu_id' => 8,
         ],]);
     }
 }

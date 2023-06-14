@@ -10,13 +10,16 @@ use App\Http\Controllers\LaporanPenilaianC;
 use App\Http\Controllers\LaporanPenilaianUserC;
 use App\Http\Controllers\MsDimensiC;
 use App\Http\Controllers\MsGroupsC;
+use App\Http\Controllers\MsIntroductionC;
 use App\Http\Controllers\MsKategoriUsahaC;
 use App\Http\Controllers\MsKriteriaC;
 use App\Http\Controllers\MsLampiranC;
 use App\Http\Controllers\MsMenusC;
+use App\Http\Controllers\MsRadarC;
 use App\Http\Controllers\MsSubKriteriaC;
 use App\Http\Controllers\MsUsersC;
 use App\Http\Controllers\ProfilC;
+use App\Http\Controllers\SettingSubKriteriaRadarC;
 use App\Http\Controllers\TenantC;
 use App\Http\Controllers\ValidasiAsesmenC;
 use Illuminate\Support\Facades\Route;
@@ -127,6 +130,31 @@ Route::group(["middleware" => "has_auth"], function () {
         Route::delete('{id}', [MsLampiranC::class, 'delete'])->name('ms-lampiran.delete');
         Route::get('', [MsLampiranC::class, 'index'])->name('ms-lampiran.index');
         Route::post('', [MsLampiranC::class, 'save'])->name('ms-lampiran.save');
+    });
+
+    Route::group(['prefix' => 'ms-radar'], function () {
+        Route::get('check-duplicate', [MsRadarC::class, 'checkDuplicate'])->name('ms-radar.check-duplicate');
+        Route::get('get-data', [MsRadarC::class, 'getData'])->name('ms-radar.get-data');
+        Route::get('{id}', [MsRadarC::class, 'getById'])->name('ms-radar.get');
+        Route::delete('{id}', [MsRadarC::class, 'delete'])->name('ms-radar.delete');
+        Route::get('', [MsRadarC::class, 'index'])->name('ms-radar.index');
+        Route::post('', [MsRadarC::class, 'save'])->name('ms-radar.save');
+    });
+
+    Route::group(['prefix' => 'setting-sub-kriteria-radar'], function () {
+        Route::get('get-data/{jenis}', [SettingSubKriteriaRadarC::class, 'getData'])->name('setting-sub-kriteria-radar.get-data');
+        Route::get('get-parent', [SettingSubKriteriaRadarC::class, 'getParent'])->name('setting-sub-kriteria-radar.get-parent');
+        Route::get('', [SettingSubKriteriaRadarC::class, 'index'])->name('setting-sub-kriteria-radar.index');
+        Route::post('', [SettingSubKriteriaRadarC::class, 'save'])->name('setting-sub-kriteria-radar.save');
+    });
+
+    Route::group(['prefix' => 'ms-pengenalan'], function () {
+        Route::get('check-duplicate', [MsIntroductionC::class, 'checkDuplicate'])->name('ms-pengenalan.check-duplicate');
+        Route::get('get-data', [MsIntroductionC::class, 'getData'])->name('ms-pengenalan.get-data');
+        Route::get('{id}', [MsIntroductionC::class, 'getById'])->name('ms-pengenalan.get');
+        Route::delete('{id}', [MsIntroductionC::class, 'delete'])->name('ms-pengenalan.delete');
+        Route::get('', [MsIntroductionC::class, 'index'])->name('ms-pengenalan.index');
+        Route::post('', [MsIntroductionC::class, 'save'])->name('ms-pengenalan.save');
     });
 
     Route::group(['prefix' => 'tenant'], function () {

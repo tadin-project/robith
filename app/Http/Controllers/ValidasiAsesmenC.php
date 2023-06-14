@@ -178,7 +178,24 @@ class ValidasiAsesmenC extends MyC
         ];
 
         if ($val == 1) {
-            $data["asd_value"] = $new_val;
+            $data["asd_final"] = $new_val;
+        } else if ($val == 2) {
+            $dtConvertionValue = [];
+            $cekConvertionValue = $this->validasiAsesmenService->getConvertionValue();
+            if ($cekConvertionValue["status"]) {
+                $dtConvertionValue = $cekConvertionValue["data"];
+            }
+
+            if (count($dtConvertionValue) > 0) {
+                $data["asd_final"] =  $dtConvertionValue[0]->cval_nilai;
+            } else {
+                return response()->json([
+                    "status" => false,
+                    "msg" => "Setting terlebih dahulu margin nilainya!",
+                ]);
+            }
+        } else {
+            $data["asd_final"] = null;
         }
 
         $res = $this->validasiAsesmenService->updateDetail($id, $data);

@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-interface AsesmenService
+interface oldAsesmenService
 {
     public function getKriteria(): array;
     public function getTenantByUser(string $id): array;

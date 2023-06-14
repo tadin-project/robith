@@ -17,10 +17,21 @@
     <div class="card">
       <div class="card-header">
         <h3 class="card-title">
-          <i class="ion ion-clipboard mr-1"></i> Ringkasan Penilaian
+          <i class="ion ion-clipboard mr-1"></i> Dashboard Tenant
         </h3>
       </div>
       <div class="card-body">
+        @if ($dataAsesmen['has_asesmen'] && $dataAsesmen['persen_asesmen'] < 100)
+          <div class="alert alert-secondary" role="alert">Pengisian data asesmen sudah sampai
+            <strong>{{ $dataAsesmen['persen_asesmen'] }}%</strong>.
+            Silahkan <a href="{{ url('') }}/asesmen" class="alert-link">lanjutkan pengisian</a>
+          </div>
+        @endif
+        <div class="row">
+          <div class="col-md-12">
+            <h5><i class="ion ion-clipboard mr-1"></i> Ringkasan Penilaian</h5>
+          </div>
+        </div>
         <div class="row">
           <div class="col-md-12">
             <div style="max-height: 260px;"><canvas id="container"></canvas></div>
@@ -54,7 +65,19 @@
       plugins: {
         legend: {
           display: false
-        }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return (context.parsed.x + "%");
+            },
+
+            // label: function(context, data) {
+            //   var dataset = data.datasets[context.datasetIndex];
+            //   return (dataset.data[context.index] + "%");
+            // },
+          }
+        },
       }
     }
   };

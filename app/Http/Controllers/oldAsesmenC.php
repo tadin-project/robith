@@ -2,26 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\AsesmenService;
+use App\Services\oldAsesmenService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class AsesmenC extends MyC
+class oldAsesmenC extends MyC
 {
-    private AsesmenService $asesmenService;
-    private $dirUploads = "uploads/lampiran_submission";
-    public function __construct(AsesmenService $asesmenService)
+    private oldAsesmenService $oldAsesmenService;
+    private string $dirUploads = "uploads/lampiran_submission";
+    public function __construct(oldAsesmenService $oldAsesmenService)
     {
         parent::__construct();
         $this->middleware("has_akses:asesmen");
-        $this->asesmenService = $asesmenService;
+        $this->oldAsesmenService = $oldAsesmenService;
     }
 
     public function index(): View
     {
         $dtKriteria = [];
-        $cekKriteria = $this->asesmenService->getKriteria();
+        $cekKriteria = $this->oldAsesmenService->getKriteria();
         if ($cekKriteria["status"]) {
             $dtKriteria = $cekKriteria["data"];
         }
@@ -37,29 +37,19 @@ class AsesmenC extends MyC
 
     public function cekData(): JsonResponse
     {
-        $res = [
-            "status" => true,
-            "msg" => "",
-        ];
-
         // cek apakah user memiliki tenant
-        $cekTenant = $this->asesmenService->getTenantByUser($this->__sess_user["user_id"]);
+        $cekTenant = $this->oldAsesmenService->getTenantByUser($this->__sess_user["user_id"]);
         if ($cekTenant["data"] == 0) {
             return response()->json($cekTenant);
         }
 
         $tenant_id = $cekTenant["data"];
-        $res = $this->asesmenService->getById($tenant_id);
+        $res = $this->oldAsesmenService->getById($tenant_id);
         return response()->json($res);
     }
 
-    public function saveSementara(Request $request)
+    public function saveSementara(Request $request) : JsonResponse
     {
-        $res = [
-            "status" => true,
-            "msg" => "",
-        ];
-
         $msk_id = $request->msk_id;
         $msk_value = $request->msk_value;
         $asd_id = $request->id_detail;
@@ -71,7 +61,7 @@ class AsesmenC extends MyC
         if (empty($list_hapus_lampiran)) $list_hapus_lampiran = "";
         $list_hapus_lampiran = explode(",", $list_hapus_lampiran);
         if (count($list_hapus_lampiran) > 0) {
-            $this->asesmenService->hapusLampiran($this->dirUploads, $list_hapus_lampiran);
+            $this->oldAsesmenService->hapusLampiran($this->dirUploads, $list_hapus_lampiran);
         }
 
         $lampiran = [];
@@ -92,7 +82,7 @@ class AsesmenC extends MyC
         }
 
         // cek apakah user memiliki tenant
-        $cekTenant = $this->asesmenService->getTenantByUser($this->__sess_user["user_id"]);
+        $cekTenant = $this->oldAsesmenService->getTenantByUser($this->__sess_user["user_id"]);
         if ($cekTenant["data"] == 0) {
             $res = [
                 "status" => false,
@@ -108,7 +98,7 @@ class AsesmenC extends MyC
             "user_id" => $this->__sess_user["user_id"],
         ];
 
-        $hasAsesmen = $this->asesmenService->cekAsesmen($tenant_id);
+        $hasAsesmen = $this->oldAsesmenService->cekAsesmen($tenant_id);
 
         if (!$hasAsesmen["status"]) {
             return response()->json($hasAsesmen);
@@ -117,9 +107,9 @@ class AsesmenC extends MyC
         $as_id = 0;
         if ($hasAsesmen["data"] > 0) {
             $as_id = $hasAsesmen["data"];
-            $res = $this->asesmenService->edit($as_id, $data);
+            $res = $this->oldAsesmenService->edit($as_id, $data);
         } else {
-            $res = $this->asesmenService->add($data);
+            $res = $this->oldAsesmenService->add($data);
             if ($res["status"]) $as_id = $res["data"];
         }
 
@@ -139,7 +129,7 @@ class AsesmenC extends MyC
 
             if ($hasAsesmen["data"] > 0) {
                 $detail[$i]["asd_id"] = $asd_id[$k];
-                $dt_detail = $this->asesmenService->getDetailById($asd_id[$k]);
+                $dt_detail = $this->oldAsesmenService->getDetailById($asd_id[$k]);
 
                 if (count($dt_detail) > 0) {
                     $detail[$i]["asd_file"] = $dt_detail["asd_file"];
@@ -149,7 +139,7 @@ class AsesmenC extends MyC
 
                 if (array_key_exists($k, $lampiran)) {
                     if (!empty($dt_detail["asd_file"])) {
-                        $this->asesmenService->hapusFile("./" . $this->dirUploads . "/" . $dt_detail["asd_file"]);
+                        $this->oldAsesmenService->hapusFile("./" . $this->dirUploads . "/" . $dt_detail["asd_file"]);
                     }
                     $detail[$i]["asd_file"] = $lampiran[$k];
                 }
@@ -163,9 +153,9 @@ class AsesmenC extends MyC
 
 
         if ($hasAsesmen["data"] > 0) {
-            $res = $this->asesmenService->editDetail($detail);
+            $res = $this->oldAsesmenService->editDetail($detail);
         } else {
-            $res = $this->asesmenService->addDetail($detail);
+            $res = $this->oldAsesmenService->addDetail($detail);
         }
 
         return response()->json($res);
@@ -179,7 +169,7 @@ class AsesmenC extends MyC
         ];
 
         // cek apakah user memiliki tenant
-        $cekTenant = $this->asesmenService->getTenantByUser($this->__sess_user["user_id"]);
+        $cekTenant = $this->oldAsesmenService->getTenantByUser($this->__sess_user["user_id"]);
         if ($cekTenant["data"] == 0) {
             $res = [
                 "status" => false,
@@ -194,14 +184,14 @@ class AsesmenC extends MyC
             "as_status" => 1,
         ];
 
-        $hasAsesmen = $this->asesmenService->cekAsesmen($tenant_id);
+        $hasAsesmen = $this->oldAsesmenService->cekAsesmen($tenant_id);
 
         if (!$hasAsesmen["status"]) {
             return response()->json($hasAsesmen);
         }
 
         $as_id = $hasAsesmen["data"];
-        $res = $this->asesmenService->edit($as_id, $data);
+        $res = $this->oldAsesmenService->edit($as_id, $data);
 
         return response()->json($res);
     }

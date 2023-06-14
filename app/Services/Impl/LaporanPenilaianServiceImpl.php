@@ -2,10 +2,8 @@
 
 namespace App\Services\Impl;
 
-use App\Models\ConvertionValue;
 use App\Services\LaporanPenilaianService;
 use Illuminate\Support\Facades\DB;
-use stdClass;
 
 class LaporanPenilaianServiceImpl implements LaporanPenilaianService
 {
@@ -112,12 +110,6 @@ class LaporanPenilaianServiceImpl implements LaporanPenilaianService
 
         try {
 
-            $nilaiMin = 0;
-            $dataNilai = ConvertionValue::where("cval_status", true)->orderBy("cval_kode", "asc")->get();
-            if ($dataNilai->count() > 0) {
-                $nilaiMin = floatval($dataNilai[0]->cval_nilai);
-            }
-
             $tenant = DB::select(
                 "SELECT
                     concat(coalesce(mu.user_fullname, mu.user_name), ' (', t.tenant_nama , ')') as tenant_nama
@@ -142,62 +134,83 @@ class LaporanPenilaianServiceImpl implements LaporanPenilaianService
                                 md.md_kode ,
                                 mk.mk_kode";
             $rawKriteria = DB::select($sqlKriteria);
-            $dataSubKriteria = null;
             $tr = "";
-            $subTr = "";
             $rata2 = 0;
             $total = 0;
             $totIndexSubKriteria = 0;
-            $nilai = 0;
             if (count($rawKriteria) > 0) {
                 foreach ($rawKriteria as $k => $v) {
-
                     $rata2 = 0;
                     $total = 0;
                     $totIndexSubKriteria = 0;
-                    $bobot = 0;
-                    $nilai = 0;
+                    $totBobot = 0;
                     $tr .= "<tr>
                         <th>$v->mk_nama</th>
                         ";
 
                     $sqlSubKriteria = "SELECT
+                                            msk.msk_id ,
                                             msk.msk_nama ,
-                                            msk.msk_bobot ,
-                                            ad.asd_value ,
-                                            ad.asd_status 
+                                            msk.msk_bobot 
                                         from
                                             ms_sub_kriteria msk
-                                        left join asesmen_detail ad on
-                                            ad.msk_id = msk.msk_id
-                                            and ad.as_id = $id
                                         where
                                             msk.mk_id = $v->mk_id
                                             and msk.msk_status = true
                                         order by
                                             msk.msk_kode";
                     $rawSubKriteria = DB::select($sqlSubKriteria);
-                    $subTr = "";
+                    $trSubKriteria = "";
                     if (count($rawSubKriteria) > 0) {
                         foreach ($rawSubKriteria as $k2 => $v2) {
-                            $subNilai = $v2->asd_status == 2 ? $nilaiMin : $v2->asd_value;
-                            $subBobot = $subNilai * $v2->msk_bobot / 100;
-                            $subTr .= "<tr>
-                                <td>$v2->msk_nama</td>
-                                <td class='text-right'>$subBobot</td>
-                            </tr>";
+                            $sqlRadar = "SELECT
+                                            mr.mr_nama ,
+                                            mr.mr_bobot ,
+                                            ad.asd_final
+                                        from
+                                            asesmen_detail ad
+                                        inner join setting_sub_kriteria_radar sskr on
+                                            sskr.sskr_id = ad.sskr_id
+                                        inner join ms_radar mr on
+                                            mr.mr_id = sskr.mr_id
+                                        where
+                                            ad.as_id = $id
+                                            and sskr.msk_id = $v2->msk_id
+                                            and mr.mr_status = true
+                                        order by
+                                            mr.mr_kode ;";
+                            $rawRadar = DB::select($sqlRadar);
+                            $subNilaiRadar = 0;
+                            $trRadar = "";
+                            if (count($rawRadar) > 0) {
+                                foreach ($rawRadar as $k3 => $v3) {
+                                    $nilaiRadar = floatval($v3->mr_bobot) * floatval($v3->asd_final) / 100;
+                                    $subNilaiRadar += $nilaiRadar;
+                                    $trRadar .= "<tr>
+                                        <td>&nbsp;&nbsp;&nbsp;&nbsp;$v3->mr_nama</td>
+                                        <td class='text-right'>$nilaiRadar%</td>
+                                    </tr>";
+                                }
+                            }
+                            // $bobot = $v2->asd_status == 2 ? $nilaiMin : $v2->asd_value;
+                            // $subBobot = $bobot * $v2->msk_bobot / 100;
+                            $nilaiSubKriteria = $subNilaiRadar * floatval($v2->msk_bobot) / 100;
+                            $trSubKriteria .= "<tr>
+                                <th>&nbsp;&nbsp;$v2->msk_nama</th>
+                                <th class='text-right'>$nilaiSubKriteria</th>
+                            </tr>" . $trRadar;
 
                             $total += floatval($v2->msk_bobot);
-                            $bobot += floatval($subBobot);
+                            $totBobot += floatval($nilaiSubKriteria);
                             $totIndexSubKriteria++;
                         }
                     }
 
-                    $rata2 = $totIndexSubKriteria == 0 ? 0 : $bobot / $totIndexSubKriteria;
+                    $rata2 = $totIndexSubKriteria == 0 ? 0 : $totBobot / $totIndexSubKriteria;
 
-                    $tr .= "<th class='text-right' width='30%'>Total Nilai : $bobot<br>Rata - rata : $rata2</th>
+                    $tr .= "<th class='text-right' width='30%'>Total Nilai : $totBobot<br>Rata - rata : $rata2</th>
                     </tr>";
-                    $tr .= $subTr;
+                    $tr .= $trSubKriteria;
                 }
             }
 

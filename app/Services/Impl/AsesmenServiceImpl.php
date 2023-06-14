@@ -4,7 +4,9 @@ namespace App\Services\Impl;
 
 use App\Models\Asesmen;
 use App\Models\AsesmenDetail;
+use App\Models\AsesmenFile;
 use App\Models\ConvertionValue;
+use App\Models\MsIntroduction;
 use App\Models\Tenant;
 use App\Services\AsesmenService;
 use Illuminate\Support\Facades\DB;
@@ -15,6 +17,40 @@ use Mavinoo\Batch\BatchFacade;
  */
 class AsesmenServiceImpl implements AsesmenService
 {
+    /**
+     * Summary of getKriteria
+     * @return array
+     */
+    public function getIntroduction(): array
+    {
+        $res = [
+            "status" => true,
+            "msg" => "",
+        ];
+
+        try {
+            $mi = MsIntroduction::where("mi_status", true)->orderBy("mi_kode", "asc")->get();
+            $res["data"] = [];
+            if (count($mi) > 0) {
+                $dtMi = [];
+                foreach ($mi as $k => $v) {
+                    $dtMi[$k] = [
+                        "mi_id" => $v->mi_id,
+                        "mi_nama" => $v->mi_nama,
+                        "mi_isi" => $v->mi_isi,
+                    ];
+                }
+                $res["data"] = $dtMi;
+            }
+        } catch (\Throwable $th) {
+            $res = [
+                "status" => false,
+                "msg" => $th->getMessage(),
+            ];
+        }
+
+        return $res;
+    }
     /**
      * Summary of getKriteria
      * @return array
@@ -95,12 +131,28 @@ class AsesmenServiceImpl implements AsesmenService
             $res["data"] = [];
             if (count($msk) > 0) {
                 $dtMsk = [];
+                $dtMr = [];
                 foreach ($msk as $k => $v) {
+                    $dtMr = [];
+                    $rawRadar = DB::select("SELECT mr.*, sskr.sskr_id from setting_sub_kriteria_radar sskr inner join ms_radar mr on mr.mr_id = sskr.mr_id where sskr.msk_id = $v->msk_id and mr.mr_status = true order by mr.mr_kode");
+                    if (count($rawRadar) > 0) {
+                        foreach ($rawRadar as $k1 => $v1) {
+                            $dtMr[$v1->sskr_id] = [
+                                'sskr_id' => $v1->sskr_id,
+                                'mr_id' => $v1->mr_id,
+                                'mr_nama' => $v1->mr_nama,
+                                'mr_bobot' => $v1->mr_bobot,
+                            ];
+                        }
+                    }
+
                     $dtMsk[$v->mk_id][] = [
+                        "jenis" => 2,
                         "msk_id" => $v->msk_id,
                         "msk_nama" => $v->msk_nama,
                         "msk_is_submission" => $v->msk_is_submission,
                         "mk_id" => $v->mk_id,
+                        "radar" => $dtMr,
                     ];
                 }
                 $res["data"] = $dtMsk;
@@ -174,26 +226,31 @@ class AsesmenServiceImpl implements AsesmenService
         try {
             $asesmen = Asesmen::where("tenant_id", $tenant_id)->first();
             if (!isset($asesmen->as_id)) {
-                $res = [
-                    "status" => true,
-                    "data" => 0,
-                    "msg" => "",
-                ];
+                $res["data"] = 0;
                 return $res;
             }
 
             $res["data"] = [
                 "as_status" => $asesmen->as_status,
                 "detail" => [],
+                "file" => [],
             ];
 
             $asesmenDetail = AsesmenDetail::where("as_id", $asesmen->as_id)->get();
             foreach ($asesmenDetail as $k => $v) {
                 $res["data"]["detail"][$k] = [
-                    "msk_id" => $v->msk_id,
+                    "sskr_id" => $v->sskr_id,
                     "asd_value" => $v->asd_value,
-                    "asd_file" => $v->asd_file,
                     "id_detail" => $v->asd_id,
+                ];
+            }
+
+            $asesmenFile = AsesmenFile::where("as_id", $asesmen->as_id)->get();
+            foreach ($asesmenFile as $k => $v) {
+                $res["data"]["file"][$k] = [
+                    "msk_id" => $v->msk_id,
+                    "asf_file" => $v->asf_file,
+                    "id_file" => $v->asf_id,
                 ];
             }
         } catch (\Throwable $th) {
@@ -347,15 +404,15 @@ class AsesmenServiceImpl implements AsesmenService
         return $res;
     }
 
-    public function getDetailById(string $asd_id): array
+    public function getFileById(string $asf_id): array
     {
         try {
-            $dtDetail = AsesmenDetail::find($asd_id);
-            if (!isset($dtDetail->asd_id)) {
-                $res = [];
+            $dtFile = AsesmenFile::find($asf_id);
+            if (!isset($dtFile->asf_id)) {
+                $res = ["asf_file" => null];
             } else {
                 $res = [
-                    "asd_file" => $dtDetail->asd_file,
+                    "asf_file" => $dtFile->asf_file,
                 ];
             }
         } catch (\Throwable $th) {
@@ -365,7 +422,7 @@ class AsesmenServiceImpl implements AsesmenService
         return $res;
     }
 
-    public function hapusLampiran(string $dir, array $list_id_asd): array
+    public function hapusLampiran(string $dir, array $list_id_asf): array
     {
         $res = [
             "status" => true,
@@ -374,15 +431,15 @@ class AsesmenServiceImpl implements AsesmenService
 
         try {
             // ambil semua file yang akan dihapus
-            $dt = AsesmenDetail::whereIn("asd_id", $list_id_asd);
+            $dt = AsesmenFile::whereIn("asf_id", $list_id_asf);
             foreach ($dt->get() as $k => $v) {
-                if (!empty($v->asd_file)) {
-                    $this->hapusFile("./" . $dir . "/" . $v->asd_file);
+                if (!empty($v->asf_file)) {
+                    $this->hapusFile("./" . $dir . "/" . $v->asf_file);
                 }
             }
 
-            // update asd_file = null
-            $dt->update(["asd_file" => null]);
+            // update asf_file = null
+            $dt->update(["asf_file" => null]);
         } catch (\Throwable $th) {
             $res = [
                 "status" => false,
@@ -412,18 +469,18 @@ class AsesmenServiceImpl implements AsesmenService
                         sum(1) as tot,
                         sum(ad2.tot) as tot_fill
                     from
-                        ms_sub_kriteria msk
+                        setting_sub_kriteria_radar sskr 
                     left join (
                         select
                             1 as tot,
-                            ad.msk_id
+                            ad.sskr_id
                         from
                             asesmen a
                         inner join asesmen_detail ad on
                             ad.as_id = a.as_id
                         where
                             a.tenant_id = $tenant_id) ad2 on
-                        ad2.msk_id = msk.msk_id";
+                        ad2.sskr_id = sskr.sskr_id";
             $dt = DB::select($sql);
             if ($dt[0]->tot == $dt[0]->tot_fill) {
                 $res["data"] = true;
@@ -449,11 +506,14 @@ class AsesmenServiceImpl implements AsesmenService
 
         try {
             $sql = "SELECT
-                        ad.asd_id 
+                        ad.asd_id ,
+                        ad.asd_value 
                     from
                         asesmen_detail ad
+                    inner join setting_sub_kriteria_radar sskr on
+                        sskr.sskr_id = ad.sskr_id
                     inner join ms_sub_kriteria msk on
-                        msk.msk_id = ad.msk_id
+                        msk.msk_id = sskr.msk_id
                     where
                         ad.as_id = $as_id
                         and msk.msk_is_submission = 0;";
@@ -464,18 +524,67 @@ class AsesmenServiceImpl implements AsesmenService
 
             $dataAsesmenDetail = [];
             foreach ($rawDataAsesmenDetail as $v) {
-                $dataAsesmenDetail[] = $v->asd_id;
+                $dataAsesmenDetail[] = [
+                    "asd_id" => $v->asd_id,
+                    "asd_final" => $v->asd_value,
+                    "asd_status" => 1,
+                ];
             }
 
-            DB::table("asesmen_detail")->whereIn("asd_id", $dataAsesmenDetail)->update([
-                "asd_status" => 1,
-            ]);
+            $asesmenDetailInstance = new AsesmenDetail();
+
+            BatchFacade::update($asesmenDetailInstance, $dataAsesmenDetail, "asd_id");
         } catch (\Throwable $th) {
             $res = [
                 "status" => false,
                 "msg" => $th->getMessage(),
             ];
         }
+
+        return $res;
+    }
+
+    public function addFile($data): array
+    {
+        DB::beginTransaction();
+        $res = [
+            "status" => true,
+            "msg" => "",
+        ];
+
+        try {
+            AsesmenFile::insert($data);
+        } catch (\Throwable $th) {
+            $res = [
+                "status" => false,
+                "msg" => $th->getMessage(),
+            ];
+        }
+
+        DB::commit();
+
+        return $res;
+    }
+
+    public function editFile(array $data): array
+    {
+        DB::beginTransaction();
+        $res = [
+            "status" => true,
+            "msg" => "",
+        ];
+
+        try {
+            $asesmenFileInstance = new AsesmenFile();
+
+            BatchFacade::update($asesmenFileInstance, $data, "asf_id");
+        } catch (\Throwable $th) {
+            $res = [
+                "status" => false,
+                "msg" => $th->getMessage(),
+            ];
+        }
+        DB::commit();
 
         return $res;
     }

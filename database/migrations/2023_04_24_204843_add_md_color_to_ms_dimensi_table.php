@@ -14,7 +14,7 @@ class AddMdColorToMsDimensiTable extends Migration
     public function up()
     {
         Schema::table('ms_dimensi', function (Blueprint $table) {
-            $table->char('md_color', 255)->nullable();
+            $table->char('md_color', 255)->nullable()->default("#4C6108");
         });
     }
 
