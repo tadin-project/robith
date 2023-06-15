@@ -180,6 +180,7 @@ class MsSubKriteriaC extends MyC
             'msk_color' => $request->msk_color,
             'msk_status' => $request->msk_status,
             'msk_bobot' => $request->msk_bobot,
+            'msk_desc' => rawurlencode($request->msk_desc),
             'msk_is_submission' => $request->msk_is_submission,
             'mk_id' => $request->mk_id,
         ];
@@ -218,6 +219,7 @@ class MsSubKriteriaC extends MyC
                 "msk_kode" => $dt->msk_kode,
                 "msk_bobot" => $dt->msk_bobot,
                 "msk_status" => $dt->msk_status,
+                "msk_desc" => $dt->msk_desc,
                 "msk_is_submission" => $dt->msk_is_submission,
                 "mk_id" => $dt->mk_id,
                 "md_id" => $dt->kriteria->md_id,

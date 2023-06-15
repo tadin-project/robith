@@ -66,6 +66,14 @@
                     <tr class="colTr colTr{{ $k }}" style="{!! $mkIdFirstIndex == $k ? '' : 'display:none' !!}">
                       <td>
                         <span class="font-weight-bold">{{ $v1['msk_nama'] }}</span>
+                        @if (!empty($v1['msk_desc']))
+                          &nbsp;
+                          <button type="button" class="btn btn-sm btn-info"
+                            style="border-radius: 9999px;height: 16px;width: 16px;padding: 0;line-height: 1;"
+                            onclick="fnShowInfo('{!! $v1['msk_desc'] !!}')">
+                            <i class="fas fa-info text-white"style="font-size: 10px;"></i>
+                          </button>
+                        @endif
                         <input type="hidden" class="msk-id" id="msk_id{{ $v1['msk_id'] }}"
                           value="{{ $v1['msk_id'] }}">
                         @if ($v1['msk_is_submission'] == 1)
@@ -470,6 +478,10 @@
     } else {
       btnPrevTab.show();
     }
+  }
+
+  function fnShowInfo(message) {
+    Swal.fire("Info", decodeURIComponent(message), "info");
   }
 
   $(document).ready(function() {

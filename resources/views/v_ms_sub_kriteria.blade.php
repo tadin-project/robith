@@ -62,6 +62,12 @@
                 </div>
               </div>
               <div class="row form-group">
+                <label class="col-md-3 control-label">Deskripsi</label>
+                <div class="col-md-5">
+                  <textarea class="form-control" id="msk_desc" name="msk_desc"></textarea>
+                </div>
+              </div>
+              <div class="row form-group">
                 <label class="col-md-3 control-label">Warna</label>
                 <div class="col-md-5">
                   <div class="input-group msk_color-picker colorpicker-element" data-colorpicker-id="2">
@@ -176,6 +182,7 @@
     mskBobot = $("#msk_bobot"),
     mskIsSubmission = $("#msk_is_submission"),
     mskStatus = $("#msk_status"),
+    mskDesc = $("#msk_desc"),
     btnBatal = $("#btnBatal"),
     btnSimpan = $("#btnSimpan");
 
@@ -407,6 +414,7 @@
           mskIsSubmission.val(dt.msk_is_submission);
           mskColor.val(dt.msk_color);
           mskColor.trigger("change");
+          mskDesc.val(decodeURIComponent(dt.msk_desc));
 
           rowForm.slideDown(500);
           rowData.slideUp(500);

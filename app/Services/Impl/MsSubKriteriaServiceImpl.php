@@ -227,6 +227,7 @@ class MsSubKriteriaServiceImpl implements MsSubKriteriaService
             $dt->msk_color = $data["msk_color"];
             $dt->msk_bobot = $data["msk_bobot"];
             $dt->msk_is_submission = $data["msk_is_submission"];
+            $dt->msk_desc = $data["msk_desc"];
             $dt->mk_id = $data["mk_id"];
             if (!is_null($data["msk_status"])) {
                 $dt->msk_status = $data["msk_status"];

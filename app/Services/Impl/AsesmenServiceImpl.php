@@ -150,6 +150,7 @@ class AsesmenServiceImpl implements AsesmenService
                         "jenis" => 2,
                         "msk_id" => $v->msk_id,
                         "msk_nama" => $v->msk_nama,
+                        "msk_desc" => $v->msk_desc,
                         "msk_is_submission" => $v->msk_is_submission,
                         "mk_id" => $v->mk_id,
                         "radar" => $dtMr,
