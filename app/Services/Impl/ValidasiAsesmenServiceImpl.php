@@ -118,9 +118,9 @@ class ValidasiAsesmenServiceImpl implements ValidasiAsesmenService
             "msg" => "",
         ];
         try {
-            $mk = MsKriteria::where("mk_status", true)->orderBy("mk_kode", "asc")->get();
+            $mk = DB::select("SELECT mk.* from ms_kriteria mk inner join ms_dimensi md on md.md_id = mk.md_id where mk.mk_status = true and md.md_status = true order by md.md_kode, mk.mk_kode");
             $res["data"] = [];
-            if ($mk->count() > 0) {
+            if (count($mk) > 0) {
                 $dtMk = [];
                 foreach ($mk as $k => $v) {
                     $dtMk[$k] = [
@@ -129,8 +129,8 @@ class ValidasiAsesmenServiceImpl implements ValidasiAsesmenService
                         "msk" => [],
                     ];
 
-                    $msk = $v->subKriteria()->where("msk_status", true)->orderBy("msk_kode", "asc")->get();
-                    if ($msk->count() > 0) {
+                    $msk = DB::select("SELECT msk.* from ms_sub_kriteria msk where msk.msk_status = true and msk.mk_id = $v->mk_id order by msk.msk_kode");
+                    if (count($msk) > 0) {
                         $dtMr = [];
                         foreach ($msk as $k1 => $v1) {
                             $dtMr = [];

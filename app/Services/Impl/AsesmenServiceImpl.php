@@ -141,6 +141,7 @@ class AsesmenServiceImpl implements AsesmenService
                                 'sskr_id' => $v1->sskr_id,
                                 'mr_id' => $v1->mr_id,
                                 'mr_nama' => $v1->mr_nama,
+                                'mr_desc' => $v1->mr_desc,
                                 'mr_bobot' => $v1->mr_bobot,
                             ];
                         }
@@ -241,7 +242,7 @@ class AsesmenServiceImpl implements AsesmenService
             foreach ($asesmenDetail as $k => $v) {
                 $res["data"]["detail"][$k] = [
                     "sskr_id" => $v->sskr_id,
-                    "asd_value" => $v->asd_value,
+                    "asd_value" => $asesmen->as_status < 2 ? $v->asd_value : $v->asd_final,
                     "id_detail" => $v->asd_id,
                 ];
             }
@@ -498,6 +499,7 @@ class AsesmenServiceImpl implements AsesmenService
         return $res;
     }
 
+    /*
     public function editNonSubmission(string $as_id): array
     {
         $res = [
@@ -544,6 +546,7 @@ class AsesmenServiceImpl implements AsesmenService
 
         return $res;
     }
+    */
 
     public function addFile($data): array
     {

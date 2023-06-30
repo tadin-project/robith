@@ -164,6 +164,7 @@ class MsRadarC extends MyC
             'mr_color' => $request->mr_color,
             'mr_status' => $request->mr_status,
             'mr_bobot' => $mr_bobot,
+            'mr_desc' => $request->mr_desc,
         ];
 
         if ($request->act == 'edit') {
@@ -200,6 +201,7 @@ class MsRadarC extends MyC
                 "mr_color" => $dt->mr_color,
                 "mr_status" => $dt->mr_status,
                 "mr_bobot" => $dt->mr_bobot,
+                "mr_desc" => $dt->mr_desc,
             ];
             $res["data"] = $data;
         }

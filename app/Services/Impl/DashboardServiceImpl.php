@@ -109,7 +109,11 @@ class DashboardServiceImpl implements DashboardService
             $data = [];
 
             foreach ($kriteria as $k => $v) {
-                $data[$v->mk_id] = $v->tot_nilai * 100 / $v->max_nilai;
+                if ($v->max_nilai > 0) {
+                    $data[$v->mk_id] = $v->tot_nilai * 100 / $v->max_nilai;
+                } else {
+                    $data[$v->mk_id] = 0;
+                }
             }
 
             $res["data"] = $data;

@@ -422,11 +422,13 @@ class AsesmenC extends MyC
         }
 
         // update semua data yang non submission menjadi valid
+        /*
         $res = $this->asesmenService->editNonSubmission($as_id);
 
         if (!$res["status"]) {
             return response()->json($res);
         }
+        */
 
         DB::commit();
         return response()->json($res);

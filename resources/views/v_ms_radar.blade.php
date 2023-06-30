@@ -65,6 +65,12 @@
                 </div>
               </div>
               <div class="row form-group">
+                <label class="col-md-3 control-label">Deskripsi</label>
+                <div class="col-md-5">
+                  <input type="text" class="form-control" id="mr_desc" name="mr_desc">
+                </div>
+              </div>
+              <div class="row form-group">
                 <label class="col-md-3 control-label">Status</label>
                 <div class="col-md-2">
                   <select name="mr_status" id="mr_status" class="form-control">
@@ -84,7 +90,8 @@
         </div>
         <div class="row" id="rowData">
           <div class="col-12">
-            <table class="table table-sm table-striped table-bordered table-hover" id="tableVendor" style="width: 100%">
+            <table class="table table-sm table-striped table-bordered table-hover" id="tableVendor"
+              style="width: 100%">
               <thead>
                 <tr>
                   <th class="text-center">No</th>
@@ -122,6 +129,7 @@
     oldMrKode = $("#old_mr_kode"),
     mrStatus = $("#mr_status"),
     mrBobot = $("#mr_bobot"),
+    mrDesc = $("#mr_desc"),
     btnBatal = $("#btnBatal"),
     btnSimpan = $("#btnSimpan");
 
@@ -308,6 +316,7 @@
           mrNama.val(dt.mr_nama);
           mrStatus.val(dt.mr_status);
           mrBobot.val(dt.mr_bobot);
+          mrDesc.val(dt.mr_desc);
           mrColor.val(dt.mr_color);
           mrColor.trigger("change");
 

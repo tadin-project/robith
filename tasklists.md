@@ -75,8 +75,8 @@
 
 ### Revisi 4
 
-- [ ] tambahkan deskripsi ke master radar
-- [ ] deskripsi radar dan kriteria dibuat popup seperti sub kriteria
-- [ ] setelah user mengisi penilaian, tidak langsung auto valid bagi inputan yang non submission
+- [x] tambahkan deskripsi ke master radar
+- [x] deskripsi radar dan kriteria dibuat popup seperti sub kriteria
+- [x] setelah user mengisi penilaian, tidak langsung auto valid bagi inputan yang non submission
 - [ ] rubah background login dan register menjadi gambar kapal
 - [ ] rubah logo adminlte dengan logo wmk pblt ppns

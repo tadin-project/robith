@@ -32,13 +32,22 @@
         </div>
       </div>
       <div class="card-body">
+        <input type="hidden" id="asStatus" value="0">
         <input type="hidden" id="prevTabValue" value="0">
         <input type="hidden" id="nextTabValue" value="{{ $dtKriteria[1]['mk_id'] }}">
         <div class="row">
           @foreach ($dtKriteria as $k => $v)
             <div class="col-12 colTitle" id="colTitle{{ $v['mk_id'] }}" style="{!! $mkIdFirstIndex == $v['mk_id'] ? '' : 'display:none' !!}">
-              <h4>{{ $v['mk_nama'] }}</h4>
-              <p>{{ $v['mk_desc'] }}</p>
+              <h4>
+                {{ $v['mk_nama'] }}
+                @if (!empty($v['mk_desc']))
+                  &nbsp;<button type="button" class="btn btn-sm btn-info"
+                    style="border-radius: 9999px;height: 16px;width: 16px;padding: 0;line-height: 1;"
+                    onclick="fnShowInfo('{!! $v['mk_desc'] !!}')">
+                    <i class="fas fa-info text-white"style="font-size: 10px;"></i>
+                  </button>
+                @endif
+              </h4>
               <input type="hidden" class="currentKriteria" value="{{ $v['mk_id'] }}">
               <input type="hidden" class="prevKriteria" value="{{ $k == 0 ? 0 : $dtKriteria[$k - 1]['mk_id'] }}">
               <input type="hidden" class="nextKriteria"
@@ -90,6 +99,13 @@
                     @foreach ($v1['radar'] as $k2 => $v2)
                       <tr class="colTr colTr{{ $k }}" style="{!! $mkIdFirstIndex == $k ? '' : 'display:none' !!}">
                         <td>&nbsp;&nbsp;{{ $v2['mr_nama'] }}
+                          @if (!empty($v2['mr_desc']))
+                            &nbsp;<button type="button" class="btn btn-sm btn-info"
+                              style="border-radius: 9999px;height: 16px;width: 16px;padding: 0;line-height: 1;"
+                              onclick="fnShowInfo('{!! $v2['mr_desc'] !!}')">
+                              <i class="fas fa-info text-white"style="font-size: 10px;"></i>
+                            </button>
+                          @endif
                           <input type="hidden" class="asd-id" id="asd_id{{ $v2['sskr_id'] }}" value="">
                           <input type="hidden" class="sskr-id" id="sskr_id{{ $v2['sskr_id'] }}"
                             value="{{ $v2['sskr_id'] }}">
@@ -169,6 +185,7 @@
     nextTabValue = $("#nextTabValue"),
     btnPrevTab = $("#btnPrevTab"),
     btnNextTab = $("#btnNextTab"),
+    asStatus = $("#asStatus"),
     btnSimpanSementara = $("#btnSimpanSementara"),
     btnSimpanFinal = $("#btnSimpanFinal");
 
@@ -210,6 +227,7 @@
           }
 
           const dt = res.data;
+          asStatus.val(dt.as_status);
           if (dt.as_status > 0) {
             btnSimpanFinal.hide();
             btnSimpanSementara.hide();
@@ -467,7 +485,9 @@
   function fnShowHideNavForm() {
     if (nextTabValue.val() == "max") {
       btnNextTab.hide();
-      btnSimpanFinal.show();
+      if (asStatus.val() == 0) {
+        btnSimpanFinal.show();
+      }
     } else {
       btnNextTab.show();
       btnSimpanFinal.hide();

@@ -19,7 +19,7 @@ interface AsesmenService
     public function hapusLampiran(string $dir, array $list_id_asd): array;
     public function hapusFile(string $file): void;
     public function cekHasComplete(string $tenant_id): array;
-    public function editNonSubmission(string $as_id): array;
+    // public function editNonSubmission(string $as_id): array;
     public function addFile(array $data): array;
     public function editFile(array $data): array;
 }
