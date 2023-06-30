@@ -20,7 +20,7 @@ class HasAuth
 
         $listRouteAuth = [
             "/",
-            "auth/admin",
+            "admin",
             "login",
             "register",
             "forgot",

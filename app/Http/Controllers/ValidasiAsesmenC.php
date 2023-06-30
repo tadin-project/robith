@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 class ValidasiAsesmenC extends MyC
 {
     private ValidasiAsesmenService $validasiAsesmenService;
-    private $dirUploads = "uploads/lampiran_submission";
+    private $dirUploads = "uploads/lampiran";
     public function __construct(ValidasiAsesmenService $validasiAsesmenService)
     {
         parent::__construct();

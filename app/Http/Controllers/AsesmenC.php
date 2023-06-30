@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 class AsesmenC extends MyC
 {
     private AsesmenService $asesmenService;
-    private $dirUploads = "uploads/lampiran_submission";
+    private $dirUploads = "uploads/lampiran";
     public function __construct(AsesmenService $asesmenService)
     {
         parent::__construct();

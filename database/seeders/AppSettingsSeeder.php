@@ -22,6 +22,7 @@ class AppSettingsSeeder extends Seeder
             'as_desc' => 'Judul Aplikasi',
             'as_default' => 'AdminLte',
             'is_auto' => 'Y',
+            'as_jenis' => 1,
         ], [
             'as_id' => 2,
             'as_key' => 'dev_nama',
@@ -30,6 +31,7 @@ class AppSettingsSeeder extends Seeder
             'as_desc' => 'Nama Developer',
             'as_default' => 'Tadin',
             'is_auto' => 'Y',
+            'as_jenis' => 1,
         ], [
             'as_id' => 3,
             'as_key' => 'id_tenant',
@@ -38,6 +40,7 @@ class AppSettingsSeeder extends Seeder
             'as_desc' => 'Id Hak Akses untuk tenant',
             'as_default' => '3',
             'is_auto' => 'Y',
+            'as_jenis' => 1,
         ], [
             'as_id' => 4,
             'as_key' => 'duration_token_reset_password',
@@ -46,6 +49,25 @@ class AppSettingsSeeder extends Seeder
             'as_desc' => 'Durasi token reset password dalam 10 menit',
             'as_default' => 10,
             'is_auto' => 'Y',
+            'as_jenis' => 1,
+        ], [
+            'as_id' => 5,
+            'as_key' => 'background_auth',
+            'as_value' => 'background.png',
+            'as_nama' => 'Background Autentikasi',
+            'as_desc' => 'Background autentikasi',
+            'as_default' => '',
+            'is_auto' => 'Y',
+            'as_jenis' => 2,
+        ], [
+            'as_id' => 6,
+            'as_key' => 'app_logo',
+            'as_value' => 'logo.png',
+            'as_nama' => 'Logo Aplikasi',
+            'as_desc' => 'Logo Aplikasi',
+            'as_default' => 'AdminLTELogo.png',
+            'is_auto' => 'Y',
+            'as_jenis' => 2,
         ],]);
     }
 }

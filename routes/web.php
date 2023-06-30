@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AppSettingsC;
 use App\Http\Controllers\AsesmenC;
 use App\Http\Controllers\AuthAdminC;
 use App\Http\Controllers\AuthC;
@@ -157,6 +158,14 @@ Route::group(["middleware" => "has_auth"], function () {
         Route::post('', [MsIntroductionC::class, 'save'])->name('ms-pengenalan.save');
     });
 
+    Route::group(['prefix' => 'app-settings'], function () {
+        Route::get('get-data', [AppSettingsC::class, 'getData'])->name('app-settings.get-data');
+        Route::get('{id}', [AppSettingsC::class, 'getById'])->name('app-settings.get');
+        Route::delete('{id}', [AppSettingsC::class, 'delete'])->name('app-settings.delete');
+        Route::get('', [AppSettingsC::class, 'index'])->name('app-settings.index');
+        Route::post('', [AppSettingsC::class, 'save'])->name('app-settings.save');
+    });
+
     Route::group(['prefix' => 'tenant'], function () {
         Route::get('get-data', [TenantC::class, 'getData'])->name('tenant.get-data');
         Route::get('get-users', [TenantC::class, 'getUsers'])->name('tenant.get-user');
@@ -198,8 +207,8 @@ Route::group(["middleware" => "has_auth"], function () {
 
     Route::get('logout', [AuthC::class, 'logout'])->name('logout');
 
-    Route::get('/auth/admin', [AuthAdminC::class, 'index'])->name('auth-admin.index');
-    Route::post('/auth/admin', [AuthAdminC::class, 'login'])->name('auth-admin.login');
+    Route::get('/admin', [AuthAdminC::class, 'index'])->name('auth-admin.index');
+    Route::post('/admin', [AuthAdminC::class, 'login'])->name('auth-admin.login');
     Route::post('login', [AuthC::class, 'prosesLogin'])->name('auth.login.post');
     Route::get('register', [AuthC::class, 'register'])->name('auth.register');
     Route::post('register', [AuthC::class, 'prosesRegister'])->name('auth.register.post');
