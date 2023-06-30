@@ -12,6 +12,8 @@ class AuthAdminC extends Controller
 {
     public AuthAdminService $authAdminService;
     private $__sess_app;
+    private String $dirLogo = "assets/img/logo";
+    private String $dirBackground = "assets/img/background";
 
     public function __construct(AuthAdminService $authAdminService)
     {
@@ -46,6 +48,8 @@ class AuthAdminC extends Controller
         $data = [
             "__title" => "Login",
             'title_app' => "Admin",
+            'background_auth' => !empty($this->__sess_app["background_auth"]) ? asset('') . $this->dirBackground . "/" . $this->__sess_app["background_auth"] : "",
+            'app_logo' => !empty($this->__sess_app["app_logo"]) ? asset('') . $this->dirLogo . "/" . $this->__sess_app["app_logo"] : "",
         ];
 
         return view('auth.v_login_admin', $data);

@@ -144,7 +144,7 @@
     <div class="preloader flex-column justify-content-center align-items-center">
       @if (array_key_exists('use_logo_icon_admin', $__sess_app))
         @if ($__sess_app['use_logo_icon_admin'] == 'Y')
-          <img class="animation__shake" src="{{ asset($__sess_app['dir_logo_icon_admin']) }}"
+          <img class="animation__shake" src="{{ asset($__sess_app['logo_icon_admin']) }}"
             alt="{{ $__sess_app['app_nama'] }}" height="60" width="60">
         @endif
       @endif
@@ -209,8 +209,8 @@
       <a href="index3.html" class="brand-link">
         @if (array_key_exists('use_logo_icon_admin', $__sess_app))
           @if ($__sess_app['use_logo_icon_admin'] == 'Y')
-            <img src="{{ asset($__sess_app['dir_logo_icon_admin']) }}" alt="{{ $__sess_app['app_nama'] }}"
-              class="brand-image img-circle elevation-3" style="opacity: .8">
+            <img src="{{ asset($__sess_app['logo_icon_admin']) }}" alt="{{ $__sess_app['app_nama'] }}"
+              class="brand-image img-circle">
           @endif
         @endif
         <span class="brand-text font-weight-light">{{ $__sess_app['app_nama'] }}</span>

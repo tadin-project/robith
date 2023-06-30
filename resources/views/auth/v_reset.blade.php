@@ -61,10 +61,17 @@
   <script src="{{ asset('') }}assets/plugins/toastr/toastr.min.js"></script>
 </head>
 
-<body class="login-page">
+<body class="login-page"
+  style="@if (!empty($background_auth)) background:url({{ $background_auth }});background-size:cover;background-position:center;background-repeat:no-repeat; @endif">
   <div class="login-box">
     <div class="login-logo">
-      <a href="{{ url('') }}">{!! $title_auth !!}</a>
+      <a href="{{ url('') }}">
+        @if (!empty($app_logo))
+          <img src="{!! $app_logo !!}" class="w-50" />
+        @else
+          {!! $title_auth !!}
+        @endif
+      </a>
     </div>
 
     <div class="card">

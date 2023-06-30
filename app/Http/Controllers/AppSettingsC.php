@@ -127,7 +127,7 @@ class AppSettingsC extends MyC
                 $url_gambar = "";
                 if ($v->as_key == 'background_auth') {
                     $url_gambar = asset('') . $this->dirBackground . '/' . $v->as_value;
-                } else if ($v->as_key == 'app_logo') {
+                } else if ($v->as_key == 'app_logo' || $v->as_key == 'logo_icon_admin') {
                     $url_gambar = asset('') . $this->dirLogo . '/' . $v->as_value;
                 } else {
                     $url_gambar = asset('')  . $this->dirGambar . '/' . $v->as_value;
@@ -174,7 +174,7 @@ class AppSettingsC extends MyC
                     $url_gambar = "";
                     if ($currentOldAsData->as_key == 'background_auth') {
                         $url_gambar = './' . $this->dirBackground . '/' . $currentOldAsData->as_value;
-                    } else if ($currentOldAsData->as_key == 'app_logo') {
+                    } else if ($currentOldAsData->as_key == 'app_logo' || $currentOldAsData->as_key == 'logo_icon_admin') {
                         $url_gambar = './' . $this->dirLogo . '/' . $currentOldAsData->as_value;
                     } else {
                         $url_gambar = './'  . $this->dirGambar . '/' . $currentOldAsData->as_value;
@@ -190,8 +190,12 @@ class AppSettingsC extends MyC
                 if ($currentOldAsData->as_key == 'background_auth') {
                     $fileName = "background";
                     $dir = $this->dirBackground;
-                } else if ($currentOldAsData->as_key == 'app_logo') {
-                    $fileName = "logo";
+                } else if ($currentOldAsData->as_key == 'app_logo' || $currentOldAsData->as_key == 'logo_icon_admin') {
+                    if ($currentOldAsData->as_key == 'logo_icon_admin') {
+                        $fileName = "logo-mini";
+                    } else {
+                        $fileName = "logo";
+                    }
                     $dir = $this->dirLogo;
                 } else {
                     $fileName = $file->getClientOriginalName();
@@ -219,7 +223,7 @@ class AppSettingsC extends MyC
             if ($dt->as_jenis == 2) {
                 if ($dt->as_key == 'background_auth') {
                     $asValue = asset('') . $this->dirBackground . '/' . $dt->as_value;
-                } else if ($dt->as_key == 'app_logo') {
+                } else if ($dt->as_key == 'app_logo' || $dt->as_key == 'logo_icon_admin') {
                     $asValue = asset('') . $this->dirLogo . '/' . $dt->as_value;
                 } else {
                     $asValue = asset('') . $dt->as_value;

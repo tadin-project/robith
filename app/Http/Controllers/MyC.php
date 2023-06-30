@@ -10,6 +10,7 @@ class MyC extends Controller
 {
     protected $__sess_app;
     protected $__sess_user;
+    private String $dirLogo = "assets/img/logo";
 
     public function __construct()
     {
@@ -48,6 +49,10 @@ class MyC extends Controller
         $__title = $this->__sess_app['app_nama'];
         if (key_exists("__title", $data)) {
             $__title .= " | " . $data["__title"];
+        }
+
+        if (array_key_exists("logo_icon_admin", $this->__sess_app)) {
+            $this->__sess_app["logo_icon_admin"] = asset('') . $this->dirLogo . '/' . $this->__sess_app["logo_icon_admin"];
         }
 
         $param_data = [

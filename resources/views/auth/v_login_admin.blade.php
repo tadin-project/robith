@@ -57,10 +57,18 @@
   <script src="{{ asset('') }}assets/plugins/jquery-validation/localization/messages_id.min.js"></script>
 </head>
 
-<body class="login-page">
+<body class="login-page"
+  style="@if (!empty($background_auth)) background:url({{ $background_auth }});background-size:cover;background-position:center;background-repeat:no-repeat; @endif">
   <div class="login-box">
     <div class="login-logo">
-      <a href="{{ url('') }}">{!! $title_app !!}</a>
+      <a href="{{ url('') }}">
+        @if (!empty($app_logo))
+          <img src="{!! $app_logo !!}" class="w-50" />
+        @endif
+      </a>
+      <h1 class="text-white">
+        {!! $title_app !!}
+      </h1>
     </div>
 
     <div class="card">

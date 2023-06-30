@@ -61,10 +61,17 @@
   <script src="{{ asset('') }}assets/plugins/bs-stepper/js/bs-stepper.min.js"></script>
 </head>
 
-<body class="register-page">
+<body class="register-page"
+  style="@if (!empty($background_auth)) background:url({{ $background_auth }});background-size:cover;background-position:center;background-repeat:no-repeat; @endif">
   <div class="register-box">
     <div class="register-logo">
-      <a href="{{ url('') }}">{!! $title_auth !!}</a>
+      <a href="{{ url('') }}">
+        @if (!empty($app_logo))
+          <img src="{!! $app_logo !!}" class="w-50" />
+        @else
+          {!! $title_auth !!}
+        @endif
+      </a>
     </div>
 
     <div class="card card-default">

@@ -68,6 +68,24 @@ class AppSettingsSeeder extends Seeder
             'as_default' => 'AdminLTELogo.png',
             'is_auto' => 'Y',
             'as_jenis' => 2,
+        ], [
+            'as_id' => 7,
+            'as_key' => 'use_logo_icon_admin',
+            'as_value' => 'Y',
+            'as_nama' => 'Gunakan Logo Admin',
+            'as_desc' => 'Apakah ingin menggunakan logo pada admin panel?',
+            'as_default' => 'Y',
+            'is_auto' => 'Y',
+            'as_jenis' => 1,
+        ], [
+            'as_id' => 8,
+            'as_key' => 'logo_icon_admin',
+            'as_value' => 'logo-mini.png',
+            'as_nama' => 'Logo Admin Panel',
+            'as_desc' => 'Logo Admin Panel',
+            'as_default' => 'AdminLTELogo.png',
+            'is_auto' => 'Y',
+            'as_jenis' => 2,
         ],]);
     }
 }

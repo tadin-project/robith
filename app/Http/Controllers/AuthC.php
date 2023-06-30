@@ -15,6 +15,8 @@ class AuthC extends Controller
 {
     public AuthService $authService;
     private $__sess_app;
+    private String $dirLogo = "assets/img/logo";
+    private String $dirBackground = "assets/img/background";
 
     public function __construct(AuthService $authService)
     {
@@ -49,6 +51,8 @@ class AuthC extends Controller
         $data = [
             "__title" => "Login",
             'title_auth' => $this->__sess_app["app_nama"],
+            'background_auth' => !empty($this->__sess_app["background_auth"]) ? asset('') . $this->dirBackground . "/" . $this->__sess_app["background_auth"] : "",
+            'app_logo' => !empty($this->__sess_app["app_logo"]) ? asset('') . $this->dirLogo . "/" . $this->__sess_app["app_logo"] : "",
             // 'title_auth' => $this->__sess_app['title_auth_admin'],
         ];
 
@@ -66,6 +70,8 @@ class AuthC extends Controller
         $data = [
             "__title" => "Register",
             'title_auth' => $this->__sess_app["app_nama"],
+            'background_auth' => !empty($this->__sess_app["background_auth"]) ? asset('') . $this->dirBackground . "/" . $this->__sess_app["background_auth"] : "",
+            'app_logo' => !empty($this->__sess_app["app_logo"]) ? asset('') . $this->dirLogo . "/" . $this->__sess_app["app_logo"] : "",
             // 'title_auth' => $this->__sess_app['title_auth_admin'],
             'opt_ku' => $optKu,
         ];
@@ -78,6 +84,8 @@ class AuthC extends Controller
         $data = [
             "__title" => "Lupa Password",
             'title_auth' => $this->__sess_app["app_nama"],
+            'background_auth' => !empty($this->__sess_app["background_auth"]) ? asset('') . $this->dirBackground . "/" . $this->__sess_app["background_auth"] : "",
+            'app_logo' => !empty($this->__sess_app["app_logo"]) ? asset('') . $this->dirLogo . "/" . $this->__sess_app["app_logo"] : "",
         ];
 
         return view('auth.v_forgot', $data);
@@ -99,6 +107,8 @@ class AuthC extends Controller
             "__title" => "Lupa Password",
             'title_auth' => $this->__sess_app["app_nama"],
             'token' => $token,
+            'background_auth' => !empty($this->__sess_app["background_auth"]) ? asset('') . $this->dirBackground . "/" . $this->__sess_app["background_auth"] : "",
+            'app_logo' => !empty($this->__sess_app["app_logo"]) ? asset('') . $this->dirLogo . "/" . $this->__sess_app["app_logo"] : "",
         ];
 
         return view('auth.v_reset', $data);
@@ -108,7 +118,7 @@ class AuthC extends Controller
     {
         $group_id = $request->session()->get("user_data")["group_id"];
         if (in_array($group_id, [1, 2, 4])) {
-            $uri = "/auth/admin";
+            $uri = "/admin";
         } else {
             $uri = "/";
         }
