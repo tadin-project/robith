@@ -54,9 +54,9 @@
 - [x] penilaian dirubah memiliki proses pengisian
 - [x] submission di dalam sub kriteria
 - [x] penilaian diubah menjadi radio button yang nilainya diambil dari prosentase tiap bobot
-- [ ] nilai bobot disimpan dalam asesmen
+- [x] nilai bobot disimpan dalam asesmen
 - [x] laporan akhir menampilkan rata2 nilai kriteria dan nilai sub kriteria
-- [ ] dalam dashboard user tampilkan prosentase pengisian asesmen
+- [x] dalam dashboard user tampilkan prosentase pengisian asesmen
 - [x] kriteria dikasih deskripsi
 - [x] dalam form asesmen dikasih introduction sebelum proses asesmen
 - [x] nilai non submission otomatis statusnya valid
@@ -72,3 +72,11 @@
 - [x] laporan penilaian user ada detail sampai radar
 - [x] master data pesan pendahuluan sebelum mengisi radar
 - [x] penambahan data pendahuluan di form asesmen user
+
+### Revisi 4
+
+- [ ] tambahkan deskripsi ke master radar
+- [ ] deskripsi radar dan kriteria dibuat popup seperti sub kriteria
+- [ ] setelah user mengisi penilaian, tidak langsung auto valid bagi inputan yang non submission
+- [ ] rubah background login dan register menjadi gambar kapal
+- [ ] rubah logo adminlte dengan logo wmk pblt ppns
