@@ -47,7 +47,7 @@ class AsesmenC extends MyC
         }
 
         $data = [
-            "__title" => "Asesmen",
+            "__title" => "Penilaian Performa Usaha",
             "dtKriteria" => $dtKriteria,
             "dtSubKriteria" => $dtSubKriteria,
             "dtConvertionValue" => $dtConvertionValue,

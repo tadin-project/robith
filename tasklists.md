@@ -80,3 +80,10 @@
 - [x] setelah user mengisi penilaian, tidak langsung auto valid bagi inputan yang non submission
 - [x] rubah background login dan register menjadi gambar kapal
 - [x] rubah logo adminlte dengan logo wmk pblt ppns
+
+### Revisi 5
+
+- [x] tambahkan grfik radar di dashboard
+- [ ] tambahkan grfik radar di laporan penilaian user
+- [x] ganti warna header #1d5aa2
+- [x] ganti warna sidebar #1e1ec2

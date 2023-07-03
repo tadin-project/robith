@@ -7,6 +7,50 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardServiceImpl implements DashboardService
 {
+    public function getKriteria(): array
+    {
+        $res = [
+            "status" => true,
+            "msg" => "",
+        ];
+
+        try {
+            $kriteria = DB::select(
+                "SELECT
+                    mk.mk_id ,
+                    mk.mk_nama 
+                from
+                    ms_kriteria mk
+                inner join ms_dimensi md on
+                    md.md_id = mk.md_id
+                where
+                    md.md_status = true
+                    and mk.mk_status = true
+                order by
+                    md.md_kode ,
+                    mk.mk_kode"
+            );
+
+            $data = [];
+            $nilai = [];
+
+            foreach ($kriteria as $k => $v) {
+                $data[$k] = $v->mk_nama;
+                $nilai[$k] = 0;
+            }
+
+            $res["data"] = ['data' => $data, 'nilai' => $nilai];
+        } catch (\Throwable $th) {
+            $res
+                = [
+                    "status" => false,
+                    "msg" => $th->getMessage(),
+                ];
+        }
+
+        return $res;
+    }
+
     public function getInitDataTenant(): array
     {
         $res = [

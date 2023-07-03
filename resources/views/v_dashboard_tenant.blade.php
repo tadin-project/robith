@@ -37,6 +37,11 @@
             <div style="max-height: 260px;"><canvas id="container"></canvas></div>
           </div>
         </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div><canvas id="containerRadar"></canvas></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -82,8 +87,55 @@
     }
   };
 
+  const configRadar = {
+    type: 'radar',
+    data: {
+      labels: JSON.parse(`{!! json_encode($dataKriteria['data']) !!}`),
+      datasets: [{
+        label: 'Grafik Data Penilaian',
+        data: JSON.parse(`{!! json_encode($dataKriteria['nilai']) !!}`),
+        fill: true,
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgb(255, 99, 132)',
+        pointBackgroundColor: 'rgb(255, 99, 132)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgb(255, 99, 132)'
+      }]
+    },
+    options: {
+      elements: {
+        line: {
+          borderWidth: 3
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              console.log(context);
+              return (context.parsed.r + "%");
+            },
+
+            // label: function(context, data) {
+            //   var dataset = data.datasets[context.datasetIndex];
+            //   return (dataset.data[context.index] + "%");
+            // },
+          }
+        },
+      }
+    },
+  };
+
   let myChart = new Chart(
     document.getElementById('container'), config
+  );
+
+  let myChartRadar = new Chart(
+    document.getElementById('containerRadar'), configRadar
   );
 
   let intervalGetData;
@@ -102,8 +154,11 @@
           const dt = res.data;
           $.each(myChart.data.datasets[0].data, function(index, i) {
             i.nested.value = dt[i.id];
+            myChartRadar.data.datasets[0].data[index] = dt[i.id];
           });
+
           myChart.update();
+          myChartRadar.update();
         } else {
           Swal.fire("Error", res.msg, "error");
           clearInterval(intervalGetData);

@@ -38,7 +38,7 @@ class ValidasiAsesmenC extends MyC
         }
 
         $data = [
-            "__title" => "Validasi Asesmen",
+            "__title" => "Validasi Penilaian Performa Usaha",
             "opt_ku" => $optKu,
             "dtKriteria" => $dtKriteria,
             "dtConvertionValue" => $dtConvertionValue,

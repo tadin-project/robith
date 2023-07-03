@@ -28,6 +28,11 @@ class DashboardC extends MyC
             $dataInit = [];
             $dataAsesmen = [];
 
+            $cekDataKriteria = $this->dashboardService->getKriteria();
+            if ($cekDataKriteria["status"]) {
+                $dataKriteria = $cekDataKriteria["data"];
+            }
+
             $cekInitData = $this->dashboardService->getInitDataTenant();
             if ($cekInitData["status"]) {
                 $dataInit = $cekInitData["data"];
@@ -38,6 +43,7 @@ class DashboardC extends MyC
                 $dataAsesmen = $cekDataAsesmen["data"];
             }
 
+            $data["dataKriteria"] = $dataKriteria;
             $data["data"] = $dataInit;
             $data["dataAsesmen"] = $dataAsesmen;
 

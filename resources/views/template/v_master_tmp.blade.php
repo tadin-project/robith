@@ -47,6 +47,23 @@
     .has-error .form-control {
       border-color: red;
     }
+
+    #header-menu {
+      background-color: #1d5aa2;
+    }
+
+    #header-menu.navbar-light .navbar-nav .nav-link {
+      color: #fff;
+    }
+
+    #header-menu.navbar-light .navbar-nav .nav-link:focus,
+    .navbar-light .navbar-nav .nav-link:hover {
+      color: #fff;
+    }
+
+    #sidebar-menu {
+      background-color: #1e1e2c;
+    }
   </style>
 
   <!-- jQuery -->
@@ -151,7 +168,7 @@
     </div>
 
     <!-- Navbar -->
-    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <nav class="main-header navbar navbar-expand navbar-light" id="header-menu">
       <!-- Left navbar links -->
       <ul class="navbar-nav">
         <li class="nav-item">
@@ -204,7 +221,7 @@
     <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
-    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <aside class="main-sidebar sidebar-dark-primary elevation-4" id="sidebar-menu">
       <!-- Brand Logo -->
       <a href="index3.html" class="brand-link">
         @if (array_key_exists('use_logo_icon_admin', $__sess_app))
