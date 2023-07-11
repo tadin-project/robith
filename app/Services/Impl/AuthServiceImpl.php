@@ -266,6 +266,7 @@ class AuthServiceImpl implements AuthService
 
             $user = $user->first();
             $user->user_status = true;
+            $user->register_token = null;
             $user_id = $user->user_id;
             $user->save();
 
