@@ -230,7 +230,7 @@ class AuthC extends Controller
             '__title' => $this->__sess_app["app_nama"],
             'title' => 'Mail from EFQM',
             'body' => 'Ini adalah email untuk reset password. Jangan bagikan email ini kepada siapapun. Silahkan klik link berikut untuk proses selanjutnya: <br><br><br>
-            <a href="http://127.0.0.1/robith/public/reset?token=' . $res["data"] . '">Link Reset Password</a>
+            <a href="' . url('') . '/reset?token=' . $res["data"] . '">Link Reset Password</a>
             ',
         ];
 
