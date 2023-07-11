@@ -182,7 +182,7 @@ class AuthC extends Controller
             '__title' => $this->__sess_app["app_nama"],
             'title' => 'Mail from EFQM',
             'body' => 'Terima kasih telah mendaftar ke platform kami. Untuk langkah selanjutnya, silahkan Anda aktifasi akun anda melalui link berikut : <br><br><br>
-            <a href="http://127.0.0.1/robith/public/activate?token=' . $token . '">Link Aktifasi Akun</a>
+            <a href="' . url() . '/activate?token=' . $token . '">Link Aktifasi Akun</a>
             ',
         ];
 
