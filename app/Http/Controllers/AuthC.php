@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\TenantMail;
 use App\Models\AppSettings;
-use App\Models\User;
+use App\Models\MsUsers;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -190,7 +190,7 @@ class AuthC extends Controller
 
             Mail::to($request->user_email)->send(new TenantMail($details));
         } catch (\Throwable $th) {
-            User::where("user_email", $request->user_email)->delete();
+            MsUsers::where("user_email", $request->user_email)->delete();
             $res = [
                 "status" => false,
                 "message" => $th->getMessage(),
