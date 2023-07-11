@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\TenantMail;
 use App\Models\AppSettings;
+use App\Models\User;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -152,41 +153,49 @@ class AuthC extends Controller
             "msg" => "",
         ];
 
-        $cekInput = $this->authService->validasiRegister($request);
-        if (!$cekInput["status"]) {
-            $res = $cekInput;
-            return response()->json($res);
+        try {
+            $cekInput = $this->authService->validasiRegister($request);
+            if (!$cekInput["status"]) {
+                $res = $cekInput;
+                return response()->json($res);
+            }
+
+            $token = Str::random(80);
+
+            $user_data = [
+                "user_name" => $request->user_email,
+                "user_email" => $request->user_email,
+                "user_password" => Hash::make($request->user_password),
+                "user_status" => false,
+                "group_id" => $this->__sess_app["id_tenant"],
+                "register_token" => $token,
+            ];
+
+            $tenant_data = [
+                "tenant_nama" => $request->tenant_nama,
+                "tenant_desc" => $request->tenant_desc,
+                "tenant_status" => false,
+                "mku_id" => $request->mku_id,
+            ];
+
+            $res = $this->authService->register($user_data, $tenant_data);
+
+            $details = [
+                '__title' => $this->__sess_app["app_nama"],
+                'title' => 'Mail from EFQM',
+                'body' => 'Terima kasih telah mendaftar ke platform kami. Untuk langkah selanjutnya, silahkan Anda aktifasi akun anda melalui link berikut : <br><br><br>
+                <a href="' . url() . '/activate?token=' . $token . '">Link Aktifasi Akun</a>
+                ',
+            ];
+
+            Mail::to($request->user_email)->send(new TenantMail($details));
+        } catch (\Throwable $th) {
+            User::where("user_email", $request->user_email)->delete();
+            $res = [
+                "status" => false,
+                "message" => $th->getMessage(),
+            ];
         }
-
-        $token = Str::random(80);
-
-        $user_data = [
-            "user_name" => $request->user_email,
-            "user_email" => $request->user_email,
-            "user_password" => Hash::make($request->user_password),
-            "user_status" => false,
-            "group_id" => $this->__sess_app["id_tenant"],
-            "register_token" => $token,
-        ];
-
-        $tenant_data = [
-            "tenant_nama" => $request->tenant_nama,
-            "tenant_desc" => $request->tenant_desc,
-            "tenant_status" => false,
-            "mku_id" => $request->mku_id,
-        ];
-
-        $res = $this->authService->register($user_data, $tenant_data);
-
-        $details = [
-            '__title' => $this->__sess_app["app_nama"],
-            'title' => 'Mail from EFQM',
-            'body' => 'Terima kasih telah mendaftar ke platform kami. Untuk langkah selanjutnya, silahkan Anda aktifasi akun anda melalui link berikut : <br><br><br>
-            <a href="' . url() . '/activate?token=' . $token . '">Link Aktifasi Akun</a>
-            ',
-        ];
-
-        Mail::to($request->user_email)->send(new TenantMail($details));
 
         return response()->json($res);
     }
