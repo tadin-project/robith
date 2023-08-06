@@ -72,6 +72,7 @@ class AuthAdminServiceImpl implements AuthAdminService
                 "user_name"     => $user->user_name,
                 "user_email"    => $user->user_email,
                 "user_fullname" => $user->user_fullname,
+                "user_profile"  => $user->user_profile,
                 "group_id"      => $user->group_id,
             ];
 

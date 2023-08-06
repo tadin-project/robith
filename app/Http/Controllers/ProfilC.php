@@ -63,6 +63,24 @@ class ProfilC extends MyC
             return response()->json($save_user);
         }
 
+        // menyimpan data file yang diupload
+        $user_profile = $request->file('user_profile');
+
+        $user_profile_name = "";
+        if ($request->file('user_profile')) {
+            if ($user_profile->isValid()) {
+                $extension = $user_profile->extension();
+                $user_profile_name = $this->__sess_user["user_id"] . "." . $extension;
+                $user_profile->move(public_path('uploads/profile'), $user_profile_name);
+
+                $user["user_profile"] = $user_profile_name;
+                $save_user = $this->profilService->saveUser($this->__sess_user["user_id"], $user);
+                if (!$save_user["status"]) {
+                    return response()->json($save_user);
+                }
+            }
+        }
+
         if ($this->__sess_user["group_id"] == 3) {
             $save_tenant = $this->profilService->saveTenant($this->__sess_user["user_id"], $tenant);
             if (!$save_tenant["status"]) {
@@ -72,6 +90,9 @@ class ProfilC extends MyC
 
         $old_sess_user = $this->__sess_user;
         $old_sess_user["user_fullname"] = $user["user_fullname"];
+        if (!empty($user_profile_name)) {
+            $old_sess_user["user_profile"] = $user_profile_name;
+        }
         session(["user_data" => $old_sess_user]);
 
         return response()->json($res);

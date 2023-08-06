@@ -67,6 +67,38 @@
         yAxisKey: 'nama',
         xAxisKey: 'nested.value'
       },
+      scales: {
+        x: {
+          suggestedMin: 0,
+          suggestedMax: 100,
+          ticks: {
+            stepSize: 20
+          }
+        }
+      },
+      // responsive: true,
+      // maintainAspectRatio: false,
+      animation: {
+        duration: 1,
+        onComplete: (x) => {
+          const chart = x.chart;
+          var {
+            ctx
+          } = chart;
+          ctx.textAlign = 'center';
+          ctx.fillStyle = "rgba(0, 0, 0, 1)";
+          ctx.textBaseline = 'bottom';
+          // Loop through each data in the datasets
+          const metaFunc = this.getDatasetMeta;
+          chart.data.datasets.forEach((dataset, i) => {
+            var meta = chart.getDatasetMeta(i);
+            meta.data.forEach((bar, index) => {
+              var data = dataset.data[index].nested.value;
+              ctx.fillText(`${data}%`, bar.x + 20, bar.y + (bar.height / 2));
+            });
+          });
+        }
+      },
       plugins: {
         legend: {
           display: false
@@ -83,7 +115,7 @@
             // },
           }
         },
-      }
+      },
     }
   };
 
@@ -109,6 +141,15 @@
           borderWidth: 3
         }
       },
+      scales: {
+        r: {
+          suggestedMin: 0,
+          suggestedMax: 100,
+          ticks: {
+            stepSize: 20
+          }
+        }
+      },
       plugins: {
         legend: {
           display: false
@@ -116,7 +157,6 @@
         tooltip: {
           callbacks: {
             label: function(context) {
-              console.log(context);
               return (context.parsed.r + "%");
             },
 

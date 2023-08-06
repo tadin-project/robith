@@ -36,6 +36,15 @@
                 <input type="text" class="form-control" id="user_fullname" name="user_fullname"
                   value="{{ $user_data['user_fullname'] }}">
               </div>
+              <div class="form-group">
+                <label class="control-label">Foto Profil</label>
+                <div class="row mb-3">
+                  <div class="col-12">
+                    <img src="" alt="" id="prevImgProfile" style="max-height: 128px;">
+                  </div>
+                </div>
+                <input type="file" id="user_profile" name="user_profile">
+              </div>
               <div id="rowTenant" style="display: none">
                 <div class="form-group">
                   <label class="control-label">Nama Tenant</label>
@@ -109,9 +118,13 @@
   const baseDir = baseUrl + '/profil',
     rowTenant = $("#rowTenant"),
     isTenant = "{{ $is_tenant ? 'true' : 'false' }}";
+  let imgProfile =
+    "{{ !empty($user_data['user_profile']) ? asset('uploads/profile/' . $user_data['user_profile']) : asset('uploads/profile/default.png') }}";
 
   // form profil
   const formProfil = $("#formProfil"),
+    prevImgProfile = $("#prevImgProfile"),
+    userProfile = $("#user_profile"),
     btnSimpanProfil = $("#btnSimpanProfil");
 
   // form ganti password
@@ -159,12 +172,24 @@
           error.appendTo(el.parents('.form-group'));
         },
         submitHandler: function(form) {
-          btnSimpanProfil.attr('disabled', 'disabled').text('Loading...')
-          var $data = $(form).serialize();
+          btnSimpanProfil.attr('disabled', 'disabled').text('Loading...');
+          var formData = new FormData();
+          formData.append('user_fullname', $("#user_fullname").val());
+          formData.append('tenant_nama', $("#tenant_nama").val());
+          formData.append('tenant_desc', $("#tenant_desc").val());
+          formData.append('mku_id', $("#mku_id").val());
+
+          if (userProfile[0].files.length > 0) {
+            formData.append('user_profile', userProfile[0].files[0]);
+          }
+
           $.ajax({
             type: 'POST',
             url: baseDir,
-            data: $data,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            data: formData,
             error: function() {
               btnSimpanProfil.removeAttr('disabled', 'disabled').text('Perbarui');
             },
@@ -270,12 +295,29 @@
 
   $(document).ready(function() {
     PageAdvanced.init();
+    prevImgProfile.attr('src', imgProfile);
 
     if (isTenant == "true") {
       rowTenant.show();
     } else {
       rowTenant.hide();
     }
+
+    userProfile.change(function() {
+      var input = this;
+      var url = $(this).val();
+      var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
+      if (input.files && input.files[0] && (ext == "gif" || ext == "png" || ext == "jpeg" || ext == "jpg")) {
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+          prevImgProfile.attr('src', e.target.result);
+        }
+        reader.readAsDataURL(input.files[0]);
+      } else {
+        prevImgProfile.attr('src', imgProfile);
+      }
+    });
 
     btnSimpanProfil.click(function() {
       formProfil.submit();

@@ -83,7 +83,11 @@
 
 ### Revisi 5
 
-- [x] tambahkan grfik radar di dashboard
-- [ ] tambahkan grfik radar di laporan penilaian user
+- [x] tambahkan grafik radar di dashboard
+- [ ] tambahkan grafik radar di laporan penilaian user
 - [x] ganti warna header #1d5aa2
 - [x] ganti warna sidebar #1e1ec2
+
+### Revisi 6
+- [x] ganti profil photo
+- [x] memunculkan nilai pada grafik web (grafik baris)

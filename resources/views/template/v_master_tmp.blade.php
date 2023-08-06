@@ -188,9 +188,15 @@
           <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right"><a href="#" class="dropdown-item">
               <!-- Message Start -->
               <div class="media align-items-center">
-                <img src="{{ asset('') }}assets/dist/img/user1-128x128.jpg" alt="User Avatar"
-                  class="img-size-50 mr-3 img-circle">
-                <div class="media-body">
+                @if (!empty($__user['user_profile']))
+                  <img src="{{ asset('') }}uploads/profile/{{ $__user['user_profile'] }}" alt="User Avatar"
+                    class="rounded-circle" style="max-width:50px;">
+                @else
+                  <img
+                    src="https://ui-avatars.com/api/?name={{ !empty($__user['user_fullname']) ? rawurlencode($__user['user_fullname']) : $__user['user_name'] }}"
+                    alt="User Avatar" class="rounded-circle" style="max-width:50px;">
+                @endif
+                <div class="media-body ml-1">
                   <h3 class="dropdown-item-title">
                     @if (!empty($__user['user_fullname']))
                       {{ $__user['user_fullname'] }}
